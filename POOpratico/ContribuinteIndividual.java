@@ -7,30 +7,22 @@
  */
 public class ContribuinteIndividual extends Contribuinte
 {
-    // instance variables - replace the example below with your own
-    private int x;
-
     /**
      * Constructor for objects of class ContribuinteIndividual
      */
     public ContribuinteIndividual()
     {
+        // initialise instance variables        
+    }
+    
+    public ContribuinteIndividual(String nome, String email, int nif, String morada, String password)
+    {
         // initialise instance variables
-        x = 0;
-        this.setName("Jojo");
-        this.setNIF(1992);
-        
+        this.setName(nome);
+        this.setEmail(email);
+        this.setNIF(nif);
+        this.setMorada(morada);
+        this.setPassword(password);
     }
 
-    /**
-     * An example of a method - replace this comment with your own
-     *
-     * @param  y  a sample parameter for a method
-     * @return    the sum of x and y
-     */
-    public int sampleMethod(int y)
-    {
-        // put your code here
-        return x + y;
-    }
 }
