@@ -7,6 +7,11 @@
  */
 public class ContribuinteIndividual extends Contribuinte
 {
+    
+    private int numAgregado;
+    private int[] nifsAgregado;
+    private float coefFiscal;
+    private int[] atividadesEconomicas; //classe para realizar operações???
     /**
      * Constructor for objects of class ContribuinteIndividual
      */
