@@ -7,8 +7,6 @@ import java.util.ArrayList;
  */
 public class ContribuinteEmpresarial extends Contribuinte
 {
-    // instance variables - replace the example below with your own
-    private int x;
     private ArrayList<String> atividadesEconomicas; //Alterar tipo maybe class
     private int coefFiscal;
     /**
@@ -17,9 +15,12 @@ public class ContribuinteEmpresarial extends Contribuinte
     public ContribuinteEmpresarial()
     {
         // initialise instance variables
-        x = 0;
+        // x = 0;
     }
     
+    /**
+     * Construtor de objetos da classe ContribuinteEmpresarial. Recebe como argumentos as variáveis.
+     */
     public ContribuinteEmpresarial(String nome, String email, int nif, String morada, String password)
     {
         // initialise instance variables
@@ -29,16 +30,72 @@ public class ContribuinteEmpresarial extends Contribuinte
         this.setMorada(morada);
         this.setPassword(password);
     }
-
+    
     /**
-     * An example of a method - replace this comment with your own
-     *
-     * @param  y  a sample parameter for a method
-     * @return    the sum of x and y
+     * Construtor de cópia de objetos da classe ContribuinteEmpresarial.
      */
-    public int sampleMethod(int y)
-    {
-        // put your code here
-        return x + y;
+    public ContribuinteEmpresarial(ContribuinteEmpresarial c){
+        this.setName(c.getName());
+        this.setEmail(c.getEmail());
+        this.setNIF(c.getNIF());
+        this.setMorada(c.getMorada());
+        //this.setPassword(c.getPassword()); --perguntar ao stor.
+        this.atividadesEconomicas = (c.getAtividadesEconomicas());
+        this.setCoefFiscal(c.getCoefFiscal());
+    
+    }
+    
+    /**
+     * Retorna as atividades economicas.
+     * @return atividadesEconomicas.
+     */
+    public ArrayList<String> getAtividadesEconomicas(){
+        return new ArrayList<>(this.atividadesEconomicas);
+    }
+    
+    /**
+     * Adiciona uma atividadeEconomica.
+     * @param a String.
+     */
+    public void addAtividadesEconomicas(String a){
+        this.atividadesEconomicas.add(a);
+    }
+    
+    /**
+     * Remove uma atividadeEconomica.
+     * @param a String.
+     */
+    public void removeAtividadesEconomicas(String a){
+        this.atividadesEconomicas.remove(a);
+    }
+    
+    /**
+     * Retorna o coeficiente fiscal.
+     * @return coefFiscal.
+     */
+    public int getCoefFiscal (){
+        return this.coefFiscal;
+    }
+    
+    /**
+     * Altera o coeficiente fiscal.
+     * @param coefFiscal coeficiente fiscal.
+     */
+    public void setCoefFiscal (int coefFiscal){
+        this.coefFiscal = coefFiscal;
+    }
+    /**
+     * Método equals para os objetos da classe ContribuinteEmpresarial.
+     */
+    public boolean equals(Object o){
+       if(o==this) return true;
+       if(o==null || (o.getClass() != this.getClass())) return false;
+       
+       ContribuinteEmpresarial c = (ContribuinteEmpresarial) o;
+       return this.getNIF() == c.getNIF();
+              //this.coefFiscal == c.getCoefFiscal() &&
+              //this.atividadesEconomicas.equals(c.getAtividadesEconomicas());
+              
+             
     }
 }
