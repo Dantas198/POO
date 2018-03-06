@@ -84,6 +84,7 @@ public class ContribuinteEmpresarial extends Contribuinte
     public void setCoefFiscal (int coefFiscal){
         this.coefFiscal = coefFiscal;
     }
+    
     /**
      * Método equals para os objetos da classe ContribuinteEmpresarial.
      */
@@ -94,8 +95,34 @@ public class ContribuinteEmpresarial extends Contribuinte
        ContribuinteEmpresarial c = (ContribuinteEmpresarial) o;
        return this.getNIF() == c.getNIF();
               //this.coefFiscal == c.getCoefFiscal() &&
-              //this.atividadesEconomicas.equals(c.getAtividadesEconomicas());
-              
-             
+              //this.atividadesEconomicas.equals(c.getAtividadesEconomicas()))      
+    }
+    
+    /**
+     * Clonagem do objeto da classe ContribuinteEmpresarial.
+     */
+    public ContribuinteEmpresarial clone(){
+        return new ContribuinteEmpresarial(this);
+    } 
+    
+    /**
+     * Passagem das variáveis para Strings.
+     */
+    public String toString(){
+        StringBuilder sb = new StringBuilder("Empresarial...Nif: ");
+        sb.append(this.getNIF());
+        sb.append(", Nome: ");
+        sb.append(this.getName());
+        sb.append(", Email: ");
+        sb.append(this.getEmail());
+        sb.append(", Morada: ");
+        sb.append(this.getMorada());
+        //sb.append(" ,Password: ");
+        //sb.append(" ,Atividades Economicas: ");
+        //sb.append(this.atividadesEconomicas.toString());
+        sb.append(", Coeficiente Fiscal: ");
+        sb.append(this.coefFiscal);
+        
+        return sb.toString();
     }
 }
