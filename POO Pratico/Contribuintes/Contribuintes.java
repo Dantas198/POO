@@ -16,7 +16,7 @@ public class Contribuintes {
 	
 	public Contribuinte login(int nif, String password) {
 		if (contribuintes.containsKey(nif)){
-			Contribuinte c =contribuintes.get(nif);
+			Contribuinte c = contribuintes.get(nif);
 			if(c.isPassword(password))
 				return c;
 		}
