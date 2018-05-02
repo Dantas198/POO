@@ -2,7 +2,6 @@ package AtividadesEconomicas;
 //Pode vir a ser Imutavel
 public class AtividadeEconomica {
 	private Deducao d;
-	
 	public AtividadeEconomica(AtividadeEconomica a) {
 		// TODO Auto-generated constructor stub
 	}
