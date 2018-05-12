@@ -1,9 +1,11 @@
 package Fatura;
 
 import AtividadesEconomicas.AtividadeEconomica;
+
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
-public class Fatura {
+public class Fatura implements Serializable{
 	private int nifEmitente;
 	private String designacaoEmitente;
 	private LocalDateTime dataDespesa; //imutavel

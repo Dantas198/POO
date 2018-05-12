@@ -1,9 +1,10 @@
 package Contribuintes;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Set;
 
-public class Contribuintes {
+public class Contribuintes implements Serializable{
 	HashMap<Integer, Contribuinte> contribuintes;//Keys Nifs dos contribuintes
 	
 	public void addContribuinte(Contribuinte c) {

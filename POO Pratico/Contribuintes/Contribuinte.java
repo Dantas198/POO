@@ -1,8 +1,9 @@
 package Contribuintes;
 
+import java.io.Serializable;
 import java.lang.StringBuilder;
 
-public abstract class Contribuinte {
+public abstract class Contribuinte implements Serializable {
     private String nome;
     private int nif;
     private String email;

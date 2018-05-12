@@ -1,5 +1,6 @@
 package Contribuintes;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -8,7 +9,7 @@ import java.util.stream.Collectors;
 
 import AtividadesEconomicas.AtividadeEconomica;
 
-public class ContribuinteIndividual extends Contribuinte {
+public class ContribuinteIndividual extends Contribuinte implements Serializable {
     private int numDependentesAgregado;
     private ArrayList<Integer> nifsAgregado; //Fazer Getters e Setters
     private float coefFiscal;

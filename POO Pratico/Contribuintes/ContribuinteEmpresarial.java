@@ -1,5 +1,6 @@
 package Contribuintes;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
@@ -7,7 +8,7 @@ import java.util.Map;
 import AtividadesEconomicas.AtividadeEconomica;
 import Fatura.Fatura;
 
-public class ContribuinteEmpresarial extends Contribuinte {
+public class ContribuinteEmpresarial extends Contribuinte implements Serializable {
     private HashMap<Integer,AtividadeEconomica> atividadesEmpresa;
     private float fatorDeducao;
     
