@@ -169,6 +169,11 @@ public class Menu
         return op;
     }
     
+    public void run(Contribuintes cs){
+        this.c = cs;
+        welcomeMenu();
+    }
+    
     public void run(){
         welcomeMenu();
     }
