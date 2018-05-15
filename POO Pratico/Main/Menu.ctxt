@@ -1,0 +1,22 @@
+#BlueJ class context
+comment0.target=Menu
+comment0.text=\n\ Write\ a\ description\ of\ class\ Menu\ here.\n\n\ @author\ (your\ name)\n\ @version\ (a\ version\ number\ or\ a\ date)\n
+comment1.params=Message\ cls
+comment1.target=java.lang.Object\ getInfo(java.lang.String,\ java.lang.Class)
+comment2.params=
+comment2.target=int\ registerMenuContrInd()
+comment3.params=
+comment3.target=int\ registerMenuContrEmpr()
+comment4.params=
+comment4.target=int\ registerMenu()
+comment5.params=
+comment5.target=int\ loginMenu()
+comment6.params=
+comment6.target=int\ welcomeMenu()
+comment7.params=menuString\ toRun
+comment7.target=int\ genericMenu(java.util.ArrayList,\ java.util.ArrayList)
+comment8.params=cs
+comment8.target=void\ run(Contribuintes.Contribuintes)
+comment9.params=
+comment9.target=void\ run()
+numComments=10

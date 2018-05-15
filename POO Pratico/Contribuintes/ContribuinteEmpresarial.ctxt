@@ -1,0 +1,19 @@
+#BlueJ class context
+comment0.target=ContribuinteEmpresarial
+comment1.params=
+comment1.target=ContribuinteEmpresarial()
+comment2.params=c
+comment2.target=ContribuinteEmpresarial(ContribuinteEmpresarial)
+comment3.params=a
+comment3.target=void\ setAtividadesEmpresa(java.util.Map)
+comment4.params=
+comment4.target=java.util.HashMap\ getAtividadesEmpresa()
+comment5.params=
+comment5.target=float\ getFatorDeducao()
+comment6.params=fatorDeducao
+comment6.target=void\ setFatorDeducao(float)
+comment7.params=nifCliente\ descricao\ despesa
+comment7.target=Fatura.Fatura\ emiteFatura(int,\ java.lang.String,\ float)
+comment8.params=
+comment8.target=ContribuinteEmpresarial\ clone()
+numComments=9
