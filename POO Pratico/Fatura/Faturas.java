@@ -93,6 +93,32 @@ public class Faturas implements Serializable {
 		return (float) x.stream().mapToDouble(Fatura::getDespesa).sum();
 	}
 	
+	//Tem de ser uma empresa
+	public List<Fatura> getFaturasByDate(int nif){
+        List<Fatura> x = getFaturasFromEmitente(nif);
+        x.sort(new CompareFaturasByDate());
+        return x;
+    }
+    //Tem de ser um empresa
+    public List<Fatura> getFaturasByValor(int nif){
+        List<Fatura> x = getFaturasFromEmitente(nif);
+        x.sort(new CompareFaturasByValor());
+        return x;
+    }
+    
+    
+    //tem de ser nif de empresa.
+    //A lista está disposta da seguinte maneira:
+    //      Se tivermos 3 contribuintes: A,B e C e cada um com 3 faturas com valores: x > y > z, 
+    //      O resultado vai ser {Ax, Ay, Az, Bx, By, Bz, Cx, Cy, Cz}
+    public List<Fatura> getFaturasByValorDecrescente(int nif){
+        List<Fatura> x = getFaturasFromEmitente(nif);
+        x.sort(Comparator.comparing(Fatura::getNifCliente)
+                         .thenComparing(Fatura::getDespesa).reversed()); 
+        return x;
+    
+    }
+    
 	public Faturas() {
 		this.faturas = new HashMap<>();
 		this.faturasPendentes = new HashMap<>();
