@@ -12,6 +12,12 @@ public class ContribuinteEmpresarial extends Contribuinte implements Serializabl
     private HashMap<Integer,AtividadeEconomica> atividadesEmpresa;
     private float fatorDeducao;
     
+    public ContribuinteEmpresarial(){
+        super();
+        this.fatorDeducao = 0;
+        this.atividadesEmpresa = new HashMap<Integer, AtividadeEconomica>();
+    }
+    
     public ContribuinteEmpresarial(ContribuinteEmpresarial c) {
         super(c);
         this.setAtividadesEmpresa(c.getAtividadesEmpresa());
