@@ -6,7 +6,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.Comparator;
 
+import Comparators.CompareFaturasByValor;
+import Comparators.CompareFaturasByDate;
 import AtividadesEconomicas.AtividadeEconomica;
 import Contribuintes.ContribuinteEmpresarial;
 import Exceptions.FaturaNaoExisteException;
