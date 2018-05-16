@@ -1,0 +1,5 @@
+#BlueJ class context
+comment0.target=ComparePairDespesa
+comment1.params=p1\ p2
+comment1.target=int\ compare(javafx.util.Pair,\ javafx.util.Pair)
+numComments=2
