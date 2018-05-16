@@ -11,17 +11,20 @@ import Fatura.Fatura;
 public class ContribuinteEmpresarial extends Contribuinte implements Serializable {
     private HashMap<Integer,AtividadeEconomica> atividadesEmpresa;
     private float fatorDeducao;
+    private int countFaturas;
     
     public ContribuinteEmpresarial(){
         super();
         this.fatorDeducao = 0;
         this.atividadesEmpresa = new HashMap<Integer, AtividadeEconomica>();
+        this.countFaturas = 0;
     }
     
     public ContribuinteEmpresarial(ContribuinteEmpresarial c) {
         super(c);
         this.setAtividadesEmpresa(c.getAtividadesEmpresa());
         this.fatorDeducao = c.getFatorDeducao();
+        this.countFaturas = c.getCountFaturas();
     }
     
     private void setAtividadesEmpresa(Map<Integer, AtividadeEconomica> a) {
@@ -36,6 +39,14 @@ public class ContribuinteEmpresarial extends Contribuinte implements Serializabl
             res.put(e.getKey(), e.getValue().clone());
             
         return res;
+    }
+    
+    public int getCountFaturas(){
+        return this.countFaturas;
+    }
+    
+    public void setCountFaturas(int countFaturas){
+        this.countFaturas = countFaturas;
     }
     
     public float getFatorDeducao() {
