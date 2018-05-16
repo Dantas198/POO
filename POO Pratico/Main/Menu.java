@@ -237,7 +237,9 @@ public class Menu
     }
     
     public void run(Contribuintes cs){
-        this.c = cs;
+        if(cs != null) 
+            this.c = cs;
+        else c = new Contribuintes();
         //System.out.println("c: " + c);
         //System.out.println("cs " + cs);
         welcomeMenu();
