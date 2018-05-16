@@ -15,6 +15,7 @@ import java.io.Serializable;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.ClassNotFoundException;
+import java.io.File;
 
 
 import Contribuintes.Contribuintes;
@@ -25,13 +26,20 @@ import Fatura.Faturas;
 public class Main implements Serializable{
     private static Menu menu = new Menu();
 
-    private static Contribuintes initContribuintes(String filepath) throws FileNotFoundException, IOException, ClassNotFoundException{
-        FileInputStream fis = new FileInputStream(filepath);
+    
+    private static Contribuintes initContribuintes(String filepath) throws FileNotFoundException, IOException{
+        Contribuintes cs;
+        FileInputStream fis = new FileInputStream(new File(filepath));
         ObjectInputStream ois = new ObjectInputStream(fis);
-        Contribuintes cs = (Contribuintes) ois.readObject();
+        try{
+            cs = (Contribuintes) ois.readObject();
+        } catch (ClassNotFoundException e){
+            cs = new Contribuintes();
+        }
         ois.close();
         return cs;
     }
+    
     
     private static int login() {
         return -1;
@@ -41,23 +49,35 @@ public class Main implements Serializable{
         int x = login();
 
         try{
-        Contribuintes cs = initContribuintes("filepath"); //tu sabes o que meter.....;)
+        Contribuintes cs = initContribuintes("Contribuintes.txt");
         menu.run(cs);
-    }
+        }
         catch (FileNotFoundException e){
             System.out.println("Could not find a file with that name"); menu.run();}
         catch (IOException e){
             System.out.println("There was an unexpected error when accessing to that file");}
-        catch (ClassNotFoundException e){
-            System.out.println("Error! The file does not contain the class specified");}
+        catch (NullPointerException e){
+            System.out.println("Contribuintes don't exist");
+            Contribuintes cs = new Contribuintes();
+            menu.run(cs);
+        }
+         try{
+             menu.saveContribuintes("Contribuintes.txt");
+         } catch (FileNotFoundException e){
+             System.out.println("Could not find a file with that name");
+         } catch (IOException e){
+            System.out.println("There was an unexpected error when accessing to that file");
+         }
+           catch (ClassNotFoundException e){
+            System.out.println("Error! The file does not contain the class specified");
+         }
+      }
             
-         
-    }
     
     
     
     public static void main(String[] args) {
-        Main m = new Main();
-        m.run();
+        menu.run();
+        return;
     }
 }

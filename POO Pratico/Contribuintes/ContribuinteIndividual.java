@@ -53,11 +53,13 @@ public class ContribuinteIndividual extends Contribuinte implements Serializable
         super();
         this.nifsAgregado = new ArrayList<Integer>();
         this.coefFiscal = 0;
+        this.numDependentesAgregado = 0;
     }
     
-    public ContribuinteIndividual(String nome, int nif, String email, String morada, String password,Map<Integer,AtividadeEconomica> aDedusiveis,float coefFiscal) {
+    public ContribuinteIndividual(String nome, int nif, String email, String morada, String password,float coefFiscal) {
         super(nome,nif,email,morada,password);
         this.coefFiscal = coefFiscal; 
+        this.actDeduziveis = new HashMap<>();
     }
     
     public ContribuinteIndividual(ContribuinteIndividual a){

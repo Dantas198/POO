@@ -2,8 +2,8 @@
 comment0.target=ContribuinteIndividual
 comment1.params=
 comment1.target=int\ getNumDependentesAgregado()
-comment10.params=nome\ nif\ email\ morada\ password\ aDedusiveis\ coefFiscal
-comment10.target=ContribuinteIndividual(java.lang.String,\ int,\ java.lang.String,\ java.lang.String,\ java.lang.String,\ java.util.Map,\ float)
+comment10.params=nome\ nif\ email\ morada\ password\ coefFiscal
+comment10.target=ContribuinteIndividual(java.lang.String,\ int,\ java.lang.String,\ java.lang.String,\ java.lang.String,\ float)
 comment11.params=a
 comment11.target=ContribuinteIndividual(ContribuinteIndividual)
 comment12.params=

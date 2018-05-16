@@ -13,6 +13,7 @@ public class Fatura implements Serializable{
 	private String descricao;
 	private AtividadeEconomica naturezaDespesa;//Ver como implementar
 	private float despesa;
+	private int numFatura;
 	
 	public int getNifEmitente() {
 		return nifEmitente;
@@ -57,6 +58,12 @@ public class Fatura implements Serializable{
 		this.despesa = despesa;
 	}
 	
+	public int getNumFatura() {
+		return numFatura;
+	}
+	public void setNumFatura(int numFatura) {
+		this.numFatura = numFatura;
+	}
 	public Fatura(int nEmitente, String designacaoEmitente, LocalDateTime data, int nifCliente, String descricao, AtividadeEconomica naturezaDespesa, float despesa) {
 		this.nifEmitente = nEmitente;
 		this.nifCliente =nifCliente;
@@ -75,6 +82,7 @@ public class Fatura implements Serializable{
 		this.descricao = f.getDescricao();
 		this.naturezaDespesa = f.getNaturezaDespesa();
 		this.dataDespesa = f.getDataDespesa();
+		this.numFatura = f.getNumFatura();
 	}
 	
 	public Fatura clone() {
