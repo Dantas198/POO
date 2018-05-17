@@ -26,6 +26,10 @@ public class Faturas implements Serializable {
     private ArrayList<Pair<Integer,Pair<AtividadeEconomica,AtividadeEconomica>>> correcoes;
     private int numFaturas;
     
+    public int getNumFaturas(){
+        return numFaturas;
+    }
+    
     public void addFatura(Fatura f) {
         Fatura i = f.clone();
         i.setNumFatura(this.numFaturas);
@@ -53,7 +57,7 @@ public class Faturas implements Serializable {
     }
     
     //Pair<Nif, Despesa>
-    //Pode estar uma merda, mas fds....ver se é preciso dar clone.....
+    //Pode estar uma merda, mas fds....ver se ï¿½ preciso dar clone.....
     public Set<Pair <Integer,Float>> getTenContribuintesMostDespesa(){
        HashMap<Integer, Pair <Integer,Float>> tmp = new HashMap<>();
            for(Fatura a : faturas.values()){

@@ -6,7 +6,6 @@ import java.io.Serializable;
 public class AtividadeEconomica implements Serializable{
 	
 	private float coef;
-	
 	private String nomeAtividade;
 	
 	public AtividadeEconomica(float coef, String nomeAtividade) {

@@ -2,22 +2,14 @@
 dependency1.from=Main
 dependency1.to=Menu
 dependency1.type=UsesDependency
-<<<<<<< HEAD
 objectbench.height=200
 objectbench.width=659
 package.divider.horizontal=0.6
 package.divider.vertical=0.6810477657935285
 package.editor.height=435
-=======
-objectbench.height=199
-objectbench.width=643
-package.divider.horizontal=0.6
-package.divider.vertical=0.6786271450858035
-package.editor.height=428
->>>>>>> 5a68fefddd66edc7275a533cca90ee101bde85a8
 package.editor.width=553
 package.editor.x=525
-package.editor.y=16
+package.editor.y=0
 package.frame.height=741
 package.frame.width=683
 package.numDependencies=1
@@ -34,21 +26,12 @@ target1.name=Menu
 target1.showInterface=false
 target1.type=ClassTarget
 target1.width=80
-<<<<<<< HEAD
-target1.x=190
-target1.y=200
-=======
-target1.x=180
-target1.y=70
->>>>>>> 5a68fefddd66edc7275a533cca90ee101bde85a8
+target1.x=230
+target1.y=250
 target2.height=50
 target2.name=Main
 target2.showInterface=false
 target2.type=ClassTarget
 target2.width=80
-<<<<<<< HEAD
-target2.x=270
-=======
 target2.x=180
->>>>>>> 5a68fefddd66edc7275a533cca90ee101bde85a8
 target2.y=10

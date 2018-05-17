@@ -24,7 +24,7 @@ import Fatura.Faturas;
 
 
 public class Main implements Serializable{
-    private static Menu menu = new Menu();
+    private Menu menu = new Menu();
 
     
     private static Contribuintes initContribuintes(String filepath) throws FileNotFoundException, IOException{
@@ -41,13 +41,8 @@ public class Main implements Serializable{
     }
     
     
-    private static int login() {
-        return -1;
-    }
-    
-    public static void run() {
-        int x = login();
-
+    private static void run() {
+        Menu menu = new Menu();
         try{
         Contribuintes cs = initContribuintes("Contribuintes.txt");
         menu.run(cs);
@@ -77,7 +72,7 @@ public class Main implements Serializable{
     
     
     public static void main(String[] args) {
-        menu.run();
+        run();
         return;
     }
 }

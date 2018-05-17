@@ -11,12 +11,17 @@ import java.io.IOException;
 import java.lang.ClassNotFoundException;
 import java.io.File;
 import java.util.HashMap;
+import java.time.LocalDateTime;
+import java.util.function.Function;
 
 import Contribuintes.Contribuintes;
 import Contribuintes.Contribuinte;
 import Contribuintes.ContribuinteIndividual;
 import Contribuintes.ContribuinteEmpresarial;
 import Fatura.Faturas;
+import Fatura.Fatura;
+import AtividadesEconomicas.AtividadeEconomica;
+
 /**
  * Write a description of class Menu here.
  *
@@ -28,10 +33,31 @@ public class Menu
     private static Faturas f;
     private static Contribuintes c;
     
+    private void setFaturas(Faturas f){
+        this.f = f;
+    }
+    
+    private void setContribuintes(Contribuintes c){
+        this.c = c;
+    }
+    
+    
     public static void saveContribuintes(String filepath) throws FileNotFoundException, IOException, ClassNotFoundException{
         FileOutputStream fos = new FileOutputStream(new File(filepath));
         ObjectOutputStream oos = new ObjectOutputStream(fos);
         oos.writeObject(c);
+    }
+    
+    private static int menuAdmin(Contribuinte contr){
+        System.out.println("Welcome Administrator");
+        ArrayList<String> menuString = new ArrayList<>();
+        ArrayList<Callable<Integer>> toRun = new ArrayList<>();
+        
+        menuString.add("Ver os 10 contribuintes que gastam mais no sistema");
+        menuString.add("Ver as empresas que faturam mais e as suas deduçoes fiscais");
+        menuString.add("Log out");
+        
+        return genericMenu(menuString, toRun);
     }
     
     private static int menuContrIndiv(ContribuinteIndividual contr){
@@ -45,14 +71,40 @@ public class Menu
         menuString.add("Ver lista de facturas de uma empresa");
         menuString.add("Log out");
         
-        return -1;
-        
+        return genericMenu(menuString, toRun);
     }
+    
+    
+    private static boolean criarFatura(ContribuinteEmpresarial contr){
+        Fatura fat = new Fatura();
+        AtividadeEconomica ae = new AtividadeEconomica();
+        
+        System.out.println("Criando uma nova fatura");
+        fat.setNumFatura(f.getNumFaturas());
+        fat.setNifEmitente(contr.getNif());
+        fat.setDataDespesa(LocalDateTime.now());
+        fat.setNifCliente((int) getInfo("Introduza o Nif do cliente", Integer.class));
+        fat.setDesignacaoEmitente((String) getInfo("Introduza a designacao", String.class));
+        fat.setDespesa((int) getInfo("Introduza a despesa", Integer.class));
+        ae.setNomeAtividade((String) getInfo("Introduza a atividade", String.class));
+        ae.setCoef((float) getInfo("Introduza o coeficiente da atividade", Float.class));
+        fat.setNaturezaDespesa(ae);
+        
+        try{
+            f.addFatura(fat);
+        } catch (Exception e){
+            System.out.println("Couldn't insert Fatura");
+            return false;
+        }
+        
+        return true;
+        
+    }    
     
     private static int menuContrEmpr(ContribuinteEmpresarial contr){
         System.out.println("Em que lhe posso ajudar "+ contr.getNome());
         ArrayList<String> menuString = new ArrayList<>();
-        ArrayList<Callable<Integer>> toRun = new ArrayList<>();
+        ArrayList<Function<Contribuinte,Boolean>> toRun = new ArrayList<>();
         
         menuString.add("Criar fatura");
         menuString.add("Ver faturas");
@@ -61,7 +113,11 @@ public class Menu
         menuString.add("Ver total faturado num intervalo de tempo");
         menuString.add("Log out");
         
-        return genericMenu(menuString, toRun);
+        // toRun.add(Menu::criarFatura);
+   
+        
+        return -1;
+        //return genericMenu(menuString, toRun);
         
     }
     
@@ -72,33 +128,6 @@ public class Menu
             return menuContrIndiv((ContribuinteIndividual) contr);
         else return menuContrEmpr((ContribuinteEmpresarial) contr);
     }
-    
-   
-    private static Object getInfo(String Message, Class<?> cls){
-        do{
-            System.out.println(Message);
-            Scanner s = new Scanner(System.in);
-            if(cls == String.class){
-                try{
-                    String res = s.nextLine();
-                    return res;
-                } catch (InputMismatchException e){
-                    System.out.println("Insert a text please");
-                }
-            }
-            if(cls == Integer.class){
-                try{
-                    int res = s.nextInt();
-                    return res;
-                } catch (InputMismatchException e){
-                    System.out.println("Insert a number only please");
-                }
-            }
-        }while(true);
-    }
-    
-    
-
     
     private static int registerMenuContrInd(){
         ContribuinteIndividual contr = new ContribuinteIndividual();
@@ -181,10 +210,13 @@ public class Menu
             contr = c.login(nif, pass);
             
         if(contr == null){
-            System.out.println("User not found/Wrong password");
+            System.out.println("Utilizador nao encontrado/password errada");
             return welcomeMenu();
         }
         else{
+            if(contr.getNif() == -777 && contr.isPassword(pass))
+                return menuAdmin(contr);
+            
             System.out.println("Authentication sucessful");
             return menuContr(contr);
         }
@@ -203,7 +235,8 @@ public class Menu
         
         return genericMenu(menuString, toRun);
     }
-        
+    
+    
     
     public static int genericMenu(ArrayList<String> menuString, ArrayList<Callable<Integer>> toRun){
         int op;
@@ -227,14 +260,47 @@ public class Menu
                 try{
                     op = toRun.get(op-1).call();
                 } catch (Exception e){
-                    System.out.println("Please try again " + e.getMessage());
+                    System.out.println("Tente mais tarde");
                     return welcomeMenu();
                 }
             }
+            if(op > 0) System.out.println("Funcionalidade nao encontrada");
         }while(op != 0);
         scan.close();
         return op;
     }
+    
+        private static Object getInfo(String Message, Class<?> cls){
+        do{
+            System.out.println(Message);
+            Scanner s = new Scanner(System.in);
+            if(cls == String.class){
+                try{
+                    String res = s.nextLine();
+                    return res;
+                } catch (InputMismatchException e){
+                    System.out.println("Insert a text please");
+                }
+            }
+            if(cls == Integer.class){
+                try{
+                    int res = s.nextInt();
+                    return res;
+                } catch (InputMismatchException e){
+                    System.out.println("Insert a number only please");
+                }
+            }
+            if(cls == Float.class){
+                try{
+                    float res = s.nextFloat();
+                    return res;
+                } catch (InputMismatchException e){
+                    System.out.println("Insert a decimal number only please");
+                }
+            }
+        }while(true);
+    }
+    
     
     public void run(Contribuintes cs){
         if(cs != null) 
