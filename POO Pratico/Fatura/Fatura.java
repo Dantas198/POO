@@ -1,5 +1,8 @@
 package Fatura;
 
+import Contribuintes.Contribuinte;
+import Contribuintes.ContribuinteIndividual;
+import Contribuintes.ContribuinteEmpresarial;
 import AtividadesEconomicas.AtividadeEconomica;
 
 import java.io.Serializable;
@@ -14,7 +17,18 @@ public class Fatura implements Serializable{
     private AtividadeEconomica naturezaDespesa;//Ver como implementar
     private float despesa;
     private int numFatura;
+    private float deducaoGlobal;
     
+    
+    public float getDeducaoGlobal(){
+        return this.deducaoGlobal;
+    }
+    public void setDeducaoGlobal(float deducaoGlobal){
+        this.deducaoGlobal = deducaoGlobal;
+    }
+    public void setDeducaoGlobal(Contribuinte c){
+        this.deducaoGlobal = ((ContribuinteIndividual) c).getCoefFiscal() * this.naturezaDespesa.getCoef();
+    }
     public int getNifEmitente() {
         return nifEmitente;
     }
@@ -92,5 +106,5 @@ public class Fatura implements Serializable{
     
     public Fatura clone() {
         return new Fatura(this);
-	}
+    }
 }

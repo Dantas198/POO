@@ -60,7 +60,7 @@ public class ContribuinteEmpresarial extends Contribuinte implements Serializabl
     public Fatura emiteFatura(int nifCliente,String descricao,float despesa) {
         Fatura res = new Fatura(this.getNif(), this.getNome(), LocalDateTime.now(), nifCliente, descricao, null, despesa);
         if(atividadesEmpresa.size()==1) {
-            //Garantimos que n�o ocorre excessao
+            //Garantimos que nao ocorre excessao
             AtividadeEconomica a = atividadesEmpresa.values().stream().findFirst().get();
             res.setNaturezaDespesa(a);
         }

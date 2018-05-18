@@ -10,11 +10,13 @@ import java.util.Comparator;
 import java.util.Set;
 import java.util.TreeSet;
 
+import Contribuintes.Contribuinte;
 import Comparators.CompareFaturasByValor;
 import Comparators.CompareFaturasByDate;
 import Comparators.ComparePairDespesa;
 import AtividadesEconomicas.AtividadeEconomica;
 import Contribuintes.ContribuinteEmpresarial;
+import Contribuintes.ContribuinteIndividual;
 import Exceptions.FaturaNaoExisteException;
 import Exceptions.FaturaNaoPendenteException;
 import Exceptions.FaturaPendenteException;
@@ -56,8 +58,61 @@ public class Faturas implements Serializable {
         return x;
     }
     
+    //Calcula a despesa deduzida de uma lista de faturas.
+    public float getDeducao(List<Fatura> faturas){
+        float count=0;
+        for(Fatura f : faturas)
+            count+=f.getDeducaoGlobal() * f.getDespesa(); 
+        
+        return count;
+    }
+    
+    //Calcula a despesa deduzida de todos no agregado familiar.
+    public float getNFAcumuladoAgregado(List<Integer> nifsAgregado, int nif){
+        float Supercount=0;
+        
+        //meto o nif do contribuinte principal para não andar a repetir ciclos, embora chame de novo uma funcao.
+        nifsAgregado.add(nif);
+        for(Integer i : nifsAgregado){
+             List<Fatura> tmp = getFaturasFromContribuinte(i);
+                Supercount+=getDeducao(tmp);
+        }
+        return Supercount;
+    }
+    
+    //Ponto 4. Devolve um Par<Faturas do c, despesa deduzida do c e agregado>.
+    public Pair<List<Fatura>,Float> getDespesasAndDFAcumulado(Contribuinte c){
+        int nif = c.getNif();
+        
+        List<Fatura> x = getFaturasFromContribuinte(nif);
+        ContribuinteIndividual ci = (ContribuinteIndividual) c;
+        float acumulado = getNFAcumuladoAgregado(ci.getNifsAgregado(), nif);
+        
+        Pair <List<Fatura>, Float> res = new Pair <List<Fatura>, Float> (x,acumulado);
+        return res;
+    }
+    
+    //Segundo o que entendi:
+    //Na atividade económica da fatura está o coeficiente gerado por uma empresa e que vai entrar para a deducao.
+    //O que diferencia este método do getDespesasAndDFAcumulado é o facto deste último eu ir buscar o campo deducaoGlobal à fatura
+    //este campo tem o fator de deducao da empresa emitente assim como o coeficiente do contribuinte individual.
+    //Só para administrador. Ponto 12
+    public float getDFEmpresa(Contribuinte c){
+        int nif = c.getNif();
+        float count=0;
+        //Contribuinte terá de ser Empresarial.
+        //getFaturasFromContribuinte ou FromEmitente, embora tenha quase a certeza que as por emitir não entram para a deducao
+        List<Fatura> x = getFaturasFromContribuinte(nif);
+            for(Fatura f : x) {
+                AtividadeEconomica a = f.getNaturezaDespesa();
+                count+= f.getDespesa() * a.getCoef();
+            }
+        return count;
+    }
+    
+    
     //Pair<Nif, Despesa>
-    //Pode estar uma merda, mas fds....ver se � preciso dar clone.....
+    //Pode estar uma merda, mas fds....ver se e preciso dar clone.....
     public Set<Pair <Integer,Float>> getTenContribuintesMostDespesa(){
        HashMap<Integer, Pair <Integer,Float>> tmp = new HashMap<>();
            for(Fatura a : faturas.values()){
@@ -92,7 +147,7 @@ public class Faturas implements Serializable {
         return x;
     }
     
-    public void associaAtividadeEconcomica(int numFatura, AtividadeEconomica a) throws FaturaNaoPendenteException, FaturaNaoExisteException{
+    public void associaAtividadeEconcomica(Contribuinte c, int numFatura, AtividadeEconomica a) throws FaturaNaoPendenteException, FaturaNaoExisteException{
         if(!this.faturasPendentes.containsKey(numFatura)) {
             if (this.faturas.containsKey(numFatura)) {
                 throw(new FaturaNaoPendenteException(Integer.toString(numFatura)));             
@@ -102,10 +157,12 @@ public class Faturas implements Serializable {
         }
         Fatura f = this.faturasPendentes.get(numFatura);
         f.setNaturezaDespesa(a);
+        //Contribuinte tem de ser Individual
+        f.setDeducaoGlobal(c);
         return;
     }
     
-    public void corrigeAtividadeFatura(int numFatura, AtividadeEconomica nova) throws FaturaNaoExisteException, FaturaPendenteException {
+    public void corrigeAtividadeFatura(Contribuinte c, int numFatura, AtividadeEconomica nova) throws FaturaNaoExisteException, FaturaPendenteException {
         if(!this.faturas.containsKey(numFatura)) {
             if (this.faturasPendentes.containsKey(numFatura)) {
                 throw (new FaturaPendenteException(Integer.toString(numFatura)));
@@ -117,6 +174,10 @@ public class Faturas implements Serializable {
         AtividadeEconomica old = f.getNaturezaDespesa();
         Pair <AtividadeEconomica,AtividadeEconomica> atividades = new Pair<AtividadeEconomica, AtividadeEconomica>(old,nova);
         Pair <Integer,Pair<AtividadeEconomica,AtividadeEconomica>> change = new Pair<Integer, Pair<AtividadeEconomica,AtividadeEconomica>>(f.getNumFatura(), atividades);
+        //O Zé esqueceu-se.
+        f.setNaturezaDespesa(nova);
+        //Contribuinte tem de ser individual. Vejam isto pff!!
+        f.setDeducaoGlobal(c);
         this.correcoes.add(change);
     }
     

@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import AtividadesEconomicas.AtividadeEconomica;
@@ -29,13 +29,15 @@ public class ContribuinteIndividual extends Contribuinte implements Serializable
     public void setCoefFiscal(float coefFiscal) {
         this.coefFiscal = coefFiscal;
     }
-    public void setNifsAgregado(Set<Integer> nifs) {
+    public void setNifsAgregado(List<Integer> nifs) {
         for(Integer nif : nifs){
             this.nifsAgregado.add(nif);
         }
     }
-    public Set<Integer> getNifsAgregado() {
-        return this.nifsAgregado.stream().collect(Collectors.toSet());
+    
+    //estava Set, mas dá-me geito assim
+    public List<Integer> getNifsAgregado() {
+        return this.nifsAgregado.stream().collect(Collectors.toList());
     }
     public Map<Integer,AtividadeEconomica> getActDeduziveis() {
         HashMap<Integer,AtividadeEconomica> res = new HashMap<Integer,AtividadeEconomica>();
