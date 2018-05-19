@@ -69,6 +69,7 @@ public class Fatura implements Serializable{
     }
     public void setNaturezaDespesa(AtividadeEconomica naturezaDespesa) {
         this.naturezaDespesa = naturezaDespesa.clone();
+        this.dedutor.setAtividade(naturezaDespesa);
     }
     public float getDespesa() {
         return despesa;
@@ -103,6 +104,7 @@ public class Fatura implements Serializable{
         this.descricao = descricao;
         this.naturezaDespesa = naturezaDespesa;
         this.dataDespesa = data;
+        this.dedutor = new DeducNull();
     }
     
     public Fatura(Fatura f) {
@@ -114,6 +116,7 @@ public class Fatura implements Serializable{
         this.naturezaDespesa = f.getNaturezaDespesa();
         this.dataDespesa = f.getDataDespesa();
         this.numFatura = f.getNumFatura();
+        this.dedutor = this.getDedutor();
     }
     
     public Fatura(ContribuinteEmpresarial emitente, LocalDateTime now, Contribuinte cliente,
