@@ -112,26 +112,21 @@ public class Faturas implements Serializable {
     }
     
     
-    //Pair<Nif, Despesa>
-    //Pode estar uma merda, mas fds....ver se e preciso dar clone.....
-    public Set<Pair <Integer,Float>> getTenContribuintesMostDespesa(){
+    public List<Pair<Integer, Float>> getTenContribuintesMostDespesa(){
        HashMap<Integer, Pair <Integer,Float>> tmp = new HashMap<>();
-           for(Fatura a : faturas.values()){
-               int nif = a.getNifCliente();
-               if(tmp.containsKey(nif)){
-                   Pair <Integer, Float> older = tmp.get(nif);
-                   Pair <Integer, Float> newer = new Pair <Integer, Float>(nif, older.getValue() + a.getDespesa());
-                   tmp.put(nif,newer);
-               }
-               else {
-                   Pair <Integer, Float> newer = new Pair <Integer, Float>(nif, a.getDespesa());
-                   tmp.put(nif,newer);
-               }
+       for(Fatura a : faturas.values()){
+           int nif = a.getNifCliente();
+           float despesa = a.getDespesa();
+           if(tmp.containsKey(nif)){
+               Pair <Integer, Float> older = tmp.get(nif);
+               despesa += older.getValue();
            }
-            
-       TreeSet< Pair <Integer, Float>> x;
-       x = tmp.values().stream().collect(Collectors.toCollection(()-> new TreeSet< Pair <Integer, Float>> (new ComparePairDespesa()))); 
-       return x;
+           Pair <Integer, Float> newer = new Pair <Integer, Float>(nif, despesa);
+           tmp.put(nif,newer);  
+       }    
+       List<Pair <Integer, Float>> l = tmp.values().stream().collect(Collectors.toList());
+       l.sort(new ComparePairDespesa());
+       return l.subList(0, 10);
     }
     
     public List<Fatura> getFaturasFromEmitenteBetweenDate(int nif,LocalDateTime beg, LocalDateTime end){

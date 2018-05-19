@@ -4,18 +4,22 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import atividadesEconomicas.AtividadeEconomica;
+import deductors.Deductor;
+import deductors.DeductorIndividual;
 import moradas.Morada;
 
-public class ContribuinteIndividual extends Contribuinte implements Serializable {
+public class ContribuinteIndividual extends Contribuinte implements Serializable,BeneficioFiscal,ContribuinteDedutor {
     private int numDependentesAgregado;
     private ArrayList<Integer> nifsAgregado; //Fazer Getters e Setters
     private float coefFiscal;
+    private static double benificioFamNumerosas = 0;
     //AtividadesEconomicas 
-    private HashMap<Integer,AtividadeEconomica> actDeduziveis; //Fazer Getters e Setters
+    private HashMap<String,AtividadeEconomica> actDeduziveis; //Fazer Getters e Setters
     
     public int getNumDependentesAgregado() {
         return numDependentesAgregado;
@@ -35,20 +39,18 @@ public class ContribuinteIndividual extends Contribuinte implements Serializable
             this.nifsAgregado.add(nif);
         }
     }
-    
-    //estava Set, mas dá-me geito assim
     public List<Integer> getNifsAgregado() {
         return this.nifsAgregado.stream().collect(Collectors.toList());
     }
-    public Map<Integer,AtividadeEconomica> getActDeduziveis() {
-        HashMap<Integer,AtividadeEconomica> res = new HashMap<Integer,AtividadeEconomica>();
+    public Map<String, AtividadeEconomica> getActDeduziveis() {
+        Map<String, AtividadeEconomica> res = new HashMap<String,AtividadeEconomica>();
         for(AtividadeEconomica v : this.actDeduziveis.values())
-            res.put(v.getKey(), v.clone());
+            res.put(v.getNomeAtividade(), v.clone());
         return res;
     }
-    private void setActDeduziveis(Map<Integer, AtividadeEconomica> actDeduziveis2) {
-        this.actDeduziveis = new HashMap<Integer, AtividadeEconomica>();
-        for(Map.Entry<Integer, AtividadeEconomica> e : actDeduziveis.entrySet())
+    private void setActDeduziveis(Map<String, AtividadeEconomica> actDeduziveis2) {
+        this.actDeduziveis = new HashMap<String, AtividadeEconomica>();
+        for(Entry<String, AtividadeEconomica> e : actDeduziveis.entrySet())
             this.actDeduziveis.put(e.getKey(), e.getValue().clone());
     }
     public ContribuinteIndividual() {
@@ -78,4 +80,23 @@ public class ContribuinteIndividual extends Contribuinte implements Serializable
         // TODO Auto-generated method stub
         return new ContribuinteIndividual(this);
     }
+	@Override
+	public double reducaoImposto() {
+		if (this.getNumDependentesAgregado()>=5)
+			return ContribuinteIndividual.getBenificioFamNumerosas();
+		return 0;
+	}
+	
+	public static double getBenificioFamNumerosas() {
+		return benificioFamNumerosas;
+	}
+	
+	public static void setBenificioFamNumerosas(double benificioFamNumerosas) {
+		ContribuinteIndividual.benificioFamNumerosas = benificioFamNumerosas;
+	}
+	
+	@Override
+	public Deductor getDeductor() {
+		return new DeductorIndividual(this,null);
+	}
 }

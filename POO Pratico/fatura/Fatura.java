@@ -1,7 +1,12 @@
 package fatura;
 
 import contribuintes.Contribuinte;
+import contribuintes.ContribuinteDedutor;
+import contribuintes.ContribuinteEmpresarial;
 import contribuintes.ContribuinteIndividual;
+import deductors.DeducNull;
+import deductors.Deductor;
+import deductors.DeductorIndividual;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -18,7 +23,7 @@ public class Fatura implements Serializable{
     private float despesa;
     private int numFatura;
     private float deducaoGlobal;
-    
+    private Deductor dedutor;
     
     public float getDeducaoGlobal(){
         return this.deducaoGlobal;
@@ -60,10 +65,10 @@ public class Fatura implements Serializable{
         this.descricao = descricao;
     }
     public AtividadeEconomica getNaturezaDespesa() {
-        return naturezaDespesa;
+        return naturezaDespesa.clone();
     }
     public void setNaturezaDespesa(AtividadeEconomica naturezaDespesa) {
-        this.naturezaDespesa = naturezaDespesa;
+        this.naturezaDespesa = naturezaDespesa.clone();
     }
     public float getDespesa() {
         return despesa;
@@ -77,6 +82,13 @@ public class Fatura implements Serializable{
     }
     public void setNumFatura(int numFatura) {
         this.numFatura = numFatura;
+    }
+    
+    public float getValorDeduzivel() {
+    	float deduzivel = (float) dedutor.calculateDeduzivel();
+    	float res;
+    	res = this.despesa * deduzivel;
+    	return res;
     }
     
     public Fatura(){
@@ -104,7 +116,31 @@ public class Fatura implements Serializable{
         this.numFatura = f.getNumFatura();
     }
     
-    public Fatura clone() {
+    public Fatura(ContribuinteEmpresarial emitente, LocalDateTime now, Contribuinte cliente,
+			String descricao, AtividadeEconomica naturezaDespesa, float despesa) {
+    	this.nifEmitente = emitente.getNif();
+        this.nifCliente = cliente.getNif();
+        this.designacaoEmitente = emitente.getNome();
+        this.despesa = despesa;
+        this.descricao = descricao;
+        this.naturezaDespesa = naturezaDespesa;
+        this.dataDespesa = now;
+		if (cliente instanceof ContribuinteDedutor) {
+			ContribuinteDedutor new_name = (ContribuinteDedutor) cliente;
+			this.dedutor = this.getDedutor();
+			this.dedutor.setAtividade(naturezaDespesa);
+		}
+		else
+			this.dedutor = new DeducNull();		
+	}
+    
+	public Fatura clone() {
         return new Fatura(this);
     }
+	public Deductor getDedutor() {
+		return dedutor.clone();
+	}
+	public void setDedutor(Deductor dedutor) {
+		this.dedutor = dedutor.clone();
+	}
 }

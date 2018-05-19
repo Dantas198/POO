@@ -158,7 +158,6 @@ public class Menu
         contr.setNome((String) getInfo("Introduza o Nome", String.class));
         contr.setEmail((String) getInfo("Introduza o Email", String.class));
         contr.setMorada((String) getInfo("Introduza a Morada", String.class));
-        contr.setFatorDeducao((int) getInfo("Introduza o fator de deduçao", Integer.class));
         contr.setPassword((String) getInfo("Introduza a sua palavra-passe", String.class));
 
         try{

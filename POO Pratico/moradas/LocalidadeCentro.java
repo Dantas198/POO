@@ -1,13 +1,19 @@
 package moradas;
 
 public class LocalidadeCentro extends Localidade {
-
-	public LocalidadeCentro(String localidade) {
-		super(localidade);
+	private double beneficioPercentagem;
+	
+	public double getBeneficioPercentagem() {
+		return beneficioPercentagem;
 	}
 
+	public LocalidadeCentro(String localidade, double beneficio) {
+		super(localidade);
+		this.beneficioPercentagem = beneficio;
+	}
+	
 	@Override
 	public LocalidadeCentro clone() {
-		return new LocalidadeCentro(this.getLocalidade());
+		return new LocalidadeCentro(this.getLocalidade(),this.beneficioPercentagem);
 	}
 }

@@ -2,7 +2,6 @@ package moradas;
 
 import java.io.Serializable;
 
-import javafx.util.Pair;
 
 public abstract class Localidade implements Serializable{
 	private String localidade;

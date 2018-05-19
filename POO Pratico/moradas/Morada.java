@@ -26,10 +26,23 @@ public class Morada{
 		this.localidade = localidade.clone();
 	}
 	
-	public Morada(Morada morada) {
-		// TODO Auto-generated constructor stub
+	public Morada() {
+		this.numeroPorta = 0;
+		this.codigoPostal = null;
+		this.localidade = null;
 	}
 	
+	public Morada(int numeroPorta, Pair<Integer, Integer> codigoPostal, Localidade localidade) {
+		this.numeroPorta = numeroPorta;
+		this.codigoPostal = codigoPostal;
+		this.localidade = localidade.clone();
+	}
+	
+	public Morada(Morada morada) {
+		this.numeroPorta = this.getNumeroPorta();
+		this.codigoPostal = this.getCodigoPostal();
+		this.localidade = this.getLocalidade();
+	}
 
 	public Morada clone(){
 		// TODO Auto-generated method stub

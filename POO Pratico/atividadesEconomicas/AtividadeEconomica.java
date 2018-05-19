@@ -23,10 +23,6 @@ public class AtividadeEconomica implements Serializable{
 		this.coef = 0;
 		this.nomeAtividade = null;
 	}
-
-	public Integer getKey() {
-		return 0;
-	}
 	
 	public AtividadeEconomica clone() {
 		return new AtividadeEconomica(this);
