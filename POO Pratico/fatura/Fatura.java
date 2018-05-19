@@ -77,22 +77,26 @@ public class Fatura implements Serializable{
     public void setDespesa(float despesa) {
         this.despesa = despesa;
     }
-    
-    public int getNumFatura() {
+     public int getNumFatura() {
         return numFatura;
     }
     public void setNumFatura(int numFatura) {
         this.numFatura = numFatura;
     }
-    
     public float getValorDeduzivel() {
     	float deduzivel = (float) dedutor.calculateDeduzivel();
     	float res;
     	res = this.despesa * deduzivel;
     	return res;
     }
+    public Deductor getDedutor() {
+		return dedutor.clone();
+	}
+	public void setDedutor(Deductor dedutor) {
+		this.dedutor = dedutor.clone();
+	}
     
-    public Fatura(){
+	public Fatura(){
 
     }
     
@@ -140,10 +144,5 @@ public class Fatura implements Serializable{
 	public Fatura clone() {
         return new Fatura(this);
     }
-	public Deductor getDedutor() {
-		return dedutor.clone();
-	}
-	public void setDedutor(Deductor dedutor) {
-		this.dedutor = dedutor.clone();
-	}
+	
 }
