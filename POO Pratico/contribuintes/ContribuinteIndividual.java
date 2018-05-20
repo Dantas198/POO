@@ -56,6 +56,7 @@ public class ContribuinteIndividual extends Contribuinte implements Serializable
     public ContribuinteIndividual() {
         // TODO Auto-generated constructor stub
         super();
+        this.actDeduziveis = new HashMap<>();
         this.nifsAgregado = new ArrayList<Integer>();
         this.coefFiscal = 0;
         this.numDependentesAgregado = 0;

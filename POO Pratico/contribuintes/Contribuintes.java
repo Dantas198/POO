@@ -11,6 +11,10 @@ import java.util.Comparator;
 public class Contribuintes implements Serializable{
     HashMap<Integer, Contribuinte> contribuintes;//Keys Nifs dos contribuintes
     
+    public boolean existeContribuinte(Contribuinte c){
+        return contribuintes.keySet().stream().anyMatch((nif) -> c.getNif() == nif);
+    }
+    
     public void addContribuinte(Contribuinte c) {
         contribuintes.put(c.getNif(), c.clone());
     }

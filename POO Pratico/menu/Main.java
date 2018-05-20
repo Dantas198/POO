@@ -11,6 +11,7 @@ import java.util.concurrent.Callable;
 import contribuintes.Contribuinte;
 import contribuintes.Contribuintes;
 
+import java.lang.ClassNotFoundException;
 import java.io.ObjectInputStream;
 import java.io.FileInputStream;
 import java.io.ObjectOutputStream;
@@ -42,7 +43,7 @@ public class Main implements Serializable{
     }
     
     
-    private static void run() {
+    private static void run(){
         Menu menu = new Menu();
         try{
         Contribuintes cs = initContribuintes("Contribuintes.txt");
@@ -72,7 +73,7 @@ public class Main implements Serializable{
     
     
     
-    public static void main(String[] args) {
+    public static void main(String[] args){
         run();
         return;
     }
