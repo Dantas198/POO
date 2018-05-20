@@ -224,14 +224,12 @@ public class Menu
         contr.setNome((String) getInfo("Introduza o Nome", String.class));
         contr.setEmail((String) getInfo("Introduza o Email", String.class));
         contr.setPassword((String) getInfo("Introduza a sua palavra-passe", String.class));
-        contr.setMorada (new Morada());//(moradaMenu());
+        contr.setMorada(moradaMenu());
         try{
             if(c.existeContribuinte(contr))
                 System.out.println("User already exists");
             else c.addContribuinte(contr);
         } catch (NullPointerException e){
-            System.out.println(contr);
-            System.out.println(c);
             System.out.println("Couldn't register Contribuinte");
         }
         return welcomeMenu();
@@ -311,12 +309,11 @@ public class Menu
     
     
     private Morada moradaMenu(){
-        Morada m = new Morada();
-        m.setNumeroPorta((int) getInfo("Introduza o seu numero de porta", Integer.class));
-        LocalidadeLitoral l = new LocalidadeLitoral ((String) getInfo("Introduza a sua Localidade", String.class));
-        m.setLocalidade(l);
-        m.setCodigoPostal((Pair<Integer,Integer>) getInfo("Introduza o seu codigo postal  \"? - ?\"", Pair.class));
-        return m;
+        int nPorta = ((int) getInfo("Introduza o numero de porta", Integer.class));
+        String localidade = (String) getInfo("Introduza a localidade", String.class);
+        LocalidadeCentro l = new LocalidadeCentro (localidade, (double) getInfo("Introduza o desconto fiscal", Double.class));
+        Pair<Integer, Integer> codPostal = ((Pair<Integer,Integer>) getInfo("Introduza o seu codigo postal  \"? - ?\"", Pair.class));
+        return new Morada(nPorta, codPostal, l);
     }
     
     private int genericMenu(ArrayList<String> menuString, ArrayList<Callable<Integer>> toRun){
@@ -344,6 +341,7 @@ public class Menu
                 } catch (Exception e){
                     scan.close();
                     System.out.println("Tente mais tarde: " + e.getMessage());
+                    e.printStackTrace(System.out);
                     return welcomeMenu();
                 }
             }
@@ -431,20 +429,17 @@ public class Menu
                     System.out.println("Follow the format \"Number - Number\"");
                 }
             } 
+            if(cl == Double.class){
+                try{
+                    double res = s.nextDouble();
+                    s.close();
+                    return res;
+                } catch(InputMismatchException e){
+                    System.out.println("Insert a decimal number onply please");
+                }
+            }
            s.close();
         }while(true);
-    }
-   
-    
-    public void run(Contribuintes cs){
-        if(cs != null) 
-            this.c = cs;
-        else c = new Contribuintes();
-        this.f = new Faturas();
-        System.out.println("f: " + f);
-        System.out.println("c: " + c);
-        System.out.println("cs " + cs);
-        welcomeMenu();
     }
     
     public void run(){

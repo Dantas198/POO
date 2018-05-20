@@ -12,7 +12,7 @@ public class Contribuintes implements Serializable{
     HashMap<Integer, Contribuinte> contribuintes;//Keys Nifs dos contribuintes
     
     public boolean existeContribuinte(Contribuinte c){
-        return contribuintes.keySet().stream().anyMatch((nif) -> c.getNif() == nif);
+        return contribuintes.containsKey(c.getNif());
     }
     
     public void addContribuinte(Contribuinte c) {
