@@ -8,5 +8,5 @@ public class Localidades implements Serializable {
 	
 	public void addLocalidade(Localidade a) {
 		localidades.put(a.getLocalidade(), a.clone());
-	}
+        }
 }

@@ -26,40 +26,36 @@ import fatura.Faturas;
 
 
 public class Main implements Serializable{
-    private Menu menu = new Menu();
+    private static Menu menu;
 
     
-    private static Contribuintes initContribuintes(String filepath) throws FileNotFoundException, IOException{
-        Contribuintes cs;
+    private static void initMenu(String filepath) throws FileNotFoundException, IOException{
         FileInputStream fis = new FileInputStream(new File(filepath));
         ObjectInputStream ois = new ObjectInputStream(fis);
         try{
-            cs = (Contribuintes) ois.readObject();
+            menu = (Menu) ois.readObject();
         } catch (ClassNotFoundException e){
-            cs = new Contribuintes();
+            menu = new Menu();
         }
         ois.close();
-        return cs;
     }
     
     
     private static void run(){
-        Menu menu = new Menu();
+        menu = new Menu();
         try{
-        Contribuintes cs = initContribuintes("Contribuintes.txt");
-        menu.run(cs);
+          initMenu("Menu.txt");
+          menu.run();
         }
         catch (FileNotFoundException e){
-            System.out.println("Could not find a file with that name"); menu.run();}
+            System.out.println("Could not find a file with that name"); menu.initRun();}
         catch (IOException e){
-            System.out.println("There was an unexpected error when accessing to that file");}
+            System.out.println("There was an unexpected error when accessing to that file"); menu.initRun();}
         catch (NullPointerException e){
-            System.out.println("Contribuintes don't exist");
-            Contribuintes cs = new Contribuintes();
-            menu.run(cs);
+            System.out.println("Menu doesn't exist"); menu.initRun();
         }
          try{
-             menu.saveContribuintes("Contribuintes.txt");
+             menu.saveMenu("Menu.txt");
          } catch (FileNotFoundException e){
              System.out.println("Could not find a file with that name");
          } catch (IOException e){
@@ -69,8 +65,7 @@ public class Main implements Serializable{
             System.out.println("Error! The file does not contain the class specified");
          }
       }
-            
-    
+      
     
     
     public static void main(String[] args){
