@@ -1,0 +1,9 @@
+#BlueJ class context
+comment0.target=Localidades
+comment1.params=
+comment1.target=Localidades()
+comment2.params=localidades
+comment2.target=Localidades(java.util.HashMap)
+comment3.params=a
+comment3.target=void\ addLocalidade(Localidade)
+numComments=4

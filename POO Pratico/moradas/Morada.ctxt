@@ -1,0 +1,23 @@
+#BlueJ class context
+comment0.target=Morada
+comment1.params=
+comment1.target=int\ getNumeroPorta()
+comment10.params=
+comment10.target=Morada\ clone()
+comment2.params=numeroPorta
+comment2.target=void\ setNumeroPorta(int)
+comment3.params=
+comment3.target=javafx.util.Pair\ getCodigoPostal()
+comment4.params=codigoPostal
+comment4.target=void\ setCodigoPostal(javafx.util.Pair)
+comment5.params=
+comment5.target=Localidade\ getLocalidade()
+comment6.params=localidade
+comment6.target=void\ setLocalidade(Localidade)
+comment7.params=
+comment7.target=Morada()
+comment8.params=numeroPorta\ codigoPostal\ localidade
+comment8.target=Morada(int,\ javafx.util.Pair,\ Localidade)
+comment9.params=morada
+comment9.target=Morada(Morada)
+numComments=11
