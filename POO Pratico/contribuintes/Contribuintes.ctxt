@@ -1,19 +1,15 @@
 #BlueJ class context
 comment0.target=Contribuintes
 comment1.params=c
-comment1.target=void\ addContribuinte(Contribuinte)
+comment1.target=boolean\ existeContribuinte(Contribuinte)
 comment2.params=c
-comment2.target=void\ addContribuintes(java.util.Set)
-comment3.params=nif\ password
-comment3.target=Contribuinte\ login(int,\ java.lang.String)
-<<<<<<< HEAD
-comment4.params=
-comment4.target=Contribuintes()
-numComments=5
-=======
-comment4.params=x
-comment4.target=java.util.List\ getXMostFaturas(int)
-comment5.params=
-comment5.target=Contribuintes()
-numComments=6
->>>>>>> 5a68fefddd66edc7275a533cca90ee101bde85a8
+comment2.target=void\ addContribuinte(Contribuinte)
+comment3.params=c
+comment3.target=void\ addContribuintes(java.util.Set)
+comment4.params=nif\ password
+comment4.target=Contribuinte\ login(int,\ java.lang.String)
+comment5.params=x
+comment5.target=java.util.List\ getXMostFaturas(int)
+comment6.params=
+comment6.target=Contribuintes()
+numComments=7

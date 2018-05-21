@@ -2,11 +2,11 @@
 dependency1.from=Main
 dependency1.to=Menu
 dependency1.type=UsesDependency
-objectbench.height=198
+objectbench.height=199
 objectbench.width=643
 package.divider.horizontal=0.6
-package.divider.vertical=0.6801872074882995
-package.editor.height=429
+package.divider.vertical=0.6786271450858035
+package.editor.height=428
 package.editor.width=553
 package.editor.x=525
 package.editor.y=0
