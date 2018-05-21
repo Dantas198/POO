@@ -40,17 +40,12 @@ public class Morada implements Serializable{
     }
     
     public Morada(Morada morada) {
-        this.numeroPorta = this.getNumeroPorta();
-        this.codigoPostal = this.getCodigoPostal();
-        this.localidade = this.getLocalidade();
+        this.numeroPorta = morada.getNumeroPorta();
+        this.codigoPostal = morada.getCodigoPostal();
+        this.localidade = morada.getLocalidade();
     }
 
     public Morada clone(){
-        Morada nova = new Morada();
-        nova.setNumeroPorta(this.getNumeroPorta());
-        nova.setCodigoPostal(this.getCodigoPostal());
-        nova.setLocalidade(this.getLocalidade());
-        return nova;
-        //return new Morada(this);
+        return new Morada(this);
     }
 }

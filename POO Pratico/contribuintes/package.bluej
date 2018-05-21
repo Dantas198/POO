@@ -8,6 +8,7 @@ dependency2.type=UsesDependency
 dependency3.from=Contribuintes
 dependency3.to=ContribuinteEmpresarial
 dependency3.type=UsesDependency
+<<<<<<< HEAD
 objectbench.height=115
 objectbench.width=659
 package.divider.horizontal=0.6
@@ -16,6 +17,16 @@ package.editor.height=520
 package.editor.width=553
 package.editor.x=100
 package.editor.y=0
+=======
+objectbench.height=113
+objectbench.width=643
+package.divider.horizontal=0.6
+package.divider.vertical=0.8127925117004681
+package.editor.height=514
+package.editor.width=553
+package.editor.x=100
+package.editor.y=100
+>>>>>>> a7b700568ec56975707a66cb4dd44f1f810f7b47
 package.frame.height=741
 package.frame.width=683
 package.numDependencies=3
@@ -31,41 +42,75 @@ target1.height=50
 target1.name=BeneficioFiscal
 target1.showInterface=false
 target1.type=InterfaceTarget
+<<<<<<< HEAD
 target1.width=140
 target1.x=390
 target1.y=30
+=======
+target1.width=100
+target1.x=70
+target1.y=70
+>>>>>>> a7b700568ec56975707a66cb4dd44f1f810f7b47
 target2.height=50
 target2.name=ContribuinteDedutor
 target2.showInterface=false
 target2.type=InterfaceTarget
+<<<<<<< HEAD
 target2.width=180
 target2.x=280
 target2.y=140
+=======
+target2.width=130
+target2.x=10
+target2.y=230
+>>>>>>> a7b700568ec56975707a66cb4dd44f1f810f7b47
 target3.height=50
 target3.name=ContribuinteEmpresarial
 target3.showInterface=false
 target3.type=ClassTarget
+<<<<<<< HEAD
 target3.width=210
 target3.x=30
 target3.y=310
+=======
+target3.width=150
+target3.x=30
+target3.y=170
+>>>>>>> a7b700568ec56975707a66cb4dd44f1f810f7b47
 target4.height=50
 target4.name=ContribuinteIndividual
 target4.showInterface=false
 target4.type=ClassTarget
+<<<<<<< HEAD
 target4.width=190
 target4.x=340
 target4.y=310
+=======
+target4.width=140
+target4.x=340
+target4.y=220
+>>>>>>> a7b700568ec56975707a66cb4dd44f1f810f7b47
 target5.height=50
 target5.name=Contribuintes
 target5.showInterface=false
 target5.type=ClassTarget
+<<<<<<< HEAD
 target5.width=130
 target5.x=210
 target5.y=380
+=======
+target5.width=100
+target5.x=180
+target5.y=260
+>>>>>>> a7b700568ec56975707a66cb4dd44f1f810f7b47
 target6.height=50
 target6.name=Contribuinte
 target6.showInterface=false
 target6.type=AbstractTarget
+<<<<<<< HEAD
 target6.width=120
+=======
+target6.width=90
+>>>>>>> a7b700568ec56975707a66cb4dd44f1f810f7b47
 target6.x=70
 target6.y=10
