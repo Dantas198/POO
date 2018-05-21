@@ -2,6 +2,8 @@
 comment0.target=LocalidadeLitoral
 comment1.params=localidade
 comment1.target=LocalidadeLitoral(java.lang.String)
+comment1.text=\r\n\ Construtor\ parametrizado\ de\ LocalidadeLitoral\r\n
 comment2.params=
 comment2.target=LocalidadeLitoral\ clone()
+comment2.text=\r\n\ Clone\ de\ LocalidadeLitoral\r\n
 numComments=3

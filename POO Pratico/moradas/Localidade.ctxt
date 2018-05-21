@@ -2,8 +2,11 @@
 comment0.target=Localidade
 comment1.params=
 comment1.target=java.lang.String\ getLocalidade()
+comment1.text=\r\n\ Devolve\ a\ localidade\r\n
 comment2.params=localidade
 comment2.target=Localidade(java.lang.String)
+comment2.text=\r\n\ Atualiza\ a\ localidade\r\n
 comment3.params=
 comment3.target=Localidade\ clone()
+comment3.text=\r\n\ Clone\ abstrato\r\n
 numComments=4

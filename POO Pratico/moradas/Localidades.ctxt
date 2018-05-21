@@ -2,8 +2,11 @@
 comment0.target=Localidades
 comment1.params=
 comment1.target=Localidades()
+comment1.text=\r\n\ Construtor\ vazio\r\n
 comment2.params=localidades
 comment2.target=Localidades(java.util.HashMap)
+comment2.text=\r\n\ Construtor\ parametrizado\r\n
 comment3.params=a
 comment3.target=void\ addLocalidade(Localidade)
+comment3.text=\r\n\ Adiciona\ uma\ localidade\r\n
 numComments=4

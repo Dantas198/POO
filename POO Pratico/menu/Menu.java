@@ -46,17 +46,23 @@ public class Menu implements Serializable
     private LocalDateTime start;
     private LocalDateTime end;
     
-    
+    /**
+     * Atualiza as faturas
+     */
     private void setFaturas(Faturas f){
         this.f = f;
     }
     
+    /**
+     * Atualiza os contribuintes
+     */
     private void setContribuintes(Contribuintes c){
         this.c = c;
     }
     
-    
-    
+    /**
+     * Metodo que guarda o estado do menu
+     */
     public void saveMenu(String filepath) throws FileNotFoundException, IOException, ClassNotFoundException{
         FileOutputStream fos = new FileOutputStream(new File(filepath));
         ObjectOutputStream oos = new ObjectOutputStream(fos);
@@ -64,6 +70,9 @@ public class Menu implements Serializable
         oos.close();
     }
     
+    /**
+     * Metodo que constroi o menu do administrador
+     */
     private int menuAdmin(){
         System.out.println("Welcome Administrator");
         ArrayList<String> menuString = new ArrayList<>();
@@ -76,7 +85,9 @@ public class Menu implements Serializable
         return genericMenu(menuString, toRun);
     }
     
-    
+    /**
+     * Adiciona opcoes de ver despesas ao menu
+     */
     private int verDespesas(){
         ArrayList<String> menuString = new ArrayList<>();
         ArrayList<Callable<Integer>> toRun = new ArrayList<>();
@@ -89,6 +100,9 @@ public class Menu implements Serializable
         return genericMenu(menuString, toRun);
     }
     
+    /**
+     * Constroi o menu do contribuinte individual
+     */
     private int menuContrIndiv(){
         System.out.println("Em que lhe posso ajudar "+ this.loggedIn.getNome());
         ArrayList<String> menuString = new ArrayList<>();
@@ -106,7 +120,9 @@ public class Menu implements Serializable
         return genericMenu(menuString, toRun);
     }
     
-    
+    /**
+     * Permite a uma empresa, atraves do menu, emitir uma fatura por parte de uma empresa(menu c. empresarial)
+     */
     private int criarFatura(){
         Fatura fat = new Fatura();
         AtividadeEconomica ae = new AtividadeEconomica();
@@ -136,6 +152,9 @@ public class Menu implements Serializable
         return menuContrEmpr();
     }    
     
+    /**
+     * Adiciona ao menu a possibilidade de ver as faturas de um contribuinte
+     */
     private int verFaturas(){
         ArrayList<String> menuString = new ArrayList<>();
         ArrayList<Callable<Integer>> toRun = new ArrayList<>();
@@ -148,6 +167,9 @@ public class Menu implements Serializable
         return genericMenu(menuString, toRun);
     }
     
+    /**
+     * Constroi o menu do contribuinte empresarial
+     */
     private int menuContrEmpr(){
         System.out.println("Em que lhe posso ajudar "+ this.loggedIn.getNome());
         ArrayList<String> menuString = new ArrayList<>();
@@ -173,13 +195,18 @@ public class Menu implements Serializable
     }
     
     
-    
+    /**
+     * Dependendo do tipo de contribuinte invoca o menu correspondente a esse tipo
+     */
     private int menuContr(){
         if(this.loggedIn instanceof ContribuinteIndividual)
             return menuContrIndiv();
         else return menuContrEmpr();
     }
     
+    /**
+     * Constroi o menu de registo do contribuinte individual
+     */
     private int registerMenuContrInd(){
         ContribuinteIndividual contr = new ContribuinteIndividual();
         
@@ -208,7 +235,9 @@ public class Menu implements Serializable
         return welcomeMenu();
     }
    
-    
+    /**
+     * Constroi o menu de registo de um contribuinte empresarial
+     */
     private int registerMenuContrEmpr(){
         ContribuinteEmpresarial contr = new ContribuinteEmpresarial();
         contr.setNif((int) getInfo("Introduza o Nif", Integer.class));
@@ -226,6 +255,9 @@ public class Menu implements Serializable
         return welcomeMenu();
     }
     
+    /**
+     * Constroi o menu de registo que permite escolher o tipo de contribuinte que está em causa
+     */
     private int registerMenu(){
         System.out.println("Registrando um novo Contribuinte");
         ArrayList<String> menuString = new ArrayList<>();
@@ -241,6 +273,9 @@ public class Menu implements Serializable
         return genericMenu(menuString, toRun);
     }
     
+    /**
+     * Constroi o menu de login dos contribuintes
+     */
     private int loginMenu(){
         int nif;
         String pass;
@@ -280,10 +315,16 @@ public class Menu implements Serializable
         }
     }
     
+    /**
+     * Chama o welcomeMenu() ?
+     */
     private int welcomeMenu(Object o){
         return welcomeMenu();
     }
     
+    /**
+     * Constroi o menu de boas-vindas
+     */
     private int welcomeMenu(){
         System.out.println("Welcome User");
         ArrayList<String> menuString = new ArrayList<>();
@@ -297,7 +338,9 @@ public class Menu implements Serializable
         return genericMenu(menuString, toRun);
     }
     
-    
+    /**
+     * Constroi o menu de morada
+     */
     private Morada moradaMenu(){
         int nPorta = ((int) getInfo("Introduza o numero de porta", Integer.class));
         String localidade = (String) getInfo("Introduza a localidade", String.class);
@@ -306,6 +349,9 @@ public class Menu implements Serializable
         return new Morada(nPorta, codPostal, l);
     }
     
+    /**
+     * 
+     */
     private int genericMenu(ArrayList<String> menuString, ArrayList<Callable<Integer>> toRun){
         int op;
         int i = 1;

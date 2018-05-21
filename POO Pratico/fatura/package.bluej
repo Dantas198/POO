@@ -1,15 +1,18 @@
 #BlueJ package file
-objectbench.height=154
-objectbench.width=776
+dependency1.from=Faturas
+dependency1.to=Fatura
+dependency1.type=UsesDependency
+objectbench.height=152
+objectbench.width=760
 package.divider.horizontal=0.6
-package.divider.vertical=0.6830708661417323
-package.editor.height=340
+package.divider.vertical=0.682
+package.editor.height=334
 package.editor.width=670
 package.editor.x=507
 package.editor.y=114
 package.frame.height=600
 package.frame.width=800
-package.numDependencies=0
+package.numDependencies=1
 package.numTargets=2
 package.showExtends=true
 package.showUses=true

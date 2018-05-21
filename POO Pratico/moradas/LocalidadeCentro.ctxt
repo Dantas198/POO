@@ -2,8 +2,11 @@
 comment0.target=LocalidadeCentro
 comment1.params=
 comment1.target=double\ getBeneficioPercentagem()
+comment1.text=\r\n\ Calcula\ o\ valor\ do\ beneficio\ da\ empresa\ por\ estar\ numa\ regiao\ centro\r\n
 comment2.params=localidade\ beneficio
 comment2.target=LocalidadeCentro(java.lang.String,\ double)
+comment2.text=\r\n\ Construtor\ parametrizado\ de\ LocalidadeCentro\r\n
 comment3.params=
 comment3.target=LocalidadeCentro\ clone()
+comment3.text=\r\n\ Clone\ de\ LocalidadeCentro\r\n
 numComments=4
