@@ -1,8 +1,5 @@
 package menu;
 
- 
-
-
 import java.util.InputMismatchException;
 import java.util.Scanner;
 import java.util.ArrayList;
@@ -50,7 +47,7 @@ public class Main implements Serializable{
         catch (FileNotFoundException e){
             System.out.println("Could not find a file with that name"); menu.initRun();}
         catch (IOException e){
-            System.out.println("There was an unexpected error when accessing to that file"); menu.initRun();}
+            System.out.println("There was an unexpected error when accessing to that file"); menu.initRun(); e.printStackTrace(System.out);}
         catch (NullPointerException e){
             System.out.println("Menu doesn't exist"); menu.initRun();
         }
@@ -59,7 +56,7 @@ public class Main implements Serializable{
          } catch (FileNotFoundException e){
              System.out.println("Could not find a file with that name");
          } catch (IOException e){
-            System.out.println("There was an unexpected error when accessing to that file");
+            System.out.println("There was an unexpected error when accessing to that file");e.printStackTrace(System.out);
          }
            catch (ClassNotFoundException e){
             System.out.println("Error! The file does not contain the class specified");

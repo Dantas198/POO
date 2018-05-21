@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 import java.util.function.Function;
 import java.util.List;
 import javafx.util.Pair;
+import java.io.Serializable;
 
 import atividadesEconomicas.AtividadeEconomica;
 import fatura.Fatura;
@@ -36,10 +37,14 @@ import exceptions.FaturaNaoExisteException;
  * @author (your name)
  * @version (a version number or a date)
  */
-public class Menu
+public class Menu implements Serializable
 {   
-    private static Faturas f;
-    private static Contribuintes c;
+    private Faturas f;
+    private Contribuintes c;
+    
+    private Contribuinte loggedIn;
+    private LocalDateTime start;
+    private LocalDateTime end;
     
     
     private void setFaturas(Faturas f){
@@ -59,7 +64,7 @@ public class Menu
         oos.close();
     }
     
-    private int menuAdmin(Contribuinte contr){
+    private int menuAdmin(){
         System.out.println("Welcome Administrator");
         ArrayList<String> menuString = new ArrayList<>();
         ArrayList<Callable<Integer>> toRun = new ArrayList<>();
@@ -72,29 +77,22 @@ public class Menu
     }
     
     
-    private int verDespesas(Object o){
-        ContribuinteIndividual contr = (ContribuinteIndividual) o;
+    private int verDespesas(){
         ArrayList<String> menuString = new ArrayList<>();
-        ArrayList<Function<Object,Integer>> toRun = new ArrayList<>();
-        List<Fatura> faturas = f.getFaturasFromContribuinte(contr.getNif());
+        ArrayList<Callable<Integer>> toRun = new ArrayList<>();
+        List<Fatura> faturas = f.getFaturasFromContribuinte(this.loggedIn.getNif());
         
         System.out.println(faturas.toString());
         menuString.add("Retroceder");
         toRun.add(this::menuContrIndiv);
         
-        return genericMenu2(menuString, toRun, contr);
+        return genericMenu(menuString, toRun);
     }
     
-    
-    private int menuContrIndiv(Object o){
-        ContribuinteIndividual contr = (ContribuinteIndividual) o;
-        return menuContrIndiv(contr);
-    }
-    
-    private int menuContrIndiv(ContribuinteIndividual contr){
-        System.out.println("Em que lhe posso ajudar "+ contr.getNome());
+    private int menuContrIndiv(){
+        System.out.println("Em que lhe posso ajudar "+ this.loggedIn.getNome());
         ArrayList<String> menuString = new ArrayList<>();
-        ArrayList<Function<Object,Integer>> toRun = new ArrayList<>();
+        ArrayList<Callable<Integer>> toRun = new ArrayList<>();
         menuString.add("Ver despesas");
         menuString.add("Ver montante de deduçao fiscal acumulado");
         menuString.add("Associar uma atividade economica a uma despesa");
@@ -105,22 +103,21 @@ public class Menu
         toRun.add(this::verDespesas);
         toRun.add(this::welcomeMenu);
         
-        return genericMenu2(menuString, toRun, contr);
+        return genericMenu(menuString, toRun);
     }
     
     
-    private Integer criarFatura(Object o){
-        ContribuinteEmpresarial contr = (ContribuinteEmpresarial) o;
+    private int criarFatura(){
         Fatura fat = new Fatura();
         AtividadeEconomica ae = new AtividadeEconomica();
         
-        System.out.println("contr: " + contr);
-        System.out.println("fat: " + fat);
-        System.out.println("ae: " + ae);
+       // System.out.println("contr: " + contr);
+       // System.out.println("fat: " + fat);
+       // System.out.println("ae: " + ae);
         
         System.out.println("Criando uma nova fatura");
         fat.setNumFatura(f.getNumFaturas());
-        fat.setNifEmitente(contr.getNif());
+        fat.setNifEmitente(this.loggedIn.getNif());
         fat.setDataDespesa(LocalDateTime.now());
         fat.setNifCliente((int) getInfo("Introduza o Nif do cliente", Integer.class));
         fat.setDesignacaoEmitente((String) getInfo("Introduza a designacao", String.class));
@@ -136,31 +133,25 @@ public class Menu
             System.out.println("Couldn't insert Fatura");
         }
         
-        return menuContrEmpr(contr);
+        return menuContrEmpr();
     }    
     
-    private int verFaturas(Object o){
+    private int verFaturas(){
         ArrayList<String> menuString = new ArrayList<>();
-        ArrayList<Function<Object,Integer>> toRun = new ArrayList<>();
-        ContribuinteEmpresarial contr = (ContribuinteEmpresarial) o;
-        List<Fatura> faturas = f.getFaturasFromEmitente(contr.getNif());
+        ArrayList<Callable<Integer>> toRun = new ArrayList<>();
+        List<Fatura> faturas = f.getFaturasFromEmitente(this.loggedIn.getNif());
         
         System.out.println(faturas.toString());
         menuString.add("Retroceder");
         toRun.add(this::menuContrEmpr);
         
-        return genericMenu2(menuString, toRun, contr);
+        return genericMenu(menuString, toRun);
     }
     
-    private int menuContrEmpr(Object o){
-        ContribuinteEmpresarial contr = (ContribuinteEmpresarial) o;
-        return menuContrEmpr(contr);
-    }
-    
-    private int menuContrEmpr(ContribuinteEmpresarial contr){
-        System.out.println("Em que lhe posso ajudar "+ contr.getNome());
+    private int menuContrEmpr(){
+        System.out.println("Em que lhe posso ajudar "+ this.loggedIn.getNome());
         ArrayList<String> menuString = new ArrayList<>();
-        ArrayList<Function<Object,Integer>> toRun = new ArrayList<>();
+        ArrayList<Callable<Integer>> toRun = new ArrayList<>();
 
         
         menuString.add("Criar fatura");
@@ -177,16 +168,16 @@ public class Menu
         //toRun.add(Menu::verTotalFaturadoPeloTempo);
         toRun.add(this::welcomeMenu);
         
-        return genericMenu2(menuString, toRun, contr);
+        return genericMenu(menuString, toRun);
         
     }
     
     
     
-    private int menuContr(Contribuinte contr){
-        if(contr instanceof ContribuinteIndividual)
-            return menuContrIndiv((ContribuinteIndividual) contr);
-        else return menuContrEmpr((ContribuinteEmpresarial) contr);
+    private int menuContr(){
+        if(this.loggedIn instanceof ContribuinteIndividual)
+            return menuContrIndiv();
+        else return menuContrEmpr();
     }
     
     private int registerMenuContrInd(){
@@ -253,7 +244,6 @@ public class Menu
     private int loginMenu(){
         int nif;
         String pass;
-        Contribuinte contr = null;
         
         System.out.println("Introduza o seu NIF:");
         Scanner s1 = new Scanner(System.in);
@@ -274,19 +264,19 @@ public class Menu
         s2.close();
         
         if(c != null)
-            contr = c.login(nif, pass);
+            this.loggedIn = c.login(nif, pass);
             
-        if(contr == null){
+        if(this.loggedIn == null){
             System.out.println("Utilizador nao encontrado/password errada");
             return welcomeMenu();
         }
         else{
-            if(contr.getNif() == -777 && contr.isPassword(pass))
-                return menuAdmin(contr);
+            if(loggedIn.getNif() == -777 && loggedIn.isPassword(pass))
+                return menuAdmin();
            
             
             System.out.println("Authentication sucessful");
-            return menuContr(contr);
+            return menuContr();
         }
     }
     
@@ -351,37 +341,6 @@ public class Menu
         return op;
     }
     
-    private int genericMenu2(ArrayList<String> menuString, ArrayList<Function<Object,Integer>> toRun, Object o){
-        int op;
-        int i = 1;
-        for(String str: menuString){
-            System.out.println( i + "-" + str);
-            i++;
-        }
-        System.out.println("0-Sair");
-        //System.out.println("c: "+ c);
-        
-        Scanner scan = new Scanner(System.in);
-        do{
-            try{
-                op = scan.nextInt();
-            } catch(InputMismatchException e){
-                System.out.println("Input Errado");
-                op = -1;
-            }
-            if(op > 0 && op <= toRun.size()){
-                try{
-                    op = toRun.get(op-1).apply(o);
-                } catch (Exception e){
-                    System.out.println("Tente mais tarde " +  e.getMessage());
-                    return welcomeMenu();
-                }
-            }
-            if(op > 0) System.out.println("Funcionalidade nao encontrada");
-        }while(op != 0);
-        scan.close();
-        return op;
-        }
         
     private Object getInfo(String message, Class<?> cl){
         do{
@@ -443,12 +402,21 @@ public class Menu
     }
     
     public void run(){
+        if(c == null){
+            this.c = new Contribuintes();
+        }
+        if(f == null){
+            this.f = new Faturas();
+        }
         welcomeMenu();
     }
     
     public void initRun(){
         this.c = new Contribuintes();
         this.f = new Faturas();
+        this.loggedIn = null;
+        this.start = null;
+        this.end = null;
         this.run();
     }
 }

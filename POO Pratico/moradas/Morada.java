@@ -1,8 +1,9 @@
 package moradas;
 
 import javafx.util.Pair;
+import java.io.Serializable;
 
-public class Morada{
+public class Morada implements Serializable{
     private int numeroPorta;
     private Pair<Integer, Integer> codigoPostal;
     private Localidade localidade;
