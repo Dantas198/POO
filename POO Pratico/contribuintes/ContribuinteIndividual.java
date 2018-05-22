@@ -15,7 +15,6 @@ public class ContribuinteIndividual extends Contribuinte implements Serializable
     private int numDependentesAgregado;
     private ArrayList<Integer> nifsAgregado; //Fazer Getters e Setters
     private float coefFiscal;
-    private static double benificioFamNumerosas = 0;
     //AtividadesEconomicas 
     private HashMap<String,AtividadeEconomica> actDeduziveis; //Fazer Getters e Setters
     
@@ -126,23 +125,9 @@ public class ContribuinteIndividual extends Contribuinte implements Serializable
      * Devolve a taxa de reducao de imposto a aplicar
      */
     public double reducaoImposto() {
-        if (this.getNumDependentesAgregado()>=5)
-            return ContribuinteIndividual.getBenificioFamNumerosas();
+        if (this.numDependentesAgregado>=5)
+            return 0.05*this.numDependentesAgregado;
         return 0;
-    }
-    
-    /**
-     * Calcula a taxa de beneficio familiar a aplicar
-     */
-    public static double getBenificioFamNumerosas() {
-        return benificioFamNumerosas;
-    }
-    
-    /**
-     * Atualiza os beneficios familiares
-     */
-    public static void setBenificioFamNumerosas(double benificioFamNumerosas) {
-        ContribuinteIndividual.benificioFamNumerosas = benificioFamNumerosas;
     }
 
 	public boolean isActDeduzivel(AtividadeEconomica naturezaDespesa) {

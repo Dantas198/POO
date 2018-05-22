@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 import java.util.Comparator;
 
 import exceptions.ContribuinteDoesntExistException;
+import exceptions.ContribuinteNaoIndividualException;
 import moradas.Morada;
 
 public class Contribuintes implements Serializable{
@@ -74,22 +75,25 @@ public class Contribuintes implements Serializable{
         return result;
     }
     
-   /* private String nome;
-    private int nif;
-    private String email;
-    private String password;*/
-    public void addContribuinteToAgregado(int nifdeAgregado, String nome, int nif, String email, String password) throws ContribuinteDoesntExistException {
+    public void addNewContribuinteToAgregado(int nifdeAgregado, String nome, int nif, String email, String password) throws ContribuinteDoesntExistException, ContribuinteNaoIndividualException {
     	if(!this.contribuintes.containsKey(nifdeAgregado))
     		throw new ContribuinteDoesntExistException(Integer.toString(nifdeAgregado));
-    	ContribuinteIndividual novo = (ContribuinteIndividual) this.contribuintes.get(nifdeAgregado);
+    	Contribuinte s = this.contribuintes.get(nifdeAgregado);
+    	if (!(s instanceof ContribuinteIndividual)) {
+			throw new ContribuinteNaoIndividualException(Integer.toString(nifdeAgregado));	
+		}
+    	ContribuinteIndividual novo = (ContribuinteIndividual) s.clone();
     	novo.setNome(nome);
     	novo.setNif(nif);
     	novo.setEmail(email);
     	novo.setPassword(password);
     	List<Integer> x = novo.getNifsAgregado();
     	for (Integer i : x) {
-    		ContribuinteIndividual c = (ContribuinteIndividual) this.contribuintes.get(i);
-    		c.addAgregado(nif);
+    		Contribuinte c = (ContribuinteIndividual) this.contribuintes.get(i);
+    		if (c instanceof ContribuinteIndividual) {
+				ContribuinteIndividual n = (ContribuinteIndividual) c;
+				n.addAgregado(nif);
+			}
     	}
     }
     /**
