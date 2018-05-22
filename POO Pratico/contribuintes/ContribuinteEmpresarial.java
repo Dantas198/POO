@@ -7,15 +7,12 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import atividadesEconomicas.AtividadeEconomica;
-import deductors.DeducNull;
-import deductors.Deductor;
-import deductors.DeductorEmpresarial;
 import fatura.Fatura;
 import moradas.Localidade;
 import moradas.LocalidadeCentro;
 import moradas.Morada;
 
-public class ContribuinteEmpresarial extends Contribuinte implements Serializable,BeneficioFiscal,ContribuinteDedutor {
+public class ContribuinteEmpresarial extends Contribuinte implements Serializable,BeneficioFiscal {
     private HashMap<String,AtividadeEconomica> atividadesEmpresa;
     private int countFaturas;
     
@@ -72,7 +69,7 @@ public class ContribuinteEmpresarial extends Contribuinte implements Serializabl
      * Emite uma fatura por parte da empresa
      * @returns res, a fatura emitida
      */
-    public Fatura emiteFatura(ContribuinteIndividual cliente,String descricao,float despesa) {
+    public Fatura emiteFatura(Contribuinte cliente,String descricao,float despesa) {
         Fatura res = new Fatura(this, LocalDateTime.now(), cliente, descricao, null, despesa);
         if(atividadesEmpresa.size()==1) {
             //Garantimos que nao ocorre excessao
@@ -83,22 +80,6 @@ public class ContribuinteEmpresarial extends Contribuinte implements Serializabl
         return(res);
     }
     
-    /**
-     * @param nifCliente, quem efetuou a despesa
-     * @param descricaa, descricao da despesa
-     * @param despesa, valor da despesa
-     * Emite uma fatura por parte da empresa
-     * @returns res, a fatura emitida
-     */
-    public Fatura emiteFatura(int nifCliente,String descricao,float despesa) {
-        Fatura res = new Fatura(this.getNif(), this.getNome(), LocalDateTime.now(), nifCliente, descricao, null, despesa);
-        if(atividadesEmpresa.size()==1) {
-            //Garantimos que nao ocorre excessao
-            AtividadeEconomica a = atividadesEmpresa.values().stream().findFirst().get();
-            res.setNaturezaDespesa(a);
-        }
-        return(res);
-    }
     
     /**
      * Clone
@@ -120,10 +101,5 @@ public class ContribuinteEmpresarial extends Contribuinte implements Serializabl
         return 0;
     }
     
-    /**
-     * Devolve o deductor empresarial 
-     */
-    public Deductor getDeductor() {
-        return new DeductorEmpresarial(this);
-    }
+
 }

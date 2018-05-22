@@ -9,11 +9,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import atividadesEconomicas.AtividadeEconomica;
-import deductors.Deductor;
-import deductors.DeductorIndividual;
 import moradas.Morada;
 
-public class ContribuinteIndividual extends Contribuinte implements Serializable,BeneficioFiscal,ContribuinteDedutor {
+public class ContribuinteIndividual extends Contribuinte implements Serializable,BeneficioFiscal {
     private int numDependentesAgregado;
     private ArrayList<Integer> nifsAgregado; //Fazer Getters e Setters
     private float coefFiscal;
@@ -146,11 +144,15 @@ public class ContribuinteIndividual extends Contribuinte implements Serializable
     public static void setBenificioFamNumerosas(double benificioFamNumerosas) {
         ContribuinteIndividual.benificioFamNumerosas = benificioFamNumerosas;
     }
+
+	public boolean isActDeduzivel(AtividadeEconomica naturezaDespesa) {
+		return this.actDeduziveis.containsKey(naturezaDespesa.getNomeAtividade());
+	}
+
+	public void addAgregado(int nif) {
+		if(!this.nifsAgregado.contains(nif))
+			this.nifsAgregado.add(nif);
+	}
     
-    /**
-     * Devolve o deductor
-     */
-    public Deductor getDeductor() {
-        return new DeductorIndividual(this,null);
-    }
+
 }

@@ -1,3 +1,0 @@
-# POO
-
-Projeto POO

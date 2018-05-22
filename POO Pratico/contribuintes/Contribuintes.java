@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 import java.util.Comparator;
 
 import exceptions.ContribuinteDoesntExistException;
+import moradas.Morada;
 
 public class Contribuintes implements Serializable{
     HashMap<Integer, Contribuinte> contribuintes;//Keys Nifs dos contribuintes
@@ -73,11 +74,28 @@ public class Contribuintes implements Serializable{
         return result;
     }
     
+   /* private String nome;
+    private int nif;
+    private String email;
+    private String password;*/
+    public void addContribuinteToAgregado(int nifdeAgregado, String nome, int nif, String email, String password) throws ContribuinteDoesntExistException {
+    	if(!this.contribuintes.containsKey(nifdeAgregado))
+    		throw new ContribuinteDoesntExistException(Integer.toString(nifdeAgregado));
+    	ContribuinteIndividual novo = (ContribuinteIndividual) this.contribuintes.get(nifdeAgregado);
+    	novo.setNome(nome);
+    	novo.setNif(nif);
+    	novo.setEmail(email);
+    	novo.setPassword(password);
+    	List<Integer> x = novo.getNifsAgregado();
+    	for (Integer i : x) {
+    		ContribuinteIndividual c = (ContribuinteIndividual) this.contribuintes.get(i);
+    		c.addAgregado(nif);
+    	}
+    }
     /**
      * Construtor vazio
      */
     public Contribuintes() {
-        // TODO Auto-generated constructor stub
         contribuintes = new HashMap<Integer,Contribuinte>();
     }
 }

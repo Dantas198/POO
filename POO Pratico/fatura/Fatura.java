@@ -1,12 +1,10 @@
 package fatura;
 
+import contribuintes.BeneficioFiscal;
 import contribuintes.Contribuinte;
-import contribuintes.ContribuinteDedutor;
 import contribuintes.ContribuinteEmpresarial;
 import contribuintes.ContribuinteIndividual;
-import deductors.DeducNull;
-import deductors.Deductor;
-import deductors.DeductorIndividual;
+
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -14,16 +12,14 @@ import java.time.LocalDateTime;
 import atividadesEconomicas.AtividadeEconomica;
 
 public class Fatura implements Serializable{
-    private int nifEmitente;
-    private String designacaoEmitente;
+    private ContribuinteEmpresarial emitente;
     private LocalDateTime dataDespesa; //imutavel
-    private int nifCliente;
+    private Contribuinte cliente;
     private String descricao;
     private AtividadeEconomica naturezaDespesa;//Ver como implementar
     private float despesa;
     private int numFatura;
     private float deducaoGlobal;
-    private Deductor dedutor;
     
     /**
      * Devolve a deducaoGlobal da Fatura, que é a percentagem total de deducao, contendo o coeficiente do 
@@ -60,16 +56,26 @@ public class Fatura implements Serializable{
      * @returns nifEmitente
      */
     public int getNifEmitente() {
-        return nifEmitente;
+        return emitente.getNif();
+    }
+    
+
+    /** 
+     * Devolve copia do Emitente quando a fatura foi criada
+     * 
+     * @returns nifEmitente
+     */
+    public ContribuinteEmpresarial getEmitente() {
+        return emitente.clone();
     }
     
     /**
      * @param nifEmitente
      * 
-     * Atualiza o valor da variável nifEmitente
+     * Atualiza o valor da variável Emitente
      */
-    public void setNifEmitente(int nifEmitente) {
-        this.nifEmitente = nifEmitente;
+    public void setEmitente(ContribuinteEmpresarial e) {
+        this.emitente = e.clone();
     }
     
     /**
@@ -78,16 +84,7 @@ public class Fatura implements Serializable{
      * @returns designacaoEmitente
      */
     public String getDesignacaoEmitente() {
-        return designacaoEmitente;
-    }
-    
-    /**
-     * @param designacaoEmitente
-     * 
-     * Atualiza o nome do emitente
-     */
-    public void setDesignacaoEmitente(String designacaoEmitente) {
-        this.designacaoEmitente = designacaoEmitente;
+        return emitente.getNome();
     }
     
     /**
@@ -114,16 +111,25 @@ public class Fatura implements Serializable{
      * @returns nifCliente
      */
     public int getNifCliente() {
-        return nifCliente;
+        return this.cliente.getNif();
+    }
+    
+    /**
+     * Devolve o cliente quando criada a fatura
+     * 
+     * @returns nifCliente
+     */
+    public Contribuinte getCliente() {
+        return cliente.clone();
     }
     
     /**
      * @param nifCliente
      * 
-     * Atualiza o nif do Cliente
+     * Atualiza o Cliente
      */
-    public void setNifCliente(int nifCliente) {
-        this.nifCliente = nifCliente;
+    public void setCliente(Contribuinte c) {
+        this.cliente = c.clone();
     }
     
     /**
@@ -160,7 +166,6 @@ public class Fatura implements Serializable{
      */
     public void setNaturezaDespesa(AtividadeEconomica naturezaDespesa) {
         this.naturezaDespesa = naturezaDespesa.clone();
-        this.dedutor.setAtividade(naturezaDespesa);
     }
     
     /**
@@ -169,7 +174,7 @@ public class Fatura implements Serializable{
      * @returns despesa
      */
     public float getDespesa() {
-        return despesa;
+        return this.despesa;
     }
     
     /**
@@ -205,28 +210,19 @@ public class Fatura implements Serializable{
      * @returns res, valor da deducao   
     */
     public float getValorDeduzivel() {
-        float deduzivel = (float) dedutor.calculateDeduzivel();
-        float res;
-        res = this.despesa * deduzivel;
+        double deduzivel = 0;
+        if (cliente instanceof BeneficioFiscal) {
+			BeneficioFiscal n = (BeneficioFiscal) cliente;
+			deduzivel = n.reducaoImposto();			
+		}
+        if (cliente instanceof ContribuinteIndividual) {
+			ContribuinteIndividual n2 = (ContribuinteIndividual) cliente;
+			if(n2.isActDeduzivel(this.naturezaDespesa))
+				despesa += this.naturezaDespesa.getCoef();
+			despesa += n2.getCoefFiscal();
+		}
+        float res = this.despesa * (float)deduzivel;
         return res;
-    }
-    
-    /**
-     * Devolve o dedutor
-     * 
-     * @returns dedutor, clonado
-     */
-    public Deductor getDedutor() {
-        return dedutor.clone();
-    }
-    
-    /**
-     * @param novo dedutor
-     * 
-     * Atualiza a variável dedutor
-     */
-    public void setDedutor(Deductor dedutor) {
-        this.dedutor = dedutor.clone();
     }
     
     /**
@@ -236,33 +232,18 @@ public class Fatura implements Serializable{
 
     }
     
-    /**
-     * Construtor parametrizado de Fatura
-     */
-    public Fatura(int nEmitente, String designacaoEmitente, LocalDateTime data, int nifCliente, String descricao, AtividadeEconomica naturezaDespesa, float despesa) {
-        this.nifEmitente = nEmitente;
-        this.nifCliente =nifCliente;
-        this.designacaoEmitente = designacaoEmitente;
-        this.despesa = despesa;
-        this.descricao = descricao;
-        this.naturezaDespesa = naturezaDespesa;
-        this.dataDespesa = data;
-        this.dedutor = new DeducNull();
-    }
     
     /**
      * Construtor de copia de Fatura
      */
     public Fatura(Fatura f) {
-        this.nifEmitente = f.getNifEmitente();
-        this.nifCliente = f.getNifCliente();
-        this.designacaoEmitente = f.getDesignacaoEmitente();
+        this.cliente = f.getCliente();
+        this.emitente = this.getEmitente();
         this.despesa = f.getDespesa();
         this.descricao = f.getDescricao();
         this.naturezaDespesa = f.getNaturezaDespesa();
         this.dataDespesa = f.getDataDespesa();
         this.numFatura = f.getNumFatura();
-        this.dedutor = this.getDedutor();
     }
 
     /**
@@ -271,20 +252,12 @@ public class Fatura implements Serializable{
      */
     public Fatura(ContribuinteEmpresarial emitente, LocalDateTime date, Contribuinte cliente,
             String descricao, AtividadeEconomica naturezaDespesa, float despesa) {
-        this.nifEmitente = emitente.getNif();
-        this.nifCliente = cliente.getNif();
-        this.designacaoEmitente = emitente.getNome();
+        this.cliente= cliente.clone();
+        this.emitente = emitente.clone();
         this.despesa = despesa;
         this.descricao = descricao;
         this.naturezaDespesa = naturezaDespesa;
         this.dataDespesa = date;
-        if (cliente instanceof ContribuinteDedutor) {
-            ContribuinteDedutor new_name = (ContribuinteDedutor) cliente;
-            this.dedutor = this.getDedutor();
-            this.dedutor.setAtividade(naturezaDespesa);
-        }
-        else
-            this.dedutor = new DeducNull();     
     }
     
     /**

@@ -7,7 +7,6 @@ import java.util.concurrent.Callable;
 
 import contribuintes.Contribuinte;
 import contribuintes.Contribuintes;
-
 import java.lang.ClassNotFoundException;
 import java.io.ObjectInputStream;
 import java.io.FileInputStream;
