@@ -47,27 +47,6 @@ public class Menu implements Serializable
     private LocalDateTime start;
     private LocalDateTime end;
     
-<<<<<<< HEAD
-    
-=======
-    /**
-     * Atualiza as faturas
-     */
-    private void setFaturas(Faturas f){
-        this.f = f;
-    }
-    
-    /**
-     * Atualiza os contribuintes
-     */
-    private void setContribuintes(Contribuintes c){
-        this.c = c;
-    }
-    
-    /**
-     * Metodo que guarda o estado do menu
-     */
->>>>>>> b58349cc0243a450c6cd1907ae4a27ff6266e218
     public void saveMenu(String filepath) throws FileNotFoundException, IOException, ClassNotFoundException{
         FileOutputStream fos = new FileOutputStream(new File(filepath));
         ObjectOutputStream oos = new ObjectOutputStream(fos);
@@ -75,7 +54,20 @@ public class Menu implements Serializable
         oos.close();
     }
     
-<<<<<<< HEAD
+    //Funcao nao usada, apenas uma ideia
+    public int handleContrIndivPerm(){
+        if(!(this.loggedIn instanceof ContribuinteIndividual))
+            return welcomeMenu();
+         return -1;
+    }
+    
+    //Funcao nao usada, apenas uma ideia
+    public int handleContrEmprPerm(){
+        if(!(this.loggedIn instanceof ContribuinteEmpresarial))
+            return welcomeMenu();
+         return -1;
+    }
+    
     private int ver10ContribuintesMaisDispendiosos(){
         System.out.println("Os contribuintes com mais depesas:");
         List<Pair<Integer, Float>> osDez = f.getTenContribuintesMostDespesa();
@@ -85,19 +77,20 @@ public class Menu implements Serializable
         return menuAdmin();
     }
     
-    //Ainda por acabar
+    //Ainda por acabar ( falta colocar as deduçoes discais)
     private int verEmpresasMaisFaturadas(){
         System.out.println("As empresas que mais faturam:");
-        
+        int x = (int) getInfo("Introduza o numero de empresas que quer ver", Integer.class);
+        List<ContribuinteEmpresarial> empresas = c.getXMostFaturas(x);
+        for(ContribuinteEmpresarial c : empresas)
+            System.out.println(c.getNome() + " - " + c.getCountFaturas() + " Faturas");
         
         return menuAdmin();
     }
     
-=======
     /**
      * Metodo que constroi o menu do administrador
      */
->>>>>>> b58349cc0243a450c6cd1907ae4a27ff6266e218
     private int menuAdmin(){
         System.out.println("Welcome Administrator");
         ArrayList<String> menuString = new ArrayList<>();
@@ -108,7 +101,7 @@ public class Menu implements Serializable
         menuString.add("Log out");
         
         toRun.add(this::ver10ContribuintesMaisDispendiosos);
-        //toRun.add(this::verEmpresasMaisFaturadas);
+        toRun.add(this::verEmpresasMaisFaturadas);
         toRun.add(this::menuAdmin);
         
         return genericMenu(menuString, toRun);
@@ -153,13 +146,11 @@ public class Menu implements Serializable
         return genericMenu(menuString, toRun);
     }
     
-<<<<<<< HEAD
+
     // Nao funciona ate se definir a estrutura da fatura
-=======
     /**
      * Permite a uma empresa, atraves do menu, emitir uma fatura por parte de uma empresa(menu c. empresarial)
      */
->>>>>>> b58349cc0243a450c6cd1907ae4a27ff6266e218
     private int criarFatura(){
         Fatura fat;
         Contribuinte cliente;
@@ -257,8 +248,7 @@ public class Menu implements Serializable
      */
     private int registerMenuContrInd(){
         ContribuinteIndividual contr = new ContribuinteIndividual();
-        
-        
+      
         contr.setNif((int) getInfo("Introduza o Nif", Integer.class));
         System.out.println(contr.getNif());
         contr.setNome((String) getInfo("Introduza o Nome", String.class));

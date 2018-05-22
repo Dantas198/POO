@@ -219,25 +219,19 @@ public class Fatura implements Serializable{
     public Deductor getDedutor() {
         return dedutor.clone();
     }
-<<<<<<< HEAD
-=======
     
     /**
      * @param novo dedutor
      * 
      * Atualiza a variável dedutor
      */
->>>>>>> b58349cc0243a450c6cd1907ae4a27ff6266e218
     public void setDedutor(Deductor dedutor) {
         this.dedutor = dedutor.clone();
     }
     
-<<<<<<< HEAD
-=======
     /**
      * Construtor vazio de Fatura
      */
->>>>>>> b58349cc0243a450c6cd1907ae4a27ff6266e218
     public Fatura(){
 
     }
@@ -270,17 +264,12 @@ public class Fatura implements Serializable{
         this.numFatura = f.getNumFatura();
         this.dedutor = this.getDedutor();
     }
-<<<<<<< HEAD
-    
-    public Fatura(ContribuinteEmpresarial emitente, LocalDateTime date, Contribuinte cliente,
-=======
-   
+
     /**
      * Construtor parametrizado de Fatura, neste caso recebe como parametros diferentes os
      * Contribuintes do emitente e do cliente
      */
-    public Fatura(ContribuinteEmpresarial emitente, LocalDateTime now, Contribuinte cliente,
->>>>>>> b58349cc0243a450c6cd1907ae4a27ff6266e218
+    public Fatura(ContribuinteEmpresarial emitente, LocalDateTime date, Contribuinte cliente,
             String descricao, AtividadeEconomica naturezaDespesa, float despesa) {
         this.nifEmitente = emitente.getNif();
         this.nifCliente = cliente.getNif();
@@ -288,11 +277,7 @@ public class Fatura implements Serializable{
         this.despesa = despesa;
         this.descricao = descricao;
         this.naturezaDespesa = naturezaDespesa;
-<<<<<<< HEAD
         this.dataDespesa = date;
-=======
-        this.dataDespesa = now;
->>>>>>> b58349cc0243a450c6cd1907ae4a27ff6266e218
         if (cliente instanceof ContribuinteDedutor) {
             ContribuinteDedutor new_name = (ContribuinteDedutor) cliente;
             this.dedutor = this.getDedutor();
@@ -302,17 +287,10 @@ public class Fatura implements Serializable{
             this.dedutor = new DeducNull();     
     }
     
-<<<<<<< HEAD
-    public Fatura clone() {
-        return new Fatura(this);
-    }
-    
-=======
     /**
      * Clone 
      */
     public Fatura clone() {
         return new Fatura(this);
     }
->>>>>>> b58349cc0243a450c6cd1907ae4a27ff6266e218
 }

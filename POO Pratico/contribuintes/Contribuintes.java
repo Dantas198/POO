@@ -20,7 +20,10 @@ public class Contribuintes implements Serializable{
         return contribuintes.containsKey(c.getNif());
     }
     
-<<<<<<< HEAD
+    
+    /**
+     * Adiciona um contribuinte 
+     */
     public Contribuinte getContribuinte(int nif) throws ContribuinteDoesntExistException{
         if(!contribuintes.containsKey(nif)){
             throw new ContribuinteDoesntExistException(Integer.toString(nif));
@@ -28,20 +31,15 @@ public class Contribuintes implements Serializable{
         return contribuintes.get(nif);
     }
     
-=======
-    /**
-     * Adiciona um contribuinte 
-     */
->>>>>>> b58349cc0243a450c6cd1907ae4a27ff6266e218
-    public void addContribuinte(Contribuinte c) {
-        contribuintes.put(c.getNif(), c.clone());
-    }
-    
     /**
      * Adiciona um Set de contribuintes
      */
-    public void addContribuintes(Set<Contribuinte> c){
+    public void addContribuintes(Set<? extends Contribuinte> c){
         c.stream().map(p -> contribuintes.put(p.getNif(), p.clone()));      
+    }
+    
+    public void addContribuinte(Contribuinte c){
+        contribuintes.put(c.getNif(), c.clone());
     }
     
     /**
@@ -69,7 +67,9 @@ public class Contribuintes implements Serializable{
                   .collect(Collectors.toList());
         tmp.sort(Comparator.comparing(ContribuinteEmpresarial::getCountFaturas).reversed());
         
-        List<ContribuinteEmpresarial> result =tmp.subList(0, x-1);
+        
+        int size = tmp.size() > x-1 ? x-1 : tmp.size();
+        List<ContribuinteEmpresarial> result =tmp.subList(0, size);
         return result;
     }
     
