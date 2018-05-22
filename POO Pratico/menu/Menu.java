@@ -29,6 +29,7 @@ import moradas.Localidade;
 import moradas.LocalidadeLitoral;
 import moradas.LocalidadeCentro;
 import exceptions.FaturaPendenteException;
+import exceptions.FaturaNaoPendenteException;
 import exceptions.FaturaNaoExisteException;
 import exceptions.ContribuinteDoesntExistException;
 
@@ -72,7 +73,9 @@ public class Menu implements Serializable
         System.out.println("Os contribuintes com mais depesas:");
         List<Pair<Integer, Float>> osDez = f.getTenContribuintesMostDespesa();
         for(Pair<Integer, Float> despesa : osDez){
-            System.out.println("Nif: "+ despesa.getKey() + " -> Despesa:" + despesa.getValue());
+            List<Fatura> lFaturas = f.getFaturasFromEmitente(despesa.getKey());
+            float deducao = f.getDeducao(lFaturas);
+            System.out.println("Nif: "+ despesa.getKey() + " -> Despesa:" + despesa.getValue() + " Deduçao Fiscal:" + deducao);
         }  
         return menuAdmin();
     }
@@ -97,7 +100,7 @@ public class Menu implements Serializable
         ArrayList<Callable<Integer>> toRun = new ArrayList<>();
         
         menuString.add("Ver os 10 contribuintes que gastam mais no sistema");
-        menuString.add("Ver as empresas que faturam mais e as suas deduçoes fiscais");
+        menuString.add("Ver as empresas que faturam mais e as sua deduçao fiscal");
         menuString.add("Log out");
         
         toRun.add(this::ver10ContribuintesMaisDispendiosos);
@@ -111,14 +114,54 @@ public class Menu implements Serializable
      * Adiciona opcoes de ver despesas ao menu
      */
     private int verDespesas(){
-        ArrayList<String> menuString = new ArrayList<>();
-        ArrayList<Callable<Integer>> toRun = new ArrayList<>();
         List<Fatura> faturas = f.getFaturasFromContribuinte(this.loggedIn.getNif());
+        for(Fatura fat : faturas)
+            System.out.println(fat.toString());
+            
+        return menuContrIndiv();
+    }
+    
+    private int verMonstanteDeDeducaoFiscal(){
+        float deducaoFiscalDoAgregado = f.getNFAcumuladoAgregado((ContribuinteIndividual) this.loggedIn);
+        System.out.println("Deducao fiscal do agregado familiar - " + deducaoFiscalDoAgregado); 
+        return menuContrIndiv();
+    }
+    
+    private int associaAtividadeADespesa(){
+        int nFat = (int) getInfo("Intruduza o numero da fatura que deseja corrigir", Integer.class);
+        AtividadeEconomica ae = new AtividadeEconomica();
+        ae.setNomeAtividade((String) getInfo("Introduza a nova atividade", String.class));
+        ae.setCoef((float) getInfo("Introduza o novo coeficiente", Float.class));
         
-        System.out.println(faturas.toString());
-        menuString.add("Retroceder");
-        toRun.add(this::menuContrIndiv);   
-        return genericMenu(menuString, toRun);
+        try{
+            f.associaAtividadeEconcomica(this.loggedIn, nFat, ae);
+        } catch (FaturaNaoExisteException e){
+            System.out.println("A fatura nao existe");
+        } catch (FaturaNaoPendenteException e){
+            System.out.println("Esta fatura nao se encontra pendente");
+        }
+        return menuContrIndiv();
+    }
+    
+    /**
+     * Parte do menu que permite ao Contribuinte Individual corrigir a atividadeEconomica de uma despesa/fatura
+     */
+    
+    private int corrigirClassificacaoDeAtividade(){
+         int nFat = (int) getInfo("Intruduza o numero da fatura que deseja corrigir", Integer.class);
+         AtividadeEconomica ae = new AtividadeEconomica();
+         ae.setNomeAtividade((String) getInfo("Introduza a nova atividade", String.class));
+         ae.setCoef((float) getInfo("Introduza o novo coeficiente", Float.class));
+         
+         try{
+            f.corrigeAtividadeFatura(this.loggedIn, nFat, ae);
+        } catch (FaturaNaoExisteException e){
+            System.out.println("A fatura nao existe");
+        } catch (FaturaPendenteException e){
+            System.out.println("Esta fatura encontra-se pendente");
+        }
+         
+         return menuContrIndiv();
     }
     
     /**
@@ -130,16 +173,16 @@ public class Menu implements Serializable
         ArrayList<Callable<Integer>> toRun = new ArrayList<>();
         
         menuString.add("Ver despesas");
-        menuString.add("Ver montante de deduçao fiscal acumulado");
+        menuString.add("Ver montante de deduçao fiscal acumulado do agregado familiar");
         menuString.add("Associar uma atividade economica a uma despesa");
         menuString.add("Corrigir classificaçao de uma atividade economica");
         menuString.add("Ver lista de facturas de uma empresa");
         menuString.add("Log out");
         
         toRun.add(this::verDespesas);
-        //toRun.add(this::verMonstanteDeDeducaoFiscal);
-        //toRun.add(this::associaAtividadeADespesa);
-        //toRun.add(this::corrigitClassificacaoDeAtividade);
+        toRun.add(this::verMonstanteDeDeducaoFiscal);
+        toRun.add(this::associaAtividadeADespesa);
+        toRun.add(this::corrigirClassificacaoDeAtividade);
         //toRun.add(this::verFaturasDeUmaEmpresa);
         toRun.add(this::welcomeMenu);
         
@@ -479,6 +522,18 @@ public class Menu implements Serializable
                     return res;
                 } catch(InputMismatchException e){
                     System.out.println("Insert a decimal number onply please");
+                }
+            }
+            if(cl == Boolean.class){
+                try{
+                    char c = s.next().charAt(0);
+                    if(Character.toLowerCase(c) == 'y')
+                        return true;
+                    if(Character.toLowerCase(c) == 'n')
+                        return false;
+                    else System.out.println("Write yes or no");
+                } catch(InputMismatchException e){
+                    System.out.println("This is a yes or no question \"y/n\"");
                 }
             }
            s.close();

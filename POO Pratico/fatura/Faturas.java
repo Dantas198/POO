@@ -37,6 +37,15 @@ public class Faturas implements Serializable {
     }
     
     /**
+     * Devolve uma fatura ao receber o seu numero
+     */
+    public Fatura getFatura(int num) throws FaturaNaoExisteException{
+        if(!this.faturas.containsKey(num))
+            throw new FaturaNaoExisteException(Integer.toString(num));
+        return this.faturas.get(num);
+    }
+    
+    /**
      * @param f, fatura a adicionar
      * Método que adiciona uma fatura ao HashMap faturasPendentes, caso haja uma
      * AtividadeEconomica na fatura
@@ -46,10 +55,10 @@ public class Faturas implements Serializable {
         i.setNumFatura(this.numFaturas);
         this.numFaturas++;
         if(i.getNaturezaDespesa()==null) {
-            this.faturas.put(i.getNumFatura(), i);
+            this.faturasPendentes.put(i.getNumFatura(), i);            
         }
         else {
-            this.faturasPendentes.put(i.getNumFatura(), i);
+            this.faturas.put(i.getNumFatura(), i);
         }
     }
     
@@ -101,12 +110,10 @@ public class Faturas implements Serializable {
      * Calcula a despesa deduzida de todos no agregado familiar.
      * @returns Supercount, total da despesa deduzida do agregado 
      */
-    public float getNFAcumuladoAgregado(List<Integer> nifsAgregado, int nif){
+    public float getNFAcumuladoAgregado(ContribuinteIndividual c){
         float Supercount=0;
         
-        //meto o nif do contribuinte principal para não andar a repetir ciclos, embora chame de novo uma funcao.
-        nifsAgregado.add(nif);
-        for(Integer i : nifsAgregado){
+        for(Integer i : c.getNifsAgregado()){
              List<Fatura> tmp = getFaturasFromContribuinte(i);
                 Supercount+=getDeducao(tmp);
         }
@@ -125,7 +132,7 @@ public class Faturas implements Serializable {
         
         List<Fatura> x = getFaturasFromContribuinte(nif);
         ContribuinteIndividual ci = (ContribuinteIndividual) c;
-        float acumulado = getNFAcumuladoAgregado(ci.getNifsAgregado(), nif);
+        float acumulado = getNFAcumuladoAgregado(ci);
         
         Pair <List<Fatura>, Float> res = new Pair <List<Fatura>, Float> (x,acumulado);
         return res;
