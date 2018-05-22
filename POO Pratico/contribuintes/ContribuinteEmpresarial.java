@@ -19,23 +19,37 @@ public class ContribuinteEmpresarial extends Contribuinte implements Serializabl
     private HashMap<String,AtividadeEconomica> atividadesEmpresa;
     private int countFaturas;
     
+    /**
+     * Construtor vazio
+     */
     public ContribuinteEmpresarial(){
         super();
         this.atividadesEmpresa = new HashMap<String, AtividadeEconomica>();
         this.countFaturas = 0;
     }
     
+    /**
+     * Construtor parametrizado
+     */
     public ContribuinteEmpresarial(ContribuinteEmpresarial c) {
         super(c);
         this.setAtividadesEmpresa(c.getAtividadesEmpresa());
         this.countFaturas = c.getCountFaturas();
     }
     
+    /**
+     * @param a, atividades economicas a inserir
+     * Atualiza as atividades economicas de uma empresa
+     */
     private void setAtividadesEmpresa(Map<String, AtividadeEconomica> a) {
         for(AtividadeEconomica v : a.values())
             this.atividadesEmpresa.put(v.getNomeAtividade(), v.clone());
     }
     
+    /**
+     * Devolve as atividades economicas de uma empresa
+     * @returns Map de atividadesEconomicas
+     */
     private Map<String, AtividadeEconomica> getAtividadesEmpresa() {
         Map<String, AtividadeEconomica> res = new HashMap<>();
         for(Entry<String, AtividadeEconomica> e : this.atividadesEmpresa.entrySet())
@@ -44,10 +58,20 @@ public class ContribuinteEmpresarial extends Contribuinte implements Serializabl
         return res;
     }
     
+    /**
+     * Devolve o contador de faturas emitidas pela empresa
+     */
     public int getCountFaturas(){
         return this.countFaturas;
     }
     
+    /**
+     * @param cliente, quem efetuou a despesa
+     * @param descricao, descricao da despesa
+     * @param despesa, valor da despesa
+     * Emite uma fatura por parte da empresa
+     * @returns res, a fatura emitida
+     */
     public Fatura emiteFatura(ContribuinteIndividual cliente,String descricao,float despesa) {
         Fatura res = new Fatura(this, LocalDateTime.now(), cliente, descricao, null, despesa);
         if(atividadesEmpresa.size()==1) {
@@ -59,6 +83,13 @@ public class ContribuinteEmpresarial extends Contribuinte implements Serializabl
         return(res);
     }
     
+    /**
+     * @param nifCliente, quem efetuou a despesa
+     * @param descricaa, descricao da despesa
+     * @param despesa, valor da despesa
+     * Emite uma fatura por parte da empresa
+     * @returns res, a fatura emitida
+     */
     public Fatura emiteFatura(int nifCliente,String descricao,float despesa) {
         Fatura res = new Fatura(this.getNif(), this.getNome(), LocalDateTime.now(), nifCliente, descricao, null, despesa);
         if(atividadesEmpresa.size()==1) {
@@ -69,24 +100,30 @@ public class ContribuinteEmpresarial extends Contribuinte implements Serializabl
         return(res);
     }
     
-    @Override
+    /**
+     * Clone
+     */
     public ContribuinteEmpresarial clone() {
         return new ContribuinteEmpresarial(this);
     }
-
-	@Override
-	public double reducaoImposto() {
-		Morada m = this.getMorada();
-		Localidade x = m.getLocalidade();
-		if (x instanceof LocalidadeCentro) {
-			LocalidadeCentro n = (LocalidadeCentro) x;
-			return n.getBeneficioPercentagem();
-		}
-		return 0;
-	}
-
-	@Override
-	public Deductor getDeductor() {
-		return new DeductorEmpresarial(this);
-	}
+    
+    /**
+     * Calcula a reducao de imposto a implementar.
+     */
+    public double reducaoImposto() {
+        Morada m = this.getMorada();
+        Localidade x = m.getLocalidade();
+        if (x instanceof LocalidadeCentro) {
+            LocalidadeCentro n = (LocalidadeCentro) x;
+            return n.getBeneficioPercentagem();
+        }
+        return 0;
+    }
+    
+    /**
+     * Devolve o deductor empresarial 
+     */
+    public Deductor getDeductor() {
+        return new DeductorEmpresarial(this);
+    }
 }

@@ -29,10 +29,18 @@ public class Faturas implements Serializable {
     private ArrayList<Pair<Integer,Pair<AtividadeEconomica,AtividadeEconomica>>> correcoes;
     private int numFaturas;
     
+    /**
+     * Devolve o número associado a uma determinada fatura.
+     */
     public int getNumFaturas(){
         return numFaturas;
     }
     
+    /**
+     * @param f, fatura a adicionar
+     * Método que adiciona uma fatura ao HashMap faturasPendentes, caso haja uma
+     * AtividadeEconomica na fatura
+     */
     public void addFatura(Fatura f) {
         Fatura i = f.clone();
         i.setNumFatura(this.numFaturas);
@@ -45,21 +53,40 @@ public class Faturas implements Serializable {
         }
     }
     
+    /**
+     * @param nif do contribuinte
+     * Devolve uma lista de faturas
+     * @returns List<Fatura>
+     */
     public List<Fatura> getFaturasFromContribuinte(int nif){
         return this.faturas.values().stream().filter(p -> p.getNifCliente()==nif).map(Fatura::clone).collect(Collectors.toList());
     }
     
+    /**
+     * @param nif do contribuinte
+     * Devolve uma lista de faturas pendentes
+     * @returns List<Fatura>
+     */
     public List<Fatura> getFaturaPendentesFromContribuinte(int nif){
         return this.faturasPendentes.values().stream().filter(p -> p.getNifCliente()==nif).map(Fatura::clone).collect(Collectors.toList());
     }
     
+    /**
+     * @param nif do contribuinte
+     * Devolve uma lista de faturas que foram emitidas por o contribuinte com aquele nif
+     * @returns List<Fatura> 
+     */
     public List<Fatura> getFaturasFromEmitente(int nif){
         List<Fatura> x = this.faturas.values().stream().filter(p -> p.getNifEmitente()==nif).map(Fatura::clone).collect(Collectors.toList());
         this.faturasPendentes.values().stream().filter(p -> p.getNifEmitente()==nif).map(Fatura::clone).map(p -> x.add(p));
         return x;
     }
     
-    //Calcula a despesa deduzida de uma lista de faturas.
+    /**
+     * @param faturas, uma lista de faturas 
+     * Calcula a despesa deduzida de uma lista de faturas.
+     * @returns count, total da despesa deduzida daquelas faturas
+     */
     public float getDeducao(List<Fatura> faturas){
         float count=0;
         for(Fatura f : faturas)
@@ -68,7 +95,12 @@ public class Faturas implements Serializable {
         return count;
     }
     
-    //Calcula a despesa deduzida de todos no agregado familiar.
+    /**
+     * @param nifsAgregado, nifs do agregado familiar de um contribuinte
+     * @param nif, nif do Contribuinte
+     * Calcula a despesa deduzida de todos no agregado familiar.
+     * @returns Supercount, total da despesa deduzida do agregado 
+     */
     public float getNFAcumuladoAgregado(List<Integer> nifsAgregado, int nif){
         float Supercount=0;
         
@@ -81,7 +113,13 @@ public class Faturas implements Serializable {
         return Supercount;
     }
     
-    //Ponto 4. Devolve um Par<Faturas do c, despesa deduzida do c e agregado>.
+    /**
+     * @param c, contribuinte
+     * Devolve um par com a lista de faturas de um contribuinte assim como a sua despesa
+     * deduzida, juntamente com a do agregado
+     * @returns res, Pair<faturas, despesa deduzida>
+     */
+    //IMP!!!! ver se contribuintes empresariais entram neste caso!
     public Pair<List<Fatura>,Float> getDespesasAndDFAcumulado(Contribuinte c){
         int nif = c.getNif();
         
@@ -98,6 +136,11 @@ public class Faturas implements Serializable {
     //O que diferencia este método do getDespesasAndDFAcumulado é o facto deste último eu ir buscar o campo deducaoGlobal à fatura
     //este campo tem o fator de deducao da empresa emitente assim como o coeficiente do contribuinte individual.
     //Só para administrador. Ponto 12
+    /**
+     * @param c, contribuinte
+     * Calcula o montante de deducoes fiscais fornecidas todas as despesas emitidas por uma empresa
+     * @returns count, total de deducoes
+     */
     public float getDFEmpresa(Contribuinte c){
         int nif = c.getNif();
         float count=0;
@@ -111,7 +154,10 @@ public class Faturas implements Serializable {
         return count;
     }
     
-    
+    /**
+     * Devolve uma lista com os 10 contribuintes com mais despesas
+     * @returns Lista<Pair<nif, despesa>>
+     */
     public List<Pair<Integer, Float>> getTenContribuintesMostDespesa(){
        HashMap<Integer, Pair <Integer,Float>> tmp = new HashMap<>();
        for(Fatura a : faturas.values()){
@@ -130,6 +176,13 @@ public class Faturas implements Serializable {
        return l.subList(0, size);
     }
     
+    /**
+     * @param nifn nif do contribuinte
+     * @param beg, data inicial
+     * @param end, data final
+     * Apresenta a lista de todas as faturas entre beg e end
+     * @returns List<Fatura>
+     */
     public List<Fatura> getFaturasFromEmitenteBetweenDate(int nif,LocalDateTime beg, LocalDateTime end){
         List<Fatura> x = this.faturas.values().stream().
                 filter(p -> p.getNifEmitente()==nif).
@@ -144,6 +197,12 @@ public class Faturas implements Serializable {
         return x;
     }
     
+    /**
+     * @param c, contribuinte
+     * @param numFatura, numero de cada fatura
+     * @param a, atividade economica
+     * Associa uma atividade economica a uma fatura caso ela não esteja ja emitida
+     */
     public void associaAtividadeEconcomica(Contribuinte c, int numFatura, AtividadeEconomica a) throws FaturaNaoPendenteException, FaturaNaoExisteException{
         if(!this.faturasPendentes.containsKey(numFatura)) {
             if (this.faturas.containsKey(numFatura)) {
@@ -159,6 +218,12 @@ public class Faturas implements Serializable {
         return;
     }
     
+    /**
+     * @param c, contribuinte
+     * @param numFatura, numero de cada fatura
+     * @param nova, atividade economica
+     * Corrige uma atividade economica, ou seja, atualiza a atividade nas faturas pendentes
+     */
     public void corrigeAtividadeFatura(Contribuinte c, int numFatura, AtividadeEconomica nova) throws FaturaNaoExisteException, FaturaPendenteException {
         if(!this.faturas.containsKey(numFatura)) {
             if (this.faturasPendentes.containsKey(numFatura)) {
@@ -178,29 +243,50 @@ public class Faturas implements Serializable {
         this.correcoes.add(change);
     }
     
+    /**
+     * @param nifEmitente, nif do emitente
+     * Devolve o total faturado por um contribuinte
+     * @returns total faturado
+     */
     public float totalFaturado(int nifEmitente) {
         List<Fatura> x = this.getFaturasFromEmitente(nifEmitente);
         return (float) x.stream().mapToDouble(Fatura::getDespesa).sum();
     }
     
     //Tem de ser uma empresa
+    /**
+     * @param nif, nif contribuinte
+     * Devolve uma lista de faturas ordendas por data
+     * @returns x, List<Fatura>
+     */
     public List<Fatura> getFaturasByDate(int nif){
         List<Fatura> x = getFaturasFromEmitente(nif);
         x.sort(new CompareFaturasByDate());
         return x;
     }
+    
     //Tem de ser um empresa
+    /**
+     * @param nif, nif contribuinte
+     * Devolve uma lista de faturas ordenadas por valor
+     * @returns x, List<Fatura>
+     */
     public List<Fatura> getFaturasByValor(int nif){
         List<Fatura> x = getFaturasFromEmitente(nif);
         x.sort(new CompareFaturasByValor());
         return x;
     }
     
-    
     //tem de ser nif de empresa.
     //A lista está disposta da seguinte maneira:
     //      Se tivermos 3 contribuintes: A,B e C e cada um com 3 faturas com valores: x > y > z, 
     //      O resultado vai ser {Ax, Ay, Az, Bx, By, Bz, Cx, Cy, Cz}
+    /**
+     * @param nif, nif contribuinte
+     * Devolve uma lista de faturas ordenadas por valor decrescente
+     * mas tambem agupadas por nif
+     * @returns x, List<Fatura>
+     */
     public List<Fatura> getFaturasByValorDecrescente(int nif){
         List<Fatura> x = getFaturasFromEmitente(nif);
         x.sort(Comparator.comparing(Fatura::getNifCliente)
@@ -209,6 +295,9 @@ public class Faturas implements Serializable {
     
     }
     
+    /**
+     * Construtor vazio de Faturas
+     */
     public Faturas() {
         this.faturas = new HashMap<>();
         this.faturasPendentes = new HashMap<>();

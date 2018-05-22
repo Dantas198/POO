@@ -21,38 +21,72 @@ public class ContribuinteIndividual extends Contribuinte implements Serializable
     //AtividadesEconomicas 
     private HashMap<String,AtividadeEconomica> actDeduziveis; //Fazer Getters e Setters
     
+    /**
+     * Devolve o numero de dependentes do agregado
+     */
     public int getNumDependentesAgregado() {
         return numDependentesAgregado;
     }
+    
+    /**
+     * Atualiza o numero de dependentes do agregado
+     */
     public void setNumDependentesAgregado(int numDependentesAgregado) {
         this.numDependentesAgregado = numDependentesAgregado;
     }
 
+    /**
+     * Devolve o coeficiente fiscal
+     */
     public float getCoefFiscal() {
         return coefFiscal;
     }
+    
+    /**
+     * Atualiza o coeficiente fiscal
+     */
     public void setCoefFiscal(float coefFiscal) {
         this.coefFiscal = coefFiscal;
     }
+    
+    /**
+     * Atualiza os nifs do agregado familiar
+     */
     public void setNifsAgregado(List<Integer> nifs) {
         for(Integer nif : nifs){
             this.nifsAgregado.add(nif);
         }
     }
+    
+    /**
+     * Devolve a lista dos nifs do agreagado familiar
+     */
     public List<Integer> getNifsAgregado() {
         return this.nifsAgregado.stream().collect(Collectors.toList());
     }
+    
+    /**
+     * Devolve as atividades economicas que sao deduziveis
+     */
     public Map<String, AtividadeEconomica> getActDeduziveis() {
         Map<String, AtividadeEconomica> res = new HashMap<String,AtividadeEconomica>();
         for(AtividadeEconomica v : this.actDeduziveis.values())
             res.put(v.getNomeAtividade(), v.clone());
         return res;
     }
+    
+    /**
+     * Atualiza as aitividades economicas que sao deduziveis
+     */
     private void setActDeduziveis(Map<String, AtividadeEconomica> actDeduziveis2) {
         this.actDeduziveis = new HashMap<String, AtividadeEconomica>();
         for(Entry<String, AtividadeEconomica> e : actDeduziveis.entrySet())
             this.actDeduziveis.put(e.getKey(), e.getValue().clone());
     }
+    
+    /**
+     * Construtor vazio
+     */
     public ContribuinteIndividual() {
         // TODO Auto-generated constructor stub
         super();
@@ -62,12 +96,18 @@ public class ContribuinteIndividual extends Contribuinte implements Serializable
         this.numDependentesAgregado = 0;
     }
     
+    /**
+     * Construtor parametrizado
+     */
     public ContribuinteIndividual(String nome, int nif, String email, Morada morada, String password,float coefFiscal) {
         super(nome,nif,email,morada,password);
         this.coefFiscal = coefFiscal; 
         this.actDeduziveis = new HashMap<>();
     }
     
+    /**
+     * Construtor copia
+     */
     public ContribuinteIndividual(ContribuinteIndividual a){
         super(a);
         this.setNifsAgregado(a.getNifsAgregado());
@@ -76,28 +116,41 @@ public class ContribuinteIndividual extends Contribuinte implements Serializable
         this.setActDeduziveis(a.getActDeduziveis());
     }
     
-    @Override
+    /**
+     * Clone
+     */
     public Contribuinte clone() {
         // TODO Auto-generated method stub
         return new ContribuinteIndividual(this);
     }
-	@Override
-	public double reducaoImposto() {
-		if (this.getNumDependentesAgregado()>=5)
-			return ContribuinteIndividual.getBenificioFamNumerosas();
-		return 0;
-	}
-	
-	public static double getBenificioFamNumerosas() {
-		return benificioFamNumerosas;
-	}
-	
-	public static void setBenificioFamNumerosas(double benificioFamNumerosas) {
-		ContribuinteIndividual.benificioFamNumerosas = benificioFamNumerosas;
-	}
-	
-	@Override
-	public Deductor getDeductor() {
-		return new DeductorIndividual(this,null);
-	}
+    
+    /**
+     * Devolve a taxa de reducao de imposto a aplicar
+     */
+    public double reducaoImposto() {
+        if (this.getNumDependentesAgregado()>=5)
+            return ContribuinteIndividual.getBenificioFamNumerosas();
+        return 0;
+    }
+    
+    /**
+     * Calcula a taxa de beneficio familiar a aplicar
+     */
+    public static double getBenificioFamNumerosas() {
+        return benificioFamNumerosas;
+    }
+    
+    /**
+     * Atualiza os beneficios familiares
+     */
+    public static void setBenificioFamNumerosas(double benificioFamNumerosas) {
+        ContribuinteIndividual.benificioFamNumerosas = benificioFamNumerosas;
+    }
+    
+    /**
+     * Devolve o deductor
+     */
+    public Deductor getDeductor() {
+        return new DeductorIndividual(this,null);
+    }
 }

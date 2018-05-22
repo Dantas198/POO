@@ -13,10 +13,14 @@ import exceptions.ContribuinteDoesntExistException;
 public class Contribuintes implements Serializable{
     HashMap<Integer, Contribuinte> contribuintes;//Keys Nifs dos contribuintes
     
+    /**
+     * Verifica a existencia de um contribuinte 
+     */
     public boolean existeContribuinte(Contribuinte c){
         return contribuintes.containsKey(c.getNif());
     }
     
+<<<<<<< HEAD
     public Contribuinte getContribuinte(int nif) throws ContribuinteDoesntExistException{
         if(!contribuintes.containsKey(nif)){
             throw new ContribuinteDoesntExistException(Integer.toString(nif));
@@ -24,14 +28,26 @@ public class Contribuintes implements Serializable{
         return contribuintes.get(nif);
     }
     
+=======
+    /**
+     * Adiciona um contribuinte 
+     */
+>>>>>>> b58349cc0243a450c6cd1907ae4a27ff6266e218
     public void addContribuinte(Contribuinte c) {
         contribuintes.put(c.getNif(), c.clone());
     }
     
+    /**
+     * Adiciona um Set de contribuintes
+     */
     public void addContribuintes(Set<Contribuinte> c){
         c.stream().map(p -> contribuintes.put(p.getNif(), p.clone()));      
     }
     
+    /**
+     * Efetua o login, ou seja, verifica se o contribuinte existe na estrutura de dados
+     * @returns, contribiunte, caso existe
+     */
     public Contribuinte login(int nif, String password) {
         if (contribuintes.containsKey(nif)){
             Contribuinte c = contribuintes.get(nif);
@@ -41,6 +57,10 @@ public class Contribuintes implements Serializable{
         return null;
     }
     
+    /**
+     * @param x, tamanho da lista
+     * Devolve a lista das empresas com maior numero de faturas emitidas
+     */
     public List<ContribuinteEmpresarial> getXMostFaturas(int x){
         List<ContribuinteEmpresarial> tmp;
         tmp = this.contribuintes.values().stream()
@@ -53,6 +73,9 @@ public class Contribuintes implements Serializable{
         return result;
     }
     
+    /**
+     * Construtor vazio
+     */
     public Contribuintes() {
         // TODO Auto-generated constructor stub
         contribuintes = new HashMap<Integer,Contribuinte>();
