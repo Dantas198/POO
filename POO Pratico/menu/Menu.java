@@ -30,6 +30,7 @@ import moradas.LocalidadeLitoral;
 import moradas.LocalidadeCentro;
 import exceptions.FaturaPendenteException;
 import exceptions.FaturaNaoExisteException;
+import exceptions.ContribuinteDoesntExistException;
 
 /**
  * Write a description of class Menu here.
@@ -47,21 +48,28 @@ public class Menu implements Serializable
     private LocalDateTime end;
     
     
-    private void setFaturas(Faturas f){
-        this.f = f;
-    }
-    
-    private void setContribuintes(Contribuintes c){
-        this.c = c;
-    }
-    
-    
-    
     public void saveMenu(String filepath) throws FileNotFoundException, IOException, ClassNotFoundException{
         FileOutputStream fos = new FileOutputStream(new File(filepath));
         ObjectOutputStream oos = new ObjectOutputStream(fos);
         oos.writeObject(this);
         oos.close();
+    }
+    
+    private int ver10ContribuintesMaisDispendiosos(){
+        System.out.println("Os contribuintes com mais depesas:");
+        List<Pair<Integer, Float>> osDez = f.getTenContribuintesMostDespesa();
+        for(Pair<Integer, Float> despesa : osDez){
+            System.out.println("Nif: "+ despesa.getKey() + " -> Despesa:" + despesa.getValue());
+        }  
+        return menuAdmin();
+    }
+    
+    //Ainda por acabar
+    private int verEmpresasMaisFaturadas(){
+        System.out.println("As empresas que mais faturam:");
+        
+        
+        return menuAdmin();
     }
     
     private int menuAdmin(){
@@ -72,6 +80,10 @@ public class Menu implements Serializable
         menuString.add("Ver os 10 contribuintes que gastam mais no sistema");
         menuString.add("Ver as empresas que faturam mais e as suas deduçoes fiscais");
         menuString.add("Log out");
+        
+        toRun.add(this::ver10ContribuintesMaisDispendiosos);
+        //toRun.add(this::verEmpresasMaisFaturadas);
+        toRun.add(this::menuAdmin);
         
         return genericMenu(menuString, toRun);
     }
@@ -84,8 +96,7 @@ public class Menu implements Serializable
         
         System.out.println(faturas.toString());
         menuString.add("Retroceder");
-        toRun.add(this::menuContrIndiv);
-        
+        toRun.add(this::menuContrIndiv);   
         return genericMenu(menuString, toRun);
     }
     
@@ -93,6 +104,7 @@ public class Menu implements Serializable
         System.out.println("Em que lhe posso ajudar "+ this.loggedIn.getNome());
         ArrayList<String> menuString = new ArrayList<>();
         ArrayList<Callable<Integer>> toRun = new ArrayList<>();
+        
         menuString.add("Ver despesas");
         menuString.add("Ver montante de deduçao fiscal acumulado");
         menuString.add("Associar uma atividade economica a uma despesa");
@@ -101,36 +113,51 @@ public class Menu implements Serializable
         menuString.add("Log out");
         
         toRun.add(this::verDespesas);
+        //toRun.add(this::verMonstanteDeDeducaoFiscal);
+        //toRun.add(this::associaAtividadeADespesa);
+        //toRun.add(this::corrigitClassificacaoDeAtividade);
+        //toRun.add(this::verFaturasDeUmaEmpresa);
         toRun.add(this::welcomeMenu);
         
         return genericMenu(menuString, toRun);
     }
     
-    
+    // Nao funciona ate se definir a estrutura da fatura
     private int criarFatura(){
-        Fatura fat = new Fatura();
+        Fatura fat;
+        Contribuinte cliente;
         AtividadeEconomica ae = new AtividadeEconomica();
         
-       // System.out.println("contr: " + contr);
-       // System.out.println("fat: " + fat);
-       // System.out.println("ae: " + ae);
-        
         System.out.println("Criando uma nova fatura");
-        fat.setNumFatura(f.getNumFaturas());
-        fat.setNifEmitente(this.loggedIn.getNif());
-        fat.setDataDespesa(LocalDateTime.now());
-        fat.setNifCliente((int) getInfo("Introduza o Nif do cliente", Integer.class));
-        fat.setDesignacaoEmitente((String) getInfo("Introduza a designacao", String.class));
-        fat.setDespesa((int) getInfo("Introduza a despesa", Integer.class));
+        try{
+            cliente = c.getContribuinte((int) getInfo("Introduza o Nif do cliente", Integer.class));
+        } catch (ContribuinteDoesntExistException e){
+            System.out.println("Contribuinte doesn't exist" + e.getMessage());
+            return welcomeMenu();
+        }
+        String descricao = (String) getInfo("Introduza a descricao da fatura", String.class);
+        float despesa = (int) getInfo("Introduza a despesa", Integer.class);
+        //fat.setNumFatura(f.getNumFaturas());
+        //fat.setDataDespesa(LocalDateTime.now());
+        //fat.setDesignacaoEmitente((String) getInfo("Introduza a designacao", String.class));
+
         ae.setNomeAtividade((String) getInfo("Introduza a atividade", String.class));
         ae.setCoef((float) getInfo("Introduza o coeficiente da atividade", Float.class));
-        fat.setNaturezaDespesa(ae);
+        //fat.setNaturezaDespesa(ae);
+        
+        if(this.loggedIn instanceof ContribuinteEmpresarial)
+            fat = new Fatura((ContribuinteEmpresarial) this.loggedIn, 
+                LocalDateTime.now(), cliente, descricao, ae, despesa);
+        else{
+            System.out.println("You don't have permission to create a new Fatura");
+            return welcomeMenu();
+        }
         
         try{
             f.addFatura(fat);
             System.out.println("Fatura inserida - " + f.getNumFaturas());
         } catch (Exception e){
-            System.out.println("Couldn't insert Fatura");
+            System.out.println("Couldn't insert Fatura" + e.getMessage());
         }
         
         return menuContrEmpr();
@@ -402,12 +429,6 @@ public class Menu implements Serializable
     }
     
     public void run(){
-        if(c == null){
-            this.c = new Contribuintes();
-        }
-        if(f == null){
-            this.f = new Faturas();
-        }
         welcomeMenu();
     }
     

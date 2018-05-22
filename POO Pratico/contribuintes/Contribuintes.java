@@ -8,11 +8,20 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.Comparator;
 
+import exceptions.ContribuinteDoesntExistException;
+
 public class Contribuintes implements Serializable{
     HashMap<Integer, Contribuinte> contribuintes;//Keys Nifs dos contribuintes
     
     public boolean existeContribuinte(Contribuinte c){
         return contribuintes.containsKey(c.getNif());
+    }
+    
+    public Contribuinte getContribuinte(int nif) throws ContribuinteDoesntExistException{
+        if(!contribuintes.containsKey(nif)){
+            throw new ContribuinteDoesntExistException(Integer.toString(nif));
+        }
+        return contribuintes.get(nif);
     }
     
     public void addContribuinte(Contribuinte c) {

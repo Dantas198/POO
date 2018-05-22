@@ -84,19 +84,19 @@ public class Fatura implements Serializable{
         this.numFatura = numFatura;
     }
     public float getValorDeduzivel() {
-    	float deduzivel = (float) dedutor.calculateDeduzivel();
-    	float res;
-    	res = this.despesa * deduzivel;
-    	return res;
+        float deduzivel = (float) dedutor.calculateDeduzivel();
+        float res;
+        res = this.despesa * deduzivel;
+        return res;
     }
     public Deductor getDedutor() {
-		return dedutor.clone();
-	}
-	public void setDedutor(Deductor dedutor) {
-		this.dedutor = dedutor.clone();
-	}
+        return dedutor.clone();
+    }
+    public void setDedutor(Deductor dedutor) {
+        this.dedutor = dedutor.clone();
+    }
     
-	public Fatura(){
+    public Fatura(){
 
     }
     
@@ -123,26 +123,26 @@ public class Fatura implements Serializable{
         this.dedutor = this.getDedutor();
     }
     
-    public Fatura(ContribuinteEmpresarial emitente, LocalDateTime now, Contribuinte cliente,
-			String descricao, AtividadeEconomica naturezaDespesa, float despesa) {
-    	this.nifEmitente = emitente.getNif();
+    public Fatura(ContribuinteEmpresarial emitente, LocalDateTime date, Contribuinte cliente,
+            String descricao, AtividadeEconomica naturezaDespesa, float despesa) {
+        this.nifEmitente = emitente.getNif();
         this.nifCliente = cliente.getNif();
         this.designacaoEmitente = emitente.getNome();
         this.despesa = despesa;
         this.descricao = descricao;
         this.naturezaDespesa = naturezaDespesa;
-        this.dataDespesa = now;
-		if (cliente instanceof ContribuinteDedutor) {
-			ContribuinteDedutor new_name = (ContribuinteDedutor) cliente;
-			this.dedutor = this.getDedutor();
-			this.dedutor.setAtividade(naturezaDespesa);
-		}
-		else
-			this.dedutor = new DeducNull();		
-	}
+        this.dataDespesa = date;
+        if (cliente instanceof ContribuinteDedutor) {
+            ContribuinteDedutor new_name = (ContribuinteDedutor) cliente;
+            this.dedutor = this.getDedutor();
+            this.dedutor.setAtividade(naturezaDespesa);
+        }
+        else
+            this.dedutor = new DeducNull();     
+    }
     
-	public Fatura clone() {
+    public Fatura clone() {
         return new Fatura(this);
     }
-	
+    
 }

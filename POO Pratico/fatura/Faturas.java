@@ -126,7 +126,8 @@ public class Faturas implements Serializable {
        }    
        List<Pair <Integer, Float>> l = tmp.values().stream().collect(Collectors.toList());
        l.sort(new ComparePairDespesa());
-       return l.subList(0, 10);
+       int size = l.size() > 10 ? 10 : l.size();
+       return l.subList(0, size);
     }
     
     public List<Fatura> getFaturasFromEmitenteBetweenDate(int nif,LocalDateTime beg, LocalDateTime end){
