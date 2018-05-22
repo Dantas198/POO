@@ -1,9 +1,0 @@
-#BlueJ class context
-comment0.target=Localidade
-comment1.params=
-comment1.target=java.lang.String\ getLocalidade()
-comment2.params=localidade
-comment2.target=Localidade(java.lang.String)
-comment3.params=
-comment3.target=Localidade\ clone()
-numComments=4
