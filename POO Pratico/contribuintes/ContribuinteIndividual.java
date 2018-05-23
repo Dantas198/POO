@@ -59,6 +59,8 @@ public class ContribuinteIndividual extends Contribuinte implements Serializable
      * Devolve a lista dos nifs do agreagado familiar
      */
     public List<Integer> getNifsAgregado() {
+    	if (this.nifsAgregado == null || this.nifsAgregado.size() == 0)
+    		return new ArrayList<>();
         return this.nifsAgregado.stream().collect(Collectors.toList());
     }
     
@@ -80,6 +82,12 @@ public class ContribuinteIndividual extends Contribuinte implements Serializable
         for(Entry<String, AtividadeEconomica> e : actDeduziveis.entrySet())
             this.actDeduziveis.put(e.getKey(), e.getValue().clone());
     }
+
+    public void addAgregado(int nif) {
+    	if(!this.nifsAgregado.contains(nif))
+    		this.nifsAgregado.add(nif);
+    }
+
     
     /**
      * Construtor vazio
@@ -99,6 +107,9 @@ public class ContribuinteIndividual extends Contribuinte implements Serializable
     public ContribuinteIndividual(String nome, int nif, String email, Morada morada, String password,float coefFiscal) {
         super(nome,nif,email,morada,password);
         this.coefFiscal = coefFiscal; 
+        this.numDependentesAgregado = 0;
+        this.nifsAgregado = new ArrayList<Integer>();
+        this.nifsAgregado.add(nif);
         this.actDeduziveis = new HashMap<>();
     }
     
@@ -107,11 +118,15 @@ public class ContribuinteIndividual extends Contribuinte implements Serializable
      */
     public ContribuinteIndividual(ContribuinteIndividual a){
         super(a);
+        this.actDeduziveis = new HashMap<>();
+        this.nifsAgregado = new ArrayList<Integer>();
         this.setNifsAgregado(a.getNifsAgregado());
         this.numDependentesAgregado = a.getNumDependentesAgregado();
         this.coefFiscal = a.getCoefFiscal();
         this.setActDeduziveis(a.getActDeduziveis());
     }
+    
+
     
     /**
      * Clone
@@ -133,10 +148,7 @@ public class ContribuinteIndividual extends Contribuinte implements Serializable
         return this.actDeduziveis.containsKey(naturezaDespesa.getNomeAtividade());
     }
 
-    public void addAgregado(int nif) {
-        if(!this.nifsAgregado.contains(nif))
-            this.nifsAgregado.add(nif);
-    }
+
     
 
 }

@@ -78,6 +78,7 @@ public class Menu implements Serializable
     private int ver10ContribuintesMaisDispendiosos(){
         System.out.println("Os contribuintes com mais depesas:");
         List<Pair<Integer, Float>> osDez = f.getMostDespesa(10, ContriBuinte;
+
         for(Pair<Integer, Float> despesa : osDez){
             List<Fatura> lFaturas = f.getFaturasFromEmitente(despesa.getKey());
             float deducao = f.getDeducao(lFaturas);
@@ -339,6 +340,7 @@ public class Menu implements Serializable
         if((boolean) getInfo("Tem contribuintes dependentes no agregado familiar?", Boolean.class))
             contr.setNumDependentesAgregado((int) getInfo("Introduza o numero do agregado familiar", Integer.class)); 
         else contr.setNumDependentesAgregado(0); 
+        contr.addAgregado(contr.getNif());
         
         contr.setCoefFiscal((int) getInfo("Introduza o coeficiente fiscal", Integer.class));
         contr.setPassword((String) getInfo("Introduza a sua palavra-passe", String.class));
