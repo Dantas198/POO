@@ -1,0 +1,23 @@
+#BlueJ class context
+comment0.target=Contribuintes
+comment1.params=c
+comment1.target=boolean\ existeContribuinte(Contribuinte)
+comment1.text=\n\ Verifica\ a\ existencia\ de\ um\ contribuinte\ \n
+comment2.params=nif
+comment2.target=Contribuinte\ getContribuinte(int)
+comment2.text=\n\ Adiciona\ um\ contribuinte\ \n
+comment3.params=c
+comment3.target=void\ addContribuintes(java.util.Set)
+comment3.text=\n\ Adiciona\ um\ Set\ de\ contribuintes\n
+comment4.params=c
+comment4.target=void\ addContribuinte(Contribuinte)
+comment5.params=nif\ password
+comment5.target=Contribuinte\ login(int,\ java.lang.String)
+comment5.text=\n\ Efetua\ o\ login,\ ou\ seja,\ verifica\ se\ o\ contribuinte\ existe\ na\ estrutura\ de\ dados\n\ @returns,\ contribiunte,\ caso\ existe\n
+comment6.params=x
+comment6.target=java.util.List\ getXMostFaturas(int)
+comment6.text=\n\ @param\ x,\ tamanho\ da\ lista\n\ Devolve\ a\ lista\ das\ empresas\ com\ maior\ numero\ de\ faturas\ emitidas\n
+comment7.params=
+comment7.target=Contribuintes()
+comment7.text=\n\ Construtor\ vazio\n
+numComments=8
