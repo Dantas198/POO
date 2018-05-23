@@ -12,10 +12,15 @@ import java.io.IOException;
 import java.io.File;
 import java.util.HashMap;
 import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.function.Function;
 import java.util.List;
 import javafx.util.Pair;
 import java.io.Serializable;
+import java.time.format.DateTimeFormatter;
+import java.util.regex.Pattern;
+import java.time.format.DateTimeParseException;
+import java.time.LocalTime;
 
 import atividadesEconomicas.AtividadeEconomica;
 import fatura.Fatura;
@@ -45,8 +50,8 @@ public class Menu implements Serializable
     private Contribuintes c;
     
     private Contribuinte loggedIn;
-    private LocalDateTime start;
-    private LocalDateTime end;
+    //private LocalDateTime start;
+    //private LocalDateTime end;
     
     public void saveMenu(String filepath) throws FileNotFoundException, IOException, ClassNotFoundException{
         FileOutputStream fos = new FileOutputStream(new File(filepath));
@@ -69,16 +74,19 @@ public class Menu implements Serializable
          return -1;
     }
     
+    /*
     private int ver10ContribuintesMaisDispendiosos(){
         System.out.println("Os contribuintes com mais depesas:");
-        List<Pair<Integer, Float>> osDez = null;// f.getTenContribuintesMostDespesa();
+        List<Pair<Integer, Float>> osDez = f.getMostDespesa(10, ContriBuinte;
+
         for(Pair<Integer, Float> despesa : osDez){
             List<Fatura> lFaturas = f.getFaturasFromEmitente(despesa.getKey());
             float deducao = f.getDeducao(lFaturas);
             System.out.println("Nif: "+ despesa.getKey() + " -> Despesa:" + despesa.getValue() + " Deduçao Fiscal:" + deducao);
         }  
         return menuAdmin();
-    }
+    }*/
+    
     
     //Ainda por acabar ( falta colocar as deduçoes discais)
     private int verEmpresasMaisFaturadas(){
@@ -103,7 +111,7 @@ public class Menu implements Serializable
         menuString.add("Ver as empresas que faturam mais e as sua deduçao fiscal");
         menuString.add("Log out");
         
-        toRun.add(this::ver10ContribuintesMaisDispendiosos);
+       // toRun.add(this::ver10ContribuintesMaisDispendiosos);
         toRun.add(this::verEmpresasMaisFaturadas);
         toRun.add(this::menuAdmin);
         
@@ -164,6 +172,16 @@ public class Menu implements Serializable
          return menuContrIndiv();
     }
     
+    private int verFaturasDeUmaEmpresa(){
+        int nifEmpresa = (int) getInfo("Introduza o Nif da empresa da qual quer ver as faturas", Integer.class);
+        List<Fatura> fatDeEmpresa = f.getFaturasFromEmpresa(this.loggedIn.getNif(), nifEmpresa);
+        if(fatDeEmpresa.size() == 0) System.out.println("Nao possui faturas com esta empresa");
+        for(Fatura fat : fatDeEmpresa)
+            System.out.println(fat.toString());
+       
+        return menuContrIndiv();
+    }
+    
     /**
      * Constroi o menu do contribuinte individual
      */
@@ -183,7 +201,7 @@ public class Menu implements Serializable
         toRun.add(this::verMonstanteDeDeducaoFiscal);
         toRun.add(this::associaAtividadeADespesa);
         toRun.add(this::corrigirClassificacaoDeAtividade);
-        //toRun.add(this::verFaturasDeUmaEmpresa);
+        toRun.add(this::verFaturasDeUmaEmpresa);
         toRun.add(this::welcomeMenu);
         
         return genericMenu(menuString, toRun);
@@ -208,13 +226,9 @@ public class Menu implements Serializable
         }
         String descricao = (String) getInfo("Introduza a descricao da fatura", String.class);
         float despesa = (int) getInfo("Introduza a despesa", Integer.class);
-        //fat.setNumFatura(f.getNumFaturas());
-        //fat.setDataDespesa(LocalDateTime.now());
-        //fat.setDesignacaoEmitente((String) getInfo("Introduza a designacao", String.class));
-
         ae.setNomeAtividade((String) getInfo("Introduza a atividade", String.class));
         ae.setCoef((float) getInfo("Introduza o coeficiente da atividade", Float.class));
-        //fat.setNaturezaDespesa(ae);
+
         
         if(this.loggedIn instanceof ContribuinteEmpresarial)
             fat = new Fatura((ContribuinteEmpresarial) this.loggedIn, 
@@ -249,6 +263,32 @@ public class Menu implements Serializable
         return genericMenu(menuString, toRun);
     }
     
+    
+    private int verFaturasPeloTempo(){
+        LocalDateTime start = (LocalDateTime) getInfo("Introduza a data inicial \"dd/MM/YYYY\"", LocalDateTime.class);
+        LocalDateTime end = (LocalDateTime) getInfo("Introduza a data inicial \"dd/MM/YYYY\"", LocalDateTime.class);
+        
+        List<Fatura> faturasPeloTempo = f.getFaturasFromEmitenteBetweenDate(this.loggedIn.getNif(), start, end);
+        for(Fatura fatura : faturasPeloTempo)
+            System.out.println(fatura.toString());
+
+        return menuContrEmpr();
+    }
+    
+    private int VerFaturasPorContribuinte(){
+        List<Fatura> faturas = f.getFaturasByValorDecrescente(this.loggedIn.getNif());
+        for(Fatura fatura : faturas)
+            System.out.println(fatura.toString());
+        
+        return menuContrEmpr();
+    }
+    
+    private int verTotalFaturadoPeloTempo(){
+        
+        
+        return menuContrEmpr();
+    }
+    
     /**
      * Constroi o menu do contribuinte empresarial
      */
@@ -261,15 +301,15 @@ public class Menu implements Serializable
         menuString.add("Criar fatura");
         menuString.add("Ver faturas");
         menuString.add("Ver faturas por contribuinte num intervalo de tempo");
-        menuString.add("Ver faturas por contribuinte");
+        menuString.add("Ver faturas por contribuinte por ordem decrescente");
         menuString.add("Ver total faturado num intervalo de tempo");
         menuString.add("Log out");
         
         toRun.add(this::criarFatura);
         toRun.add(this::verFaturas);
-        //toRun.add(Menu::verFaturasPeloTempo);
-        //toRun.add(Menu::verFaturasPorContribuinte);
-        //toRun.add(Menu::verTotalFaturadoPeloTempo);
+        toRun.add(this::verFaturasPeloTempo);
+        toRun.add(this::VerFaturasPorContribuinte);
+        toRun.add(this::verTotalFaturadoPeloTempo);
         toRun.add(this::welcomeMenu);
         
         return genericMenu(menuString, toRun);
@@ -293,14 +333,15 @@ public class Menu implements Serializable
         ContribuinteIndividual contr = new ContribuinteIndividual();
       
         contr.setNif((int) getInfo("Introduza o Nif", Integer.class));
-        System.out.println(contr.getNif());
         contr.setNome((String) getInfo("Introduza o Nome", String.class));
-        System.out.println(contr.getNome());
         contr.setEmail((String) getInfo("Introduza o Email", String.class));
-        System.out.println(contr.getEmail());
         contr.setMorada(moradaMenu());
-        System.out.println(contr.getMorada());
-        contr.setNumDependentesAgregado((int) getInfo("Introduza o numero do agregado familiar", Integer.class)); 
+        
+        if((boolean) getInfo("Tem contribuintes dependentes no agregado familiar?", Boolean.class))
+            contr.setNumDependentesAgregado((int) getInfo("Introduza o numero do agregado familiar", Integer.class)); 
+        else contr.setNumDependentesAgregado(0); 
+        contr.addAgregado(contr.getNif());
+        
         contr.setCoefFiscal((int) getInfo("Introduza o coeficiente fiscal", Integer.class));
         contr.setPassword((String) getInfo("Introduza a sua palavra-passe", String.class));
         
@@ -536,8 +577,20 @@ public class Menu implements Serializable
                     System.out.println("This is a yes or no question \"y/n\"");
                 }
             }
+            if(cl == LocalDateTime.class){
+                try{
+                    String dataString = s.next();
+                    LocalDate data = LocalDate.parse(dataString);
+                    LocalTime time = LocalTime.now();
+                    time.parse("00:00");
+                    LocalDateTime resData = LocalDateTime.of(data, time);
+                    return resData;
+                } catch (DateTimeParseException e){
+                    System.out.println("Introduza a data no formato \"YYYY-MM-dd\"");
+                }
+            }
            s.close();
-        }while(true);
+        } while(true);
     }
     
     public void run(){
@@ -548,8 +601,6 @@ public class Menu implements Serializable
         this.c = new Contribuintes();
         this.f = new Faturas();
         this.loggedIn = null;
-        this.start = null;
-        this.end = null;
         this.run();
     }
 }

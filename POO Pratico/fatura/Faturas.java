@@ -162,6 +162,13 @@ public class Faturas implements Serializable {
         return count;
     }
     
+    /**
+     * Devolve uma lista com as faturas que o cliente e a empresa tem em comum
+     */
+    public List<Fatura> getFaturasFromEmpresa(int nifCliente, int nifEmpresa){
+        return this.getFaturasFromContribuinte(nifCliente).stream().filter(f -> f.getEmitente().getNif() == nifEmpresa).collect(Collectors.toList());
+    }
+    
      /**
      * Devolve um HashMap temporário com pares de nif e despesa desse contribuinte, caso queiramos
      * ir buscar a despesa de um contribuinte individual
@@ -206,11 +213,12 @@ public class Faturas implements Serializable {
       * Devolve uma lista com os contribuintes com mais despesas.
       * @returns Lista<Pair<nif, despesa>>
       */
-     public List<Pair<Integer, Float>> getMostDespesa(int x, int type){
+     
+     public List<Pair<Integer, Float>> getMostDespesa(int x, Class<?> cl){
         HashMap<Integer, Pair <Integer,Float>> tmp = new HashMap<>();
         
-        if(type == 1) makeHashIndividual(tmp);
-        if(type == 2) makeHashEmpresarial(tmp);
+        if(cl == ContribuinteIndividual.class) makeHashIndividual(tmp);
+        if(cl == ContribuinteEmpresarial.class) makeHashEmpresarial(tmp);
         
         List<Pair <Integer, Float>> l = tmp.values().stream().collect(Collectors.toList());
         l.sort(new ComparePairDespesa());
