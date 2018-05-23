@@ -16,7 +16,10 @@ public class ContribuinteEmpresarial extends Contribuinte implements Serializabl
     private HashMap<String,AtividadeEconomica> atividadesEmpresa;
     private int countFaturas;
     private float lucro;
+<<<<<<< HEAD
     
+=======
+>>>>>>> 5129202185c3929ea7e9d9fc90206d8bf809de07
     /**
      * Construtor vazio
      */

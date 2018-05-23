@@ -153,11 +153,45 @@ public class Faturas implements Serializable {
                 count+= f.getDespesa() * (a.getCoef() + c.reducaoImposto());
             }
         return count;
+<<<<<<< HEAD
     }       
         
     /**
       * Devolve um HashMap temporario com pares de nif e despesa desse contribuinte, caso queiramos
       * ir buscar os gastos de um contribuinte
+=======
+    }
+    
+    /**
+     * Devolve uma lista com as faturas que o cliente e a empresa tem em comum
+     */
+    public List<Fatura> getFaturasFromEmpresa(int nifCliente, int nifEmpresa){
+        return this.getFaturasFromContribuinte(nifCliente).stream().filter(f -> f.getEmitente().getNif() == nifEmpresa).collect(Collectors.toList());
+    }
+    
+     /**
+     * Devolve um HashMap temporário com pares de nif e despesa desse contribuinte, caso queiramos
+     * ir buscar a despesa de um contribuinte individual
+     */
+    public void makeHashIndividual(HashMap<Integer, Pair <Integer,Float>> tmp){
+        for(Fatura a : faturas.values()){
+            if(a.isClientIndividual()){
+                int nif = a.getNifCliente();
+                float despesa = a.getDespesa();
+                if(tmp.containsKey(nif)){
+                    Pair <Integer, Float> older = tmp.get(nif);
+                    despesa += older.getValue();
+                 }
+                else {
+                    Pair <Integer, Float> newer = new Pair <Integer, Float>(nif, despesa);
+                    tmp.put(nif,newer);}  
+        }}
+     }
+     
+     /**
+      * Devolve um HashMap temporário com pares de nif e despesa desse contribuinte, caso queiramos
+      * ir buscar a faturacao de uma impresa
+>>>>>>> 5129202185c3929ea7e9d9fc90206d8bf809de07
       */
     public void makeHashMostSpender(HashMap<Integer, Pair <Integer,Float>> tmp, HashMap<Integer, Fatura> faturas){
        for(Fatura a : faturas.values()){
@@ -173,6 +207,7 @@ public class Faturas implements Serializable {
        }
     }
      
+<<<<<<< HEAD
     /**
      * @param x, tamanho da lista pretendida
      * @param type, 1 se queremos os contribuintes com mais despesa, 2
@@ -186,6 +221,22 @@ public class Faturas implements Serializable {
         makeHashMostSpender(tmp, this.faturas);
         makeHashMostSpender(tmp, this.faturasPendentes);
 
+=======
+     /**
+      * @param x, tamanho da lista pretendida
+      * @param type, 1 se queremos os contribuintes com mais despesa, 2
+      * se queremos as empresas com maior faturacao 
+      * Devolve uma lista com os contribuintes com mais despesas.
+      * @returns Lista<Pair<nif, despesa>>
+      */
+     
+     public List<Pair<Integer, Float>> getMostDespesa(int x, Class<?> cl){
+        HashMap<Integer, Pair <Integer,Float>> tmp = new HashMap<>();
+        
+        if(cl == ContribuinteIndividual.class) makeHashIndividual(tmp);
+        if(cl == ContribuinteEmpresarial.class) makeHashEmpresarial(tmp);
+        
+>>>>>>> 5129202185c3929ea7e9d9fc90206d8bf809de07
         List<Pair <Integer, Float>> l = tmp.values().stream().collect(Collectors.toList());
         l.sort(new ComparePairDespesa());
         int size = l.size() > x-1 ? x-1 : l.size();
