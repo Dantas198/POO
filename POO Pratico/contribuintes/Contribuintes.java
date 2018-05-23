@@ -61,6 +61,7 @@ public class Contribuintes implements Serializable{
      * @param x, tamanho da lista
      * Devolve a lista das empresas com maior numero de faturas emitidas
      */
+    /*
     public List<ContribuinteEmpresarial> getXMostFaturas(int x){
         List<ContribuinteEmpresarial> tmp;
         tmp = this.contribuintes.values().stream()
@@ -74,27 +75,45 @@ public class Contribuintes implements Serializable{
         List<ContribuinteEmpresarial> result =tmp.subList(0, size);
         return result;
     }
+    */
+    
+    /**
+     * @param x, tamanho da lista
+     * Devolve a lista das empresas com maior lucro.
+     */
+    public List<ContribuinteEmpresarial> getXMostFaturado(int x){
+        List<ContribuinteEmpresarial> tmp;
+        tmp = this.contribuintes.values().stream()
+                  .filter(c -> c instanceof ContribuinteEmpresarial)
+                  .map(p ->(ContribuinteEmpresarial)p.clone())
+                  .collect(Collectors.toList());
+        tmp.sort(Comparator.comparing(ContribuinteEmpresarial::getLucro).reversed());
+        
+        int size = tmp.size() > x-1 ? x-1 : tmp.size();
+        List<ContribuinteEmpresarial> result = tmp.subList(0, size);
+        return result;
+    }
     
     public void addNewContribuinteToAgregado(int nifdeAgregado, String nome, int nif, String email, String password) throws ContribuinteDoesntExistException, ContribuinteNaoIndividualException {
-    	if(!this.contribuintes.containsKey(nifdeAgregado))
-    		throw new ContribuinteDoesntExistException(Integer.toString(nifdeAgregado));
-    	Contribuinte s = this.contribuintes.get(nifdeAgregado);
-    	if (!(s instanceof ContribuinteIndividual)) {
-			throw new ContribuinteNaoIndividualException(Integer.toString(nifdeAgregado));	
-		}
-    	ContribuinteIndividual novo = (ContribuinteIndividual) s.clone();
-    	novo.setNome(nome);
-    	novo.setNif(nif);
-    	novo.setEmail(email);
-    	novo.setPassword(password);
-    	List<Integer> x = novo.getNifsAgregado();
-    	for (Integer i : x) {
-    		Contribuinte c = (ContribuinteIndividual) this.contribuintes.get(i);
-    		if (c instanceof ContribuinteIndividual) {
-				ContribuinteIndividual n = (ContribuinteIndividual) c;
-				n.addAgregado(nif);
-			}
-    	}
+        if(!this.contribuintes.containsKey(nifdeAgregado))
+            throw new ContribuinteDoesntExistException(Integer.toString(nifdeAgregado));
+        Contribuinte s = this.contribuintes.get(nifdeAgregado);
+        if (!(s instanceof ContribuinteIndividual)) {
+            throw new ContribuinteNaoIndividualException(Integer.toString(nifdeAgregado));  
+        }
+        ContribuinteIndividual novo = (ContribuinteIndividual) s.clone();
+        novo.setNome(nome);
+        novo.setNif(nif);
+        novo.setEmail(email);
+        novo.setPassword(password);
+        List<Integer> x = novo.getNifsAgregado();
+        for (Integer i : x) {
+            Contribuinte c = (ContribuinteIndividual) this.contribuintes.get(i);
+            if (c instanceof ContribuinteIndividual) {
+                ContribuinteIndividual n = (ContribuinteIndividual) c;
+                n.addAgregado(nif);
+            }
+        }
     }
     /**
      * Construtor vazio

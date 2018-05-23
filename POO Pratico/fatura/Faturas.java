@@ -118,6 +118,7 @@ public class Faturas implements Serializable {
              List<Fatura> tmp = getFaturasFromContribuinte(i);
                 Supercount+=getDeducao(tmp);
         }
+        
         return Supercount;
     }
     
@@ -127,96 +128,69 @@ public class Faturas implements Serializable {
      * deduzida, juntamente com a do agregado
      * @returns res, Pair<faturas, despesa deduzida>
      */
-    //IMP!!!! ver se contribuintes empresariais entram neste caso!
-    public Pair<List<Fatura>,Float> getDespesasAndDFAcumulado(Contribuinte c){
+    public Pair<List<Fatura>,Float> getDespesasAndDFAcumulado(ContribuinteIndividual c){
         int nif = c.getNif();
         
         List<Fatura> x = getFaturasFromContribuinte(nif);
-        ContribuinteIndividual ci = (ContribuinteIndividual) c;
-        float acumulado = getNFAcumuladoAgregado(ci);
+        float acumulado = getNFAcumuladoAgregado(c);
         
         Pair <List<Fatura>, Float> res = new Pair <List<Fatura>, Float> (x,acumulado);
         return res;
     }
     
-    //Segundo o que entendi:
-    //Na atividade económica da fatura está o coeficiente gerado por uma empresa e que vai entrar para a deducao.
-    //O que diferencia este método do getDespesasAndDFAcumulado é o facto deste último eu ir buscar o campo deducaoGlobal à fatura
-    //este campo tem o fator de deducao da empresa emitente assim como o coeficiente do contribuinte individual.
-    //Só para administrador. Ponto 12
     /**
      * @param c, contribuinte
-     * Calcula o montante de deducoes fiscais fornecidas todas as despesas emitidas por uma empresa
+     * Calcula o montante de deducoes fiscais fornecidas de todas as despesas emitidas por uma empresa
      * @returns count, total de deducoes
      */
-    public float getDFEmpresa(Contribuinte c){
+    public float getDFEmpresa(ContribuinteEmpresarial c){
         int nif = c.getNif();
         float count=0;
-        //Contribuinte terá de ser Empresarial.
         //getFaturasFromContribuinte ou FromEmitente, embora tenha quase a certeza que as por emitir não entram para a deducao
         List<Fatura> x = getFaturasFromContribuinte(nif);
             for(Fatura f : x) {
                 AtividadeEconomica a = f.getNaturezaDespesa();
-                count+= f.getDespesa() * (a.getCoef() + ((ContribuinteEmpresarial) c).reducaoImposto());
+                count+= f.getDespesa() * (a.getCoef() + c.reducaoImposto());
             }
         return count;
+    }       
+        
+    /**
+      * Devolve um HashMap temporario com pares de nif e despesa desse contribuinte, caso queiramos
+      * ir buscar os gastos de um contribuinte
+      */
+    public void makeHashMostSpender(HashMap<Integer, Pair <Integer,Float>> tmp, HashMap<Integer, Fatura> faturas){
+       for(Fatura a : faturas.values()){
+           int nif = a.getNifCliente();
+           float despesa = a.getDespesa();
+               if(tmp.containsKey(nif)){
+                   Pair <Integer, Float> older = tmp.get(nif);
+                   despesa += older.getValue();
+               }
+               else {
+                   Pair <Integer, Float> newer = new Pair <Integer, Float>(nif, despesa);
+                   tmp.put(nif,newer);}  
+       }
     }
-    
-     /**
-     * Devolve um HashMap temporário com pares de nif e despesa desse contribuinte, caso queiramos
-     * ir buscar a despesa de um contribuinte individual
+     
+    /**
+     * @param x, tamanho da lista pretendida
+     * @param type, 1 se queremos os contribuintes com mais despesa, 2
+     * se queremos as empresas com maior faturacao 
+     * Devolve uma lista com os contribuintes com mais despesas.
+     * @returns Lista<Pair<nif, despesa>>
      */
-    public void makeHashIndividual(HashMap<Integer, Pair <Integer,Float>> tmp){
-        for(Fatura a : faturas.values()){
-            if(a.isClientIndividual()){
-                int nif = a.getNifCliente();
-                float despesa = a.getDespesa();
-                if(tmp.containsKey(nif)){
-                    Pair <Integer, Float> older = tmp.get(nif);
-                    despesa += older.getValue();
-                 }
-                else {
-                    Pair <Integer, Float> newer = new Pair <Integer, Float>(nif, despesa);
-                    tmp.put(nif,newer);}  
-        }}
-     }
-     
-     /**
-      * Devolve um HashMap temporário com pares de nif e despesa desse contribuinte, caso queiramos
-      * ir buscar a faturacao de uma impresa
-      */
-     public void makeHashEmpresarial(HashMap<Integer, Pair <Integer,Float>> tmp){
-        for(Fatura a : faturas.values()){
-                int nif = a.getNifCliente();
-                float despesa = a.getDespesa();
-                if(tmp.containsKey(nif)){
-                    Pair <Integer, Float> older = tmp.get(nif);
-                    despesa += older.getValue();
-                 }
-                else {
-                    Pair <Integer, Float> newer = new Pair <Integer, Float>(nif, despesa);
-                    tmp.put(nif,newer);}  
-        }
-     }
-     
-     /**
-      * @param x, tamanho da lista pretendida
-      * @param type, 1 se queremos os contribuintes com mais despesa, 2
-      * se queremos as empresas com maior faturacao 
-      * Devolve uma lista com os contribuintes com mais despesas.
-      * @returns Lista<Pair<nif, despesa>>
-      */
-     public List<Pair<Integer, Float>> getMostDespesa(int x, int type){
+    public List<Pair<Integer, Float>> getMostSpenders(int x, int type){
         HashMap<Integer, Pair <Integer,Float>> tmp = new HashMap<>();
         
-        if(type == 1) makeHashIndividual(tmp);
-        if(type == 2) makeHashEmpresarial(tmp);
-        
+        makeHashMostSpender(tmp, this.faturas);
+        makeHashMostSpender(tmp, this.faturasPendentes);
+
         List<Pair <Integer, Float>> l = tmp.values().stream().collect(Collectors.toList());
         l.sort(new ComparePairDespesa());
-        int size = l.size() > x ? x : l.size();
+        int size = l.size() > x-1 ? x-1 : l.size();
         return l.subList(0, size);
-     }
+    }
     
     /**
      * @param nifn nif do contribuinte
@@ -290,8 +264,9 @@ public class Faturas implements Serializable {
      * Devolve o total faturado por um contribuinte
      * @returns total faturado
      */
-    public float totalFaturado(int nifEmitente) {
-        List<Fatura> x = this.getFaturasFromEmitente(nifEmitente);
+    public float totalFaturado(ContribuinteEmpresarial c, LocalDateTime beg, LocalDateTime end) {
+        int nif = c.getNif();
+        List<Fatura> x = this.getFaturasFromEmitenteBetweenDate(nif, beg, end);
         return (float) x.stream().mapToDouble(Fatura::getDespesa).sum();
     }
     
@@ -301,7 +276,8 @@ public class Faturas implements Serializable {
      * Devolve uma lista de faturas ordendas por data
      * @returns x, List<Fatura>
      */
-    public List<Fatura> getFaturasByDate(int nif){
+    public List<Fatura> getFaturasByDate(ContribuinteEmpresarial c){
+        int nif = c.getNif();
         List<Fatura> x = getFaturasFromEmitente(nif);
         x.sort(new CompareFaturasByDate());
         return x;
@@ -313,7 +289,8 @@ public class Faturas implements Serializable {
      * Devolve uma lista de faturas ordenadas por valor
      * @returns x, List<Fatura>
      */
-    public List<Fatura> getFaturasByValor(int nif){
+    public List<Fatura> getFaturasByValor(ContribuinteEmpresarial c){
+        int nif = c.getNif();
         List<Fatura> x = getFaturasFromEmitente(nif);
         x.sort(new CompareFaturasByValor());
         return x;
@@ -329,7 +306,8 @@ public class Faturas implements Serializable {
      * mas tambem agupadas por nif
      * @returns x, List<Fatura>
      */
-    public List<Fatura> getFaturasByValorDecrescente(int nif){
+    public List<Fatura> getFaturasByValorDecrescente(ContribuinteEmpresarial c){
+        int nif = c.getNif();
         List<Fatura> x = getFaturasFromEmitente(nif);
         x.sort(Comparator.comparing(Fatura::getNifCliente)
                          .thenComparing(Fatura::getDespesa).reversed()); 

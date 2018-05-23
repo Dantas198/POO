@@ -15,6 +15,7 @@ import moradas.Morada;
 public class ContribuinteEmpresarial extends Contribuinte implements Serializable,BeneficioFiscal {
     private HashMap<String,AtividadeEconomica> atividadesEmpresa;
     private int countFaturas;
+    private float lucro;
     
     /**
      * Construtor vazio
@@ -63,6 +64,20 @@ public class ContribuinteEmpresarial extends Contribuinte implements Serializabl
     }
     
     /**
+     * Devolve o contador de lucro coletado pela empresa
+     */
+    public float getLucro(){
+        return this.lucro;
+    }
+    
+    /**
+     * Atualiza o lucro da empresa
+     */
+    public void setLucro(float lucro){
+        this.lucro = lucro;
+    }
+    
+    /**
      * @param cliente, quem efetuou a despesa
      * @param descricao, descricao da despesa
      * @param despesa, valor da despesa
@@ -77,6 +92,7 @@ public class ContribuinteEmpresarial extends Contribuinte implements Serializabl
             res.setNaturezaDespesa(a);
         }
         this.countFaturas++;
+        this.lucro += despesa;
         return(res);
     }
     
