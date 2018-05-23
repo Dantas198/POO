@@ -1,5 +1,6 @@
 package menu;
 
+import contribuintes.Contribuinte;
 import contribuintes.ContribuinteIndividual;
 import contribuintes.Contribuintes;
 import exceptions.ContribuinteDoesntExistException;
@@ -36,7 +37,9 @@ public class JavaFaturaDataGenerator {
 	}
 	*/
 	private LocalidadeCentro newLocCentro(String nome,double d) {
-		return new LocalidadeCentro(nome,  d);
+		LocalidadeCentro ls = new LocalidadeCentro(nome,  d);
+		this.l.addLocalidade(ls);
+		return ls;
 	}
 	
 	public void addFamilia() {
@@ -49,13 +52,27 @@ public class JavaFaturaDataGenerator {
 			e.printStackTrace();
 		}
 		try {
-			c.addDependenteToAgregado(272390208);
+			c.addDependenteToAgregado(272390208,1);
 		} catch (ContribuinteNaoIndividualException | ContribuinteDoesntExistException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 	
+	public void printFamily() {
+		try {
+			System.out.println(this.c.getContribuinte(272390208).toString());
+		} catch (ContribuinteDoesntExistException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		try {
+			System.out.println(this.c.getContribuinte(262268256).toString());
+		} catch (ContribuinteDoesntExistException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 	public void addWitcher() {
 		Morada m = new Morada(1, new Pair<Integer,Integer>(4222, 123), newLocCentro("Kaer Morhen", 0.25));
 		ContribuinteIndividual witcher = new ContribuinteIndividual("Geralt",237313731,"whiteWolf@wolfSchool.com",m,"cirilla",0.2f);
