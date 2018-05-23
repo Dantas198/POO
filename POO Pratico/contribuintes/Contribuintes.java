@@ -95,11 +95,39 @@ public class Contribuintes implements Serializable{
 				n.addAgregado(nif);
 			}
     	}
+    	novo.addAgregado(nif);
+    	this.contribuintes.put(nif, novo);
     }
+    
+    public void addDependenteToAgregado(int nifdeAgregado, int numDependentes) throws ContribuinteNaoIndividualException, ContribuinteDoesntExistException {
+    	if(!this.contribuintes.containsKey(nifdeAgregado))
+    		throw new ContribuinteDoesntExistException(Integer.toString(nifdeAgregado));
+    	Contribuinte s = this.contribuintes.get(nifdeAgregado);
+    	if (!(s instanceof ContribuinteIndividual)) {
+			throw new ContribuinteNaoIndividualException(Integer.toString(nifdeAgregado));	
+		}
+    	List<Integer> x;
+    	if (s instanceof ContribuinteIndividual) {
+			ContribuinteIndividual n = (ContribuinteIndividual) s;
+			x = n.getNifsAgregado();
+		}
+    	else
+    		x = new ArrayList<>();
+    	for (Integer i : x) {
+    		Contribuinte c = (ContribuinteIndividual) this.contribuintes.get(i);
+    		if (c instanceof ContribuinteIndividual) {
+				ContribuinteIndividual n = (ContribuinteIndividual) c;
+				n.setNumDependentesAgregado(n.getNumDependentesAgregado()+numDependentes);
+			}
+    	}
+    	
+    }
+    
     /**
      * Construtor vazio
      */
     public Contribuintes() {
         contribuintes = new HashMap<Integer,Contribuinte>();
     }
+
 }

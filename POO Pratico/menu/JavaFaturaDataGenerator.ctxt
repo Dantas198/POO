@@ -1,0 +1,10 @@
+#BlueJ class context
+comment0.target=JavaFaturaDataGenerator
+comment1.params=nome\ d
+comment1.target=moradas.LocalidadeCentro\ newLocCentro(java.lang.String,\ double)
+comment1.text=\r\n\tpublic\ Contribuintes\ getC()\ {\r\n\t\treturn\ c.clone();\r\n\t}\r\n\tpublic\ void\ setC(Contribuintes\ c)\ {\r\n\t\tthis.c\ \=\ c.clone();\r\n\t}\r\n\tpublic\ Localidades\ getL()\ {\r\n\t\treturn\ l.clone();\r\n\t}\r\n\tpublic\ void\ setL(Localidades\ l)\ {\r\n\t\tthis.l\ \=\ l.clone();\r\n\t}\r\n\tpublic\ Faturas\ getF()\ {\r\n\t\treturn\ f.clone();\r\n\t}\r\n\tpublic\ void\ setF(Faturas\ f)\ {\r\n\t\tthis.f\ \=\ f.clone();\r\n\t}\r\n
+comment2.params=
+comment2.target=void\ addFamilia()
+comment3.params=
+comment3.target=JavaFaturaDataGenerator()
+numComments=4

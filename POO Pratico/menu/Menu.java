@@ -71,7 +71,7 @@ public class Menu implements Serializable
     
     private int ver10ContribuintesMaisDispendiosos(){
         System.out.println("Os contribuintes com mais depesas:");
-        List<Pair<Integer, Float>> osDez = f.getTenContribuintesMostDespesa();
+        List<Pair<Integer, Float>> osDez = null;// f.getTenContribuintesMostDespesa();
         for(Pair<Integer, Float> despesa : osDez){
             List<Fatura> lFaturas = f.getFaturasFromEmitente(despesa.getKey());
             float deducao = f.getDeducao(lFaturas);
