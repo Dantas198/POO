@@ -21,6 +21,14 @@ public class Fatura implements Serializable{
     private int numFatura;
     private float deducaoGlobal;
     
+
+    /**
+     * Verifica se o cliente � um contribuinte individual
+     */
+    public boolean isClientIndividual(){
+        return (cliente instanceof ContribuinteIndividual);
+    }
+
     /**
      * Devolve a deducaoGlobal da Fatura, que é a percentagem total de deducao, contendo o coeficiente do 
      * contribuinte individual e a deducao oferecida pela empresa

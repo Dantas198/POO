@@ -15,6 +15,7 @@ import java.util.TreeSet;
 
 import contribuintes.Contribuinte;
 import contribuintes.ContribuinteIndividual;
+import contribuintes.ContribuinteEmpresarial;
 import comparators.CompareFaturasByDate;
 import comparators.CompareFaturasByValor;
 import comparators.ComparePairDespesa;
@@ -99,7 +100,7 @@ public class Faturas implements Serializable {
     public float getDeducao(List<Fatura> faturas){
         float count=0;
         for(Fatura f : faturas)
-            count+=f.getDeducaoGlobal() * f.getDespesa(); 
+            count+=f.getValorDeduzivel();
         
         return count;
     }
@@ -156,32 +157,66 @@ public class Faturas implements Serializable {
         List<Fatura> x = getFaturasFromContribuinte(nif);
             for(Fatura f : x) {
                 AtividadeEconomica a = f.getNaturezaDespesa();
-                count+= f.getDespesa() * a.getCoef();
+                count+= f.getDespesa() * (a.getCoef() + ((ContribuinteEmpresarial) c).reducaoImposto());
             }
         return count;
     }
     
-    /**
-     * Devolve uma lista com os 10 contribuintes com mais despesas
-     * @returns Lista<Pair<nif, despesa>>
+     /**
+     * Devolve um HashMap temporário com pares de nif e despesa desse contribuinte, caso queiramos
+     * ir buscar a despesa de um contribuinte individual
      */
-    public List<Pair<Integer, Float>> getTenContribuintesMostDespesa(){
-       HashMap<Integer, Pair <Integer,Float>> tmp = new HashMap<>();
-       for(Fatura a : faturas.values()){
-           int nif = a.getNifCliente();
-           float despesa = a.getDespesa();
-           if(tmp.containsKey(nif)){
-               Pair <Integer, Float> older = tmp.get(nif);
-               despesa += older.getValue();
-           }
-           Pair <Integer, Float> newer = new Pair <Integer, Float>(nif, despesa);
-           tmp.put(nif,newer);  
-       }    
-       List<Pair <Integer, Float>> l = tmp.values().stream().collect(Collectors.toList());
-       l.sort(new ComparePairDespesa());
-       int size = l.size() > 10 ? 10 : l.size();
-       return l.subList(0, size);
-    }
+    public void makeHashIndividual(HashMap<Integer, Pair <Integer,Float>> tmp){
+        for(Fatura a : faturas.values()){
+            if(a.isClientIndividual()){
+                int nif = a.getNifCliente();
+                float despesa = a.getDespesa();
+                if(tmp.containsKey(nif)){
+                    Pair <Integer, Float> older = tmp.get(nif);
+                    despesa += older.getValue();
+                 }
+                else {
+                    Pair <Integer, Float> newer = new Pair <Integer, Float>(nif, despesa);
+                    tmp.put(nif,newer);}  
+        }}
+     }
+     
+     /**
+      * Devolve um HashMap temporário com pares de nif e despesa desse contribuinte, caso queiramos
+      * ir buscar a faturacao de uma impresa
+      */
+     public void makeHashEmpresarial(HashMap<Integer, Pair <Integer,Float>> tmp){
+        for(Fatura a : faturas.values()){
+                int nif = a.getNifCliente();
+                float despesa = a.getDespesa();
+                if(tmp.containsKey(nif)){
+                    Pair <Integer, Float> older = tmp.get(nif);
+                    despesa += older.getValue();
+                 }
+                else {
+                    Pair <Integer, Float> newer = new Pair <Integer, Float>(nif, despesa);
+                    tmp.put(nif,newer);}  
+        }
+     }
+     
+     /**
+      * @param x, tamanho da lista pretendida
+      * @param type, 1 se queremos os contribuintes com mais despesa, 2
+      * se queremos as empresas com maior faturacao 
+      * Devolve uma lista com os contribuintes com mais despesas.
+      * @returns Lista<Pair<nif, despesa>>
+      */
+     public List<Pair<Integer, Float>> getMostDespesa(int x, int type){
+        HashMap<Integer, Pair <Integer,Float>> tmp = new HashMap<>();
+        
+        if(type == 1) makeHashIndividual(tmp);
+        if(type == 2) makeHashEmpresarial(tmp);
+        
+        List<Pair <Integer, Float>> l = tmp.values().stream().collect(Collectors.toList());
+        l.sort(new ComparePairDespesa());
+        int size = l.size() > x ? x : l.size();
+        return l.subList(0, size);
+     }
     
     /**
      * @param nifn nif do contribuinte
@@ -221,7 +256,7 @@ public class Faturas implements Serializable {
         Fatura f = this.faturasPendentes.get(numFatura);
         f.setNaturezaDespesa(a);
         //Contribuinte tem de ser Individual
-        f.setDeducaoGlobal(c);
+        //f.setDeducaoGlobal(c);
         return;
     }
     
@@ -246,7 +281,7 @@ public class Faturas implements Serializable {
         //O Zé esqueceu-se.
         f.setNaturezaDespesa(nova);
         //Contribuinte tem de ser individual. Vejam isto pff!!
-        f.setDeducaoGlobal(c);
+        //f.setDeducaoGlobal(c);
         this.correcoes.add(change);
     }
     
