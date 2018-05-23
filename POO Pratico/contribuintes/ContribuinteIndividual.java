@@ -117,7 +117,6 @@ public class ContribuinteIndividual extends Contribuinte implements Serializable
      * Clone
      */
     public Contribuinte clone() {
-        // TODO Auto-generated method stub
         return new ContribuinteIndividual(this);
     }
     
@@ -130,14 +129,14 @@ public class ContribuinteIndividual extends Contribuinte implements Serializable
         return 0;
     }
 
-	public boolean isActDeduzivel(AtividadeEconomica naturezaDespesa) {
-		return this.actDeduziveis.containsKey(naturezaDespesa.getNomeAtividade());
-	}
+    public boolean isActDeduzivel(AtividadeEconomica naturezaDespesa) {
+        return this.actDeduziveis.containsKey(naturezaDespesa.getNomeAtividade());
+    }
 
-	public void addAgregado(int nif) {
-		if(!this.nifsAgregado.contains(nif))
-			this.nifsAgregado.add(nif);
-	}
+    public void addAgregado(int nif) {
+        if(!this.nifsAgregado.contains(nif))
+            this.nifsAgregado.add(nif);
+    }
     
 
 }
