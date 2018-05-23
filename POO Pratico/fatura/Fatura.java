@@ -218,8 +218,8 @@ public class Fatura implements Serializable{
         if (cliente instanceof ContribuinteIndividual) {
 			ContribuinteIndividual n2 = (ContribuinteIndividual) cliente;
 			if(n2.isActDeduzivel(this.naturezaDespesa))
-				despesa += this.naturezaDespesa.getCoef();
-			despesa += n2.getCoefFiscal();
+				deduzivel += this.naturezaDespesa.getCoef();
+			deduzivel += n2.getCoefFiscal();
 		}
         float res = this.despesa * (float)deduzivel;
         return res;
