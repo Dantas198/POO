@@ -184,7 +184,6 @@ public class Faturas implements Serializable {
      /**
       * Devolve um HashMap temporário com pares de nif e despesa desse contribuinte, caso queiramos
       * ir buscar a faturacao de uma impresa
->>>>>>> 5129202185c3929ea7e9d9fc90206d8bf809de07
       */
     public void makeHashMostSpender(HashMap<Integer, Pair <Integer,Float>> tmp, HashMap<Integer, Fatura> faturas){
        for(Fatura a : faturas.values()){
@@ -261,6 +260,12 @@ public class Faturas implements Serializable {
         //f.setDeducaoGlobal(c);
         return;
     }
+    
+    public List<Pair<Integer,Pair<AtividadeEconomica,AtividadeEconomica>>> getChangestoFatura(int numfatura) {
+		List<Pair<Integer,Pair<AtividadeEconomica,AtividadeEconomica>>>res = new ArrayList<>();
+		this.correcoes.stream().filter(p -> p.getKey()==numfatura).forEach(p -> res.add(p));
+    	return res;
+	}
     
     /**
      * @param c, contribuinte
