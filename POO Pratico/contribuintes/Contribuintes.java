@@ -81,7 +81,7 @@ public class Contribuintes implements Serializable{
      * @param x, tamanho da lista
      * Devolve a lista das empresas com maior lucro.
      */
-    public List<ContribuinteEmpresarial> getXMostFaturado(int x){
+    public List<ContribuinteEmpresarial> getXMostFaturas(int x){
         List<ContribuinteEmpresarial> tmp;
         tmp = this.contribuintes.values().stream()
                   .filter(c -> c instanceof ContribuinteEmpresarial)

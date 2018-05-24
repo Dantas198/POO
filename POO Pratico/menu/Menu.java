@@ -276,7 +276,7 @@ public class Menu implements Serializable
     }
     
     private int VerFaturasPorContribuinte(){
-        List<Fatura> faturas = f.getFaturasByValorDecrescente(this.loggedIn.getNif());
+        List<Fatura> faturas = f.getFaturasByValorDecrescente((ContribuinteEmpresarial) this.loggedIn);
         for(Fatura fatura : faturas)
             System.out.println(fatura.toString());
         
