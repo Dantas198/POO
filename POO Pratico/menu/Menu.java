@@ -232,7 +232,7 @@ public class Menu implements Serializable
         
         if(this.loggedIn instanceof ContribuinteEmpresarial)
             fat = new Fatura((ContribuinteEmpresarial) this.loggedIn, 
-                LocalDateTime.now(), cliente, descricao, ae, despesa);
+                LocalDateTime.now(), cliente, descricao, despesa);
         else{
             System.out.println("You don't have permission to create a new Fatura");
             return welcomeMenu();

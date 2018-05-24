@@ -164,7 +164,9 @@ public class Fatura implements Serializable{
      * @returns naturezaDespesa
      */
     public AtividadeEconomica getNaturezaDespesa() {
-        return naturezaDespesa.clone();
+    	if(this.naturezaDespesa != null)
+    		return naturezaDespesa.clone();
+    	return null;
     }
     
     /**
@@ -259,12 +261,11 @@ public class Fatura implements Serializable{
      * Contribuintes do emitente e do cliente
      */
     public Fatura(ContribuinteEmpresarial emitente, LocalDateTime date, Contribuinte cliente,
-            String descricao, AtividadeEconomica naturezaDespesa, float despesa) {
+            String descricao, float despesa) {
         this.cliente= cliente.clone();
         this.emitente = emitente.clone();
         this.despesa = despesa;
         this.descricao = descricao;
-        this.naturezaDespesa = naturezaDespesa;
         this.dataDespesa = date;
     }
     

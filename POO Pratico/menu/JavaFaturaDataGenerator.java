@@ -73,6 +73,7 @@ public class JavaFaturaDataGenerator {
 			e.printStackTrace();
 		}
 	}
+	
 	public void addWitcher() {
 		Morada m = new Morada(1, new Pair<Integer,Integer>(4222, 123), newLocCentro("Kaer Morhen", 0.25));
 		ContribuinteIndividual witcher = new ContribuinteIndividual("Geralt",237313731,"whiteWolf@wolfSchool.com",m,"cirilla",0.2f);
