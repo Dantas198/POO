@@ -3,6 +3,7 @@ package contribuintes;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.ArrayList;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -143,10 +144,31 @@ public class Contribuintes implements Serializable{
     }
     
     /**
+     * Retorna uma copia do HashMap dos contribuintes
+     * */
+    public HashMap<Integer, Contribuinte> getContribuintes() {
+		HashMap<Integer,Contribuinte> res = new HashMap<>();
+		for(Contribuinte c : this.contribuintes.values()) {
+			res.put(c.getNif(),c.clone());
+		}
+		return res;
+	}
+    
+    /**
      * Construtor vazio
      */
     public Contribuintes() {
         contribuintes = new HashMap<Integer,Contribuinte>();
     }
+    
+    public Contribuintes(Contribuintes c) {
+		super();
+    	this.contribuintes = c.getContribuintes();
+	}
 
+
+	@Override
+    public Contribuintes clone(){
+    	return new Contribuintes(this);
+    }
 }

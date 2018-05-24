@@ -230,6 +230,7 @@ public class Menu implements Serializable
         
 
         
+
         if(this.loggedIn instanceof ContribuinteEmpresarial){
             fat = ((ContribuinteEmpresarial) this.loggedIn).emiteFatura(cliente, descricao, despesa);
         }

@@ -272,6 +272,12 @@ public class Faturas implements Serializable {
         return;
     }
     
+    public List<Pair<Integer,Pair<AtividadeEconomica,AtividadeEconomica>>> getChangestoFatura(int numfatura) {
+		List<Pair<Integer,Pair<AtividadeEconomica,AtividadeEconomica>>>res = new ArrayList<>();
+		this.correcoes.stream().filter(p -> p.getKey()==numfatura).forEach(p -> res.add(p));
+    	return res;
+	}
+    
     /**
      * @param c, contribuinte
      * @param numFatura, numero de cada fatura
@@ -353,6 +359,42 @@ public class Faturas implements Serializable {
     }
     
     /**
+     * Devolve um ArrayList com todas os pares numFatura, AtividadeAntiga -> Atividade nova
+     * */
+    private ArrayList<Pair<Integer, Pair<AtividadeEconomica, AtividadeEconomica>>> getCorrecoes() {
+		ArrayList<Pair<Integer, Pair<AtividadeEconomica, AtividadeEconomica>>> res = new ArrayList<>();
+		for (Pair<Integer, Pair<AtividadeEconomica, AtividadeEconomica>> pair : correcoes) {
+			AtividadeEconomica p1 = pair.getValue().getKey().clone();
+			AtividadeEconomica p2 = pair.getValue().getValue().clone();
+			Pair<Integer, Pair<AtividadeEconomica, AtividadeEconomica>> r= new Pair<>(pair.getKey(), new Pair<>(p1,p2));
+			res.add(r);
+		}
+		return res;
+	}
+
+    /**
+     * Devolve todas as faturas nao pendentes
+     * */
+	private HashMap<Integer, Fatura> getFaturasValidas() {
+		HashMap<Integer, Fatura> res = new HashMap<>();
+		for(Fatura f : this.faturas.values()) {
+			res.put(f.getNumFatura(), f.clone());
+		}
+		return res;
+	}
+	
+	/**
+     * Devolve todas as faturas pendentes
+     * */
+	private HashMap<Integer, Fatura> getFaturasPendentes() {
+		HashMap<Integer, Fatura> res = new HashMap<>();
+		for(Fatura f : this.faturasPendentes.values()) {
+			res.put(f.getNumFatura(), f.clone());
+		}
+		return res;
+	}
+	
+    /**
      * Construtor vazio de Faturas
      */
     public Faturas() {
@@ -361,5 +403,18 @@ public class Faturas implements Serializable {
         this.correcoes = new ArrayList<>();
         this.numFaturas = 0;
     }
-    
+
+    public Faturas(Faturas f) {
+    	super();
+		this.faturas = getFaturasPendentes();
+		this.faturasPendentes = getFaturasValidas();
+		this.correcoes = getCorrecoes();
+		this.numFaturas = getNumFaturas();
+	}
+
+    public Faturas clone() {
+		return new Faturas(this);
+	}
+	
+
 }

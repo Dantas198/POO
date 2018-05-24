@@ -16,7 +16,7 @@ public class JavaFaturaDataGenerator {
 	private Contribuintes c;
 	private Localidades l;
 	private Faturas f;
-	/*
+	
 	public Contribuintes getC() {
 		return c.clone();
 	}
@@ -35,7 +35,7 @@ public class JavaFaturaDataGenerator {
 	public void setF(Faturas f) {
 		this.f = f.clone();
 	}
-	*/
+	
 	private LocalidadeCentro newLocCentro(String nome,double d) {
 		LocalidadeCentro ls = new LocalidadeCentro(nome,  d);
 		this.l.addLocalidade(ls);
@@ -73,6 +73,7 @@ public class JavaFaturaDataGenerator {
 			e.printStackTrace();
 		}
 	}
+	
 	public void addWitcher() {
 		Morada m = new Morada(1, new Pair<Integer,Integer>(4222, 123), newLocCentro("Kaer Morhen", 0.25));
 		ContribuinteIndividual witcher = new ContribuinteIndividual("Geralt",237313731,"whiteWolf@wolfSchool.com",m,"cirilla",0.2f);

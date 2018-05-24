@@ -7,6 +7,13 @@ public class Localidades implements Serializable {
     private HashMap<String, Localidade> localidades;
     
     /**
+     * Adiciona uma localidade
+     */
+    public void addLocalidade(Localidade a) {
+        localidades.put(a.getLocalidade(), a.clone());
+    }
+    
+    /**
      * Construtor vazio
      */
     public Localidades(){
@@ -16,14 +23,15 @@ public class Localidades implements Serializable {
     /**
      * Construtor parametrizado
      */
-    public Localidades(HashMap<String, Localidade> localidades){
-        this.localidades = localidades;
+    public Localidades(HashMap<String, Localidade> loc){
+        super();
+    	for (Localidade l : loc.values()) {
+			this.localidades.put(l.getLocalidade(), l.clone());
+		}
     }
     
-    /**
-     * Adiciona uma localidade
-     */
-    public void addLocalidade(Localidade a) {
-        localidades.put(a.getLocalidade(), a.clone());
-        }
+    public Localidades clone() {
+    	return new Localidades(this.localidades);
+    }
+    
 }
