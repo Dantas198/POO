@@ -1,15 +1,15 @@
 #BlueJ package file
-dependency1.from=ContribuinteEmpresarial
-dependency1.to=ContribuinteIndividual
+dependency1.from=Contribuintes
+dependency1.to=Contribuinte
 dependency1.type=UsesDependency
-dependency2.from=ContribuinteIndividual
-dependency2.to=Contribuinte
+dependency2.from=Contribuintes
+dependency2.to=ContribuinteEmpresarial
 dependency2.type=UsesDependency
-dependency3.from=Contribuintes
+dependency3.from=ContribuinteIndividual
 dependency3.to=Contribuinte
 dependency3.type=UsesDependency
-dependency4.from=Contribuintes
-dependency4.to=ContribuinteEmpresarial
+dependency4.from=ContribuinteEmpresarial
+dependency4.to=Contribuinte
 dependency4.type=UsesDependency
 objectbench.height=93
 objectbench.width=776
