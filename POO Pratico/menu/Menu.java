@@ -48,10 +48,7 @@ public class Menu implements Serializable
 {   
     private Faturas f;
     private Contribuintes c;
-    
     private Contribuinte loggedIn;
-    //private LocalDateTime start;
-    //private LocalDateTime end;
     
     public void saveMenu(String filepath) throws FileNotFoundException, IOException, ClassNotFoundException{
         FileOutputStream fos = new FileOutputStream(new File(filepath));
@@ -74,10 +71,10 @@ public class Menu implements Serializable
          return -1;
     }
     
-    /*
+    
     private int ver10ContribuintesMaisDispendiosos(){
         System.out.println("Os contribuintes com mais depesas:");
-        List<Pair<Integer, Float>> osDez = f.getMostDespesa(10, ContriBuinte;
+        List<Pair<Integer, Float>> osDez = f.getMostDespesa(10, ContriBuinte);
 
         for(Pair<Integer, Float> despesa : osDez){
             List<Fatura> lFaturas = f.getFaturasFromEmitente(despesa.getKey());
@@ -85,14 +82,14 @@ public class Menu implements Serializable
             System.out.println("Nif: "+ despesa.getKey() + " -> Despesa:" + despesa.getValue() + " Deduçao Fiscal:" + deducao);
         }  
         return menuAdmin();
-    }*/
+    }
     
     
     //Ainda por acabar ( falta colocar as deduçoes discais)
     private int verEmpresasMaisFaturadas(){
         System.out.println("As empresas que mais faturam:");
         int x = (int) getInfo("Introduza o numero de empresas que quer ver", Integer.class);
-        List<ContribuinteEmpresarial> empresas = c.getXMostFaturas(x);
+        List<ContribuinteEmpresarial> empresas = c.getXMostFaturado(x);
         for(ContribuinteEmpresarial c : empresas)
             System.out.println(c.getNome() + " - " + c.getCountFaturas() + " Faturas");
         
@@ -265,8 +262,8 @@ public class Menu implements Serializable
     
     
     private int verFaturasPeloTempo(){
-        LocalDateTime start = (LocalDateTime) getInfo("Introduza a data inicial \"dd/MM/YYYY\"", LocalDateTime.class);
-        LocalDateTime end = (LocalDateTime) getInfo("Introduza a data inicial \"dd/MM/YYYY\"", LocalDateTime.class);
+        LocalDateTime start = (LocalDateTime) getInfo("Introduza a data inicial \"YYYY-MM-dd\"", LocalDateTime.class);
+        LocalDateTime end = (LocalDateTime) getInfo("Introduza a data inicial \"YYYY-MM-dd\"", LocalDateTime.class);
         
         List<Fatura> faturasPeloTempo = f.getFaturasFromEmitenteBetweenDate(this.loggedIn.getNif(), start, end);
         for(Fatura fatura : faturasPeloTempo)
@@ -276,7 +273,7 @@ public class Menu implements Serializable
     }
     
     private int VerFaturasPorContribuinte(){
-        List<Fatura> faturas = f.getFaturasByValorDecrescente(this.loggedIn.getNif());
+        List<Fatura> faturas = f.getFaturasByValorDecrescente((ContribuinteEmpresarial) this.loggedIn);
         for(Fatura fatura : faturas)
             System.out.println(fatura.toString());
         
@@ -284,7 +281,11 @@ public class Menu implements Serializable
     }
     
     private int verTotalFaturadoPeloTempo(){
+        LocalDateTime start = (LocalDateTime) getInfo("Introduza a data inicial \"YYYY-MM-dd\"", LocalDateTime.class);
+        LocalDateTime end = (LocalDateTime) getInfo("Introduza a data inicial \"YYYY-MM-dd\"", LocalDateTime.class);
         
+        float totalFaturado = f.totalFaturado((ContribuinteEmpresarial) this.loggedIn, start, end);
+        System.out.println("Total faturado de " + start.toString() + " a " + end.toString() + " - " + totalFaturado);
         
         return menuContrEmpr();
     }
