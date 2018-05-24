@@ -207,7 +207,7 @@ public class Faturas implements Serializable {
      * Devolve uma lista com os contribuintes com mais despesas.
      * @returns Lista<Pair<nif, despesa>>
      */
-    public List<Pair<Integer, Float>> getMostSpenders(int x, int type){
+    public List<Pair<Integer, Float>> getMostSpenders(int x){
         HashMap<Integer, Pair <Integer,Float>> tmp = new HashMap<>();
         
         makeHashMostSpender(tmp, this.faturas);

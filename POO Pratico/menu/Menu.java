@@ -74,7 +74,7 @@ public class Menu implements Serializable
     
     private int ver10ContribuintesMaisDispendiosos(){
         System.out.println("Os contribuintes com mais depesas:");
-        List<Pair<Integer, Float>> osDez = f.getMostDespesa(10, ContriBuinte);
+        List<Pair<Integer, Float>> osDez = f.getMostSpenders(10);
 
         for(Pair<Integer, Float> despesa : osDez){
             List<Fatura> lFaturas = f.getFaturasFromEmitente(despesa.getKey());
@@ -108,7 +108,7 @@ public class Menu implements Serializable
         menuString.add("Ver as empresas que faturam mais e as sua deduçao fiscal");
         menuString.add("Log out");
         
-       // toRun.add(this::ver10ContribuintesMaisDispendiosos);
+        toRun.add(this::ver10ContribuintesMaisDispendiosos);
         toRun.add(this::verEmpresasMaisFaturadas);
         toRun.add(this::menuAdmin);
         
@@ -362,12 +362,13 @@ public class Menu implements Serializable
      * Constroi o menu de registo de um contribuinte empresarial
      */
     private int registerMenuContrEmpr(){
+        AtividadeEconomica ae = new AtividadeEconomica();
         ContribuinteEmpresarial contr = new ContribuinteEmpresarial();
         contr.setNif((int) getInfo("Introduza o Nif", Integer.class));
         contr.setNome((String) getInfo("Introduza o Nome", String.class));
         contr.setEmail((String) getInfo("Introduza o Email", String.class));
-        contr.setPassword((String) getInfo("Introduza a sua palavra-passe", String.class));
         contr.setMorada(moradaMenu());
+        contr.setPassword((String) getInfo("Introduza a sua palavra-passe", String.class));
         try{
             if(c.existeContribuinte(contr))
                 System.out.println("User already exists");

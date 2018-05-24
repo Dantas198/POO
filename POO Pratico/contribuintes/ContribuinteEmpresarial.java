@@ -44,6 +44,10 @@ public class ContribuinteEmpresarial extends Contribuinte implements Serializabl
             this.atividadesEmpresa.put(v.getNomeAtividade(), v.clone());
     }
     
+    private void addAtividadeEmpresa(String descricao, AtividadeEconomica ae){
+        this.atividadesEmpresa.put(descricao, ae.clone());
+    }
+    
     /**
      * Devolve as atividades economicas de uma empresa
      * @returns Map de atividadesEconomicas
