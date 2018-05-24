@@ -16,7 +16,7 @@ public class JavaFaturaDataGenerator {
 	private Contribuintes c;
 	private Localidades l;
 	private Faturas f;
-	/*
+	
 	public Contribuintes getC() {
 		return c.clone();
 	}
@@ -35,7 +35,7 @@ public class JavaFaturaDataGenerator {
 	public void setF(Faturas f) {
 		this.f = f.clone();
 	}
-	*/
+	
 	private LocalidadeCentro newLocCentro(String nome,double d) {
 		LocalidadeCentro ls = new LocalidadeCentro(nome,  d);
 		this.l.addLocalidade(ls);

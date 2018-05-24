@@ -254,7 +254,7 @@ public class Fatura implements Serializable{
      */
     public Fatura(Fatura f) {
         this.cliente = f.getCliente();
-        this.emitente = this.getEmitente();
+        this.emitente = f.getEmitente();
         this.despesa = f.getDespesa();
         this.descricao = f.getDescricao();
         this.naturezaDespesa = f.getNaturezaDespesa();
