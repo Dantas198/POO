@@ -30,6 +30,17 @@ public class Faturas implements Serializable {
     private ArrayList<Pair<Integer,Pair<AtividadeEconomica,AtividadeEconomica>>> correcoes;
     private int numFaturas;
     
+    
+    public static String listToString(List<?> list) {
+    String result = "////////////////////////////////////\n";
+    for (int i = 0; i < list.size(); i++) {
+        result += list.get(i).toString();
+        result += "////////////////////////////////////\n";
+    }
+    return result;
+}
+    
+    
     /**
      * Devolve o número associado a uma determinada fatura.
      */
@@ -154,7 +165,7 @@ public class Faturas implements Serializable {
             }
         return count;
     }       
-        
+
     
     /**
      * Devolve uma lista com as faturas que o cliente e a empresa tem em comum
@@ -339,7 +350,6 @@ public class Faturas implements Serializable {
         x.sort(Comparator.comparing(Fatura::getNifCliente)
                          .thenComparing(Fatura::getDespesa).reversed()); 
         return x;
-    
     }
     
     /**
@@ -351,4 +361,5 @@ public class Faturas implements Serializable {
         this.correcoes = new ArrayList<>();
         this.numFaturas = 0;
     }
+    
 }
