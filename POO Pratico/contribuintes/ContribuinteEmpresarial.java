@@ -26,6 +26,7 @@ public class ContribuinteEmpresarial extends Contribuinte implements Serializabl
         super();
         this.atividadesEmpresa = new HashMap<String, AtividadeEconomica>();
         this.countFaturas = 0;
+        this.lucro = 0;
     }
     
     /**
@@ -33,8 +34,10 @@ public class ContribuinteEmpresarial extends Contribuinte implements Serializabl
      */
     public ContribuinteEmpresarial(ContribuinteEmpresarial c) {
         super(c);
+        this.atividadesEmpresa = new HashMap<String, AtividadeEconomica>();
         this.setAtividadesEmpresa(c.getAtividadesEmpresa());
         this.countFaturas = c.getCountFaturas();
+        this.lucro = c.getLucro();
     }
     
     /**
@@ -44,6 +47,11 @@ public class ContribuinteEmpresarial extends Contribuinte implements Serializabl
     public void setAtividadesEmpresa(Map<String, AtividadeEconomica> a) {
         for(AtividadeEconomica v : a.values())
             this.atividadesEmpresa.put(v.getNomeAtividade(), v.clone());
+    }
+    
+    public void addAtividadeEmpresa(AtividadeEconomica ae){
+        if(!this.atividadesEmpresa.containsKey(ae.getNomeAtividade()))
+            this.atividadesEmpresa.put(ae.getNomeAtividade() , ae.clone());
     }
     
     /**
@@ -59,11 +67,11 @@ public class ContribuinteEmpresarial extends Contribuinte implements Serializabl
     }
     
     public List<AtividadeEconomica> getListAtividadesEmpresa() {
-		ArrayList<AtividadeEconomica> res = new ArrayList<>(); 
-		for(AtividadeEconomica a : this.atividadesEmpresa.values())
-			res.add(a);
-		return res;
-	}
+        ArrayList<AtividadeEconomica> res = new ArrayList<>(); 
+        for(AtividadeEconomica a : this.atividadesEmpresa.values())
+            res.add(a);
+        return res;
+    }
     /**
      * Devolve o contador de faturas emitidas pela empresa
      */
@@ -93,7 +101,7 @@ public class ContribuinteEmpresarial extends Contribuinte implements Serializabl
      * @returns res, a fatura emitida
      */
     public Fatura emiteFatura(Contribuinte cliente,String descricao,float despesa) {
-        Fatura res = new Fatura(this, LocalDateTime.now(), cliente, descricao, null, despesa);
+        Fatura res = new Fatura(this, LocalDateTime.now(), cliente, descricao, despesa);
         if(atividadesEmpresa.size()==1) {
             //Garantimos que nao ocorre excessao
             AtividadeEconomica a = atividadesEmpresa.values().stream().findFirst().get();

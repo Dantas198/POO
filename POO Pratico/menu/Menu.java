@@ -22,7 +22,7 @@ import java.util.regex.Pattern;
 import java.time.format.DateTimeParseException;
 import java.time.LocalTime;
 
-import atividadesEconomicas.AtividadeEconomica;
+import atividadesEconomicas.*;
 import fatura.Fatura;
 import fatura.Faturas;
 import contribuintes.Contribuinte;
@@ -46,12 +46,11 @@ import exceptions.ContribuinteDoesntExistException;
  */
 public class Menu implements Serializable
 {   
+    private static List<AtividadeEconomica> atividadesEconomicasPossiveis;
+    
     private Faturas f;
     private Contribuintes c;
-    
     private Contribuinte loggedIn;
-    //private LocalDateTime start;
-    //private LocalDateTime end;
     
     public void saveMenu(String filepath) throws FileNotFoundException, IOException, ClassNotFoundException{
         FileOutputStream fos = new FileOutputStream(new File(filepath));
@@ -74,10 +73,10 @@ public class Menu implements Serializable
          return -1;
     }
     
-    /*
+    
     private int ver10ContribuintesMaisDispendiosos(){
         System.out.println("Os contribuintes com mais depesas:");
-        List<Pair<Integer, Float>> osDez = f.getMostDespesa(10, ContriBuinte;
+        List<Pair<Integer, Float>> osDez = f.getMostSpenders(10);
 
         for(Pair<Integer, Float> despesa : osDez){
             List<Fatura> lFaturas = f.getFaturasFromEmitente(despesa.getKey());
@@ -85,16 +84,16 @@ public class Menu implements Serializable
             System.out.println("Nif: "+ despesa.getKey() + " -> Despesa:" + despesa.getValue() + " Deduçao Fiscal:" + deducao);
         }  
         return menuAdmin();
-    }*/
+    }
     
     
     //Ainda por acabar ( falta colocar as deduçoes discais)
     private int verEmpresasMaisFaturadas(){
         System.out.println("As empresas que mais faturam:");
         int x = (int) getInfo("Introduza o numero de empresas que quer ver", Integer.class);
-        List<ContribuinteEmpresarial> empresas = c.getXMostFaturas(x);
-        for(ContribuinteEmpresarial c : empresas)
-            System.out.println(c.getNome() + " - " + c.getCountFaturas() + " Faturas");
+        List<Pair<Integer, Float>> empresas = f.getMostSpenders(x);
+        for(Pair<Integer, Float> p : empresas)
+            System.out.println("Nif: " + p.getKey() + " - " + p.getValue() + " faturado");
         
         return menuAdmin();
     }
@@ -111,7 +110,7 @@ public class Menu implements Serializable
         menuString.add("Ver as empresas que faturam mais e as sua deduçao fiscal");
         menuString.add("Log out");
         
-       // toRun.add(this::ver10ContribuintesMaisDispendiosos);
+        toRun.add(this::ver10ContribuintesMaisDispendiosos);
         toRun.add(this::verEmpresasMaisFaturadas);
         toRun.add(this::menuAdmin);
         
@@ -215,7 +214,7 @@ public class Menu implements Serializable
     private int criarFatura(){
         Fatura fat;
         Contribuinte cliente;
-        AtividadeEconomica ae = new AtividadeEconomica();
+        AtividadeEconomica ae;
         
         System.out.println("Criando uma nova fatura");
         try{
@@ -226,13 +225,15 @@ public class Menu implements Serializable
         }
         String descricao = (String) getInfo("Introduza a descricao da fatura", String.class);
         float despesa = (int) getInfo("Introduza a despesa", Integer.class);
-        ae.setNomeAtividade((String) getInfo("Introduza a atividade", String.class));
-        ae.setCoef((float) getInfo("Introduza o coeficiente da atividade", Float.class));
+        
+        
+        
 
         
-        if(this.loggedIn instanceof ContribuinteEmpresarial)
-            fat = new Fatura((ContribuinteEmpresarial) this.loggedIn, 
-                LocalDateTime.now(), cliente, descricao, ae, despesa);
+
+        if(this.loggedIn instanceof ContribuinteEmpresarial){
+            fat = ((ContribuinteEmpresarial) this.loggedIn).emiteFatura(cliente, descricao, despesa);
+        }
         else{
             System.out.println("You don't have permission to create a new Fatura");
             return welcomeMenu();
@@ -243,6 +244,7 @@ public class Menu implements Serializable
             System.out.println("Fatura inserida - " + f.getNumFaturas());
         } catch (Exception e){
             System.out.println("Couldn't insert Fatura" + e.getMessage());
+            e.printStackTrace(System.out);
         }
         
         return menuContrEmpr();
@@ -256,7 +258,7 @@ public class Menu implements Serializable
         ArrayList<Callable<Integer>> toRun = new ArrayList<>();
         List<Fatura> faturas = f.getFaturasFromEmitente(this.loggedIn.getNif());
         
-        System.out.println(faturas.toString());
+        System.out.println(f.listToString(faturas));
         menuString.add("Retroceder");
         toRun.add(this::menuContrEmpr);
         
@@ -265,8 +267,8 @@ public class Menu implements Serializable
     
     
     private int verFaturasPeloTempo(){
-        LocalDateTime start = (LocalDateTime) getInfo("Introduza a data inicial \"dd/MM/YYYY\"", LocalDateTime.class);
-        LocalDateTime end = (LocalDateTime) getInfo("Introduza a data inicial \"dd/MM/YYYY\"", LocalDateTime.class);
+        LocalDateTime start = (LocalDateTime) getInfo("Introduza a data inicial \"YYYY-MM-dd\"", LocalDateTime.class);
+        LocalDateTime end = (LocalDateTime) getInfo("Introduza a data inicial \"YYYY-MM-dd\"", LocalDateTime.class);
         
         List<Fatura> faturasPeloTempo = f.getFaturasFromEmitenteBetweenDate(this.loggedIn.getNif(), start, end);
         for(Fatura fatura : faturasPeloTempo)
@@ -284,7 +286,11 @@ public class Menu implements Serializable
     }
     
     private int verTotalFaturadoPeloTempo(){
+        LocalDateTime start = (LocalDateTime) getInfo("Introduza a data inicial \"YYYY-MM-dd\"", LocalDateTime.class);
+        LocalDateTime end = (LocalDateTime) getInfo("Introduza a data inicial \"YYYY-MM-dd\"", LocalDateTime.class);
         
+        float totalFaturado = f.totalFaturado((ContribuinteEmpresarial) this.loggedIn, start, end);
+        System.out.println("Total faturado de " + start.toString() + " a " + end.toString() + " - " + totalFaturado);
         
         return menuContrEmpr();
     }
@@ -361,18 +367,27 @@ public class Menu implements Serializable
      * Constroi o menu de registo de um contribuinte empresarial
      */
     private int registerMenuContrEmpr(){
+        AtividadeEconomica ae;
         ContribuinteEmpresarial contr = new ContribuinteEmpresarial();
         contr.setNif((int) getInfo("Introduza o Nif", Integer.class));
         contr.setNome((String) getInfo("Introduza o Nome", String.class));
         contr.setEmail((String) getInfo("Introduza o Email", String.class));
-        contr.setPassword((String) getInfo("Introduza a sua palavra-passe", String.class));
         contr.setMorada(moradaMenu());
+       
+        ae = menuAtividadesEconomicas(this.atividadesEconomicasPossiveis);
+        contr.addAtividadeEmpresa(ae);
+        while((boolean) getInfo("Quer introduzir mais atividades economicas?", Boolean.class)){
+            ae = menuAtividadesEconomicas(this.atividadesEconomicasPossiveis);
+            contr.addAtividadeEmpresa(ae);
+        }
+        contr.setPassword((String) getInfo("Introduza a sua palavra-passe", String.class));
         try{
             if(c.existeContribuinte(contr))
                 System.out.println("User already exists");
             else c.addContribuinte(contr);
         } catch (NullPointerException e){
             System.out.println("Couldn't register Contribuinte");
+            e.printStackTrace(System.out);
         }
         return welcomeMenu();
     }
@@ -593,7 +608,42 @@ public class Menu implements Serializable
         } while(true);
     }
     
+    private AtividadeEconomica menuAtividadesEconomicas(List<AtividadeEconomica> aes){
+        int i = 1, op = aes.size() + 1;
+        System.out.println("Escolha a atividade economica desejada: ");
+        for(AtividadeEconomica ae : aes){
+            System.out.println( i + "-" + ae.getNomeAtividade());
+            i++;
+        }
+        Scanner s = new Scanner(System.in);
+        while(op < 0 || op > aes.size()){
+            try{
+                op = s.nextInt();
+            } catch (InputMismatchException e){
+                System.out.println("Escoolha um numero entre 1 e " + aes.size());
+            }
+        }
+        s.close();
+        return aes.get(op-1);
+    }
+    
+    private void initAtividadesEconomicasPossiveis(){
+        this.atividadesEconomicasPossiveis = new ArrayList<>();
+        this.atividadesEconomicasPossiveis.add(new Saude());
+        this.atividadesEconomicasPossiveis.add(new Educacao());
+        this.atividadesEconomicasPossiveis.add(new DespesasGeraisFamiliares());
+        this.atividadesEconomicasPossiveis.add(new Restauracao());
+        this.atividadesEconomicasPossiveis.add(new PassesTransportes());
+        this.atividadesEconomicasPossiveis.add(new Veterinario());
+        this.atividadesEconomicasPossiveis.add(new Imoveis());
+        this.atividadesEconomicasPossiveis.add(new Lares());
+        this.atividadesEconomicasPossiveis.add(new CabeleiroBeleza());
+        this.atividadesEconomicasPossiveis.add(new ReparacaoManutencaoMotociclos());
+        this.atividadesEconomicasPossiveis.add(new ReparacaoManutencaoVeiculos());
+    }
+    
     public void run(){
+        initAtividadesEconomicasPossiveis();
         welcomeMenu();
     }
     

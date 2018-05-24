@@ -31,6 +31,17 @@ public class Faturas implements Serializable {
     private ArrayList<Pair<Integer,Pair<AtividadeEconomica,AtividadeEconomica>>> correcoes;
     private int numFaturas;
     
+    
+    public static String listToString(List<?> list) {
+    String result = "////////////////////////////////////\n";
+    for (int i = 0; i < list.size(); i++) {
+        result += list.get(i).toString();
+        result += "////////////////////////////////////\n";
+    }
+    return result;
+}
+    
+    
     /**
      * Devolve o número associado a uma determinada fatura.
      */
@@ -158,10 +169,44 @@ public class Faturas implements Serializable {
             }
         return count;
     }       
+<<<<<<< HEAD
         
     /**
       * Devolve um HashMap temporario com pares de nif e despesa desse contribuinte, caso queiramos
       * ir buscar os gastos de um contribuinte
+=======
+
+    
+    /**
+     * Devolve uma lista com as faturas que o cliente e a empresa tem em comum
+     */
+    public List<Fatura> getFaturasFromEmpresa(int nifCliente, int nifEmpresa){
+        return this.getFaturasFromContribuinte(nifCliente).stream().filter(f -> f.getEmitente().getNif() == nifEmpresa).collect(Collectors.toList());
+    }
+    
+     /**
+     * Devolve um HashMap temporário com pares de nif e despesa desse contribuinte, caso queiramos
+     * ir buscar a despesa de um contribuinte individual
+     */
+    public void makeHashIndividual(HashMap<Integer, Pair <Integer,Float>> tmp){
+        for(Fatura a : faturas.values()){
+            if(a.isClientIndividual()){
+                int nif = a.getNifCliente();
+                float despesa = a.getDespesa();
+                if(tmp.containsKey(nif)){
+                    Pair <Integer, Float> older = tmp.get(nif);
+                    despesa += older.getValue();
+                 }
+                else {
+                    Pair <Integer, Float> newer = new Pair <Integer, Float>(nif, despesa);
+                    tmp.put(nif,newer);}  
+        }}
+     }
+     
+     /**
+      * Devolve um HashMap temporário com pares de nif e despesa desse contribuinte, caso queiramos
+      * ir buscar a faturacao de uma impresa
+>>>>>>> 21b1831c6d930ddb47bc45089323aaf833a843e4
       */
     public void makeHashMostSpender(HashMap<Integer, Pair <Integer,Float>> tmp, HashMap<Integer, Fatura> faturas){
        for(Fatura a : faturas.values()){
@@ -184,7 +229,11 @@ public class Faturas implements Serializable {
      * Devolve uma lista com os contribuintes com mais despesas.
      * @returns Lista<Pair<nif, despesa>>
      */
+<<<<<<< HEAD
     public List<Pair<Integer, Float>> getMostSpenders(int x) throws FaturaListException{
+=======
+    public List<Pair<Integer, Float>> getMostSpenders(int x){
+>>>>>>> 21b1831c6d930ddb47bc45089323aaf833a843e4
         HashMap<Integer, Pair <Integer,Float>> tmp = new HashMap<>();
         
         makeHashMostSpender(tmp, this.faturas);
@@ -242,6 +291,12 @@ public class Faturas implements Serializable {
         //f.setDeducaoGlobal(c);
         return;
     }
+    
+    public List<Pair<Integer,Pair<AtividadeEconomica,AtividadeEconomica>>> getChangestoFatura(int numfatura) {
+		List<Pair<Integer,Pair<AtividadeEconomica,AtividadeEconomica>>>res = new ArrayList<>();
+		this.correcoes.stream().filter(p -> p.getKey()==numfatura).forEach(p -> res.add(p));
+    	return res;
+	}
     
     /**
      * @param c, contribuinte
@@ -339,6 +394,42 @@ public class Faturas implements Serializable {
     }
     
     /**
+     * Devolve um ArrayList com todas os pares numFatura, AtividadeAntiga -> Atividade nova
+     * */
+    private ArrayList<Pair<Integer, Pair<AtividadeEconomica, AtividadeEconomica>>> getCorrecoes() {
+		ArrayList<Pair<Integer, Pair<AtividadeEconomica, AtividadeEconomica>>> res = new ArrayList<>();
+		for (Pair<Integer, Pair<AtividadeEconomica, AtividadeEconomica>> pair : correcoes) {
+			AtividadeEconomica p1 = pair.getValue().getKey().clone();
+			AtividadeEconomica p2 = pair.getValue().getValue().clone();
+			Pair<Integer, Pair<AtividadeEconomica, AtividadeEconomica>> r= new Pair<>(pair.getKey(), new Pair<>(p1,p2));
+			res.add(r);
+		}
+		return res;
+	}
+
+    /**
+     * Devolve todas as faturas nao pendentes
+     * */
+	private HashMap<Integer, Fatura> getFaturasValidas() {
+		HashMap<Integer, Fatura> res = new HashMap<>();
+		for(Fatura f : this.faturas.values()) {
+			res.put(f.getNumFatura(), f.clone());
+		}
+		return res;
+	}
+	
+	/**
+     * Devolve todas as faturas pendentes
+     * */
+	private HashMap<Integer, Fatura> getFaturasPendentes() {
+		HashMap<Integer, Fatura> res = new HashMap<>();
+		for(Fatura f : this.faturasPendentes.values()) {
+			res.put(f.getNumFatura(), f.clone());
+		}
+		return res;
+	}
+	
+    /**
      * Construtor vazio de Faturas
      */
     public Faturas() {
@@ -347,4 +438,18 @@ public class Faturas implements Serializable {
         this.correcoes = new ArrayList<>();
         this.numFaturas = 0;
     }
+
+    public Faturas(Faturas f) {
+    	super();
+		this.faturas = getFaturasPendentes();
+		this.faturasPendentes = getFaturasValidas();
+		this.correcoes = getCorrecoes();
+		this.numFaturas = getNumFaturas();
+	}
+
+    public Faturas clone() {
+		return new Faturas(this);
+	}
+	
+
 }

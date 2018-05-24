@@ -6,9 +6,11 @@ import contribuintes.ContribuinteEmpresarial;
 import contribuintes.ContribuinteIndividual;
 
 
+
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.lang.StringBuilder; 
 
 import atividadesEconomicas.AtividadeEconomica;
 
@@ -72,8 +74,8 @@ public class Fatura implements Serializable{
      * Devolve uma lista com as atividades economicas da empresa
      * */
     public List<AtividadeEconomica> getNaturezasPossiveis() {
-		return this.emitente.getListAtividadesEmpresa();
-	}
+        return this.emitente.getListAtividadesEmpresa();
+    }
     /** 
      * Devolve copia do Emitente quando a fatura foi criada
      * 
@@ -170,7 +172,9 @@ public class Fatura implements Serializable{
      * @returns naturezaDespesa
      */
     public AtividadeEconomica getNaturezaDespesa() {
-        return naturezaDespesa.clone();
+    	if(this.naturezaDespesa != null)
+    		return naturezaDespesa.clone();
+    	return null;
     }
     
     /**
@@ -226,15 +230,15 @@ public class Fatura implements Serializable{
     public float getValorDeduzivel() {
         double deduzivel = 0;
         if (cliente instanceof BeneficioFiscal) {
-			BeneficioFiscal n = (BeneficioFiscal) cliente;
-			deduzivel = n.reducaoImposto();			
-		}
+            BeneficioFiscal n = (BeneficioFiscal) cliente;
+            deduzivel = n.reducaoImposto();         
+        }
         if (cliente instanceof ContribuinteIndividual) {
-			ContribuinteIndividual n2 = (ContribuinteIndividual) cliente;
-			if(n2.isActDeduzivel(this.naturezaDespesa))
-				deduzivel += this.naturezaDespesa.getCoef();
-			deduzivel += n2.getCoefFiscal();
-		}
+            ContribuinteIndividual n2 = (ContribuinteIndividual) cliente;
+            if(n2.isActDeduzivel(this.naturezaDespesa))
+                deduzivel += this.naturezaDespesa.getCoef();
+            deduzivel += n2.getCoefFiscal();
+        }
         float res = this.despesa * (float)deduzivel;
         return res;
     }
@@ -252,7 +256,7 @@ public class Fatura implements Serializable{
      */
     public Fatura(Fatura f) {
         this.cliente = f.getCliente();
-        this.emitente = this.getEmitente();
+        this.emitente = f.getEmitente();
         this.despesa = f.getDespesa();
         this.descricao = f.getDescricao();
         this.naturezaDespesa = f.getNaturezaDespesa();
@@ -265,12 +269,11 @@ public class Fatura implements Serializable{
      * Contribuintes do emitente e do cliente
      */
     public Fatura(ContribuinteEmpresarial emitente, LocalDateTime date, Contribuinte cliente,
-            String descricao, AtividadeEconomica naturezaDespesa, float despesa) {
+            String descricao, float despesa) {
         this.cliente= cliente.clone();
         this.emitente = emitente.clone();
         this.despesa = despesa;
         this.descricao = descricao;
-        this.naturezaDespesa = naturezaDespesa;
         this.dataDespesa = date;
     }
     
@@ -279,5 +282,17 @@ public class Fatura implements Serializable{
      */
     public Fatura clone() {
         return new Fatura(this);
+    }
+    
+    public String toString(){
+        StringBuilder sb = new StringBuilder();
+        sb.append("Numero de fatura: " + this.getNumFatura() + " - " + this.getDataDespesa() + "\n");
+        sb.append("Nif emitente : " + this.getEmitente().getNif() + "\n");
+        sb.append("Nif cliente : " + this.getCliente().getNif() + "\n");
+        sb.append("Descricao: " + this.getDescricao() + "\n");
+        sb.append("Despesa : " + this.getDespesa() + "\n");
+        if(this.getNaturezaDespesa() != null)
+            sb.append("Natureza da despesa: " + this.getNaturezaDespesa() + "\n");
+        return sb.toString();
     }
 }

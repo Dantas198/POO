@@ -1,4 +1,5 @@
 #BlueJ package file
+<<<<<<< HEAD
 objectbench.height=152
 objectbench.width=1342
 package.divider.horizontal=0.6
@@ -9,6 +10,18 @@ package.editor.x=-8
 package.editor.y=-8
 package.frame.height=744
 package.frame.width=1382
+=======
+objectbench.height=197
+objectbench.width=1342
+package.divider.horizontal=0.6
+package.divider.vertical=0.6856702619414484
+package.editor.height=438
+package.editor.width=1236
+package.editor.x=0
+package.editor.y=0
+package.frame.height=741
+package.frame.width=1366
+>>>>>>> 21b1831c6d930ddb47bc45089323aaf833a843e4
 package.numDependencies=0
 package.numTargets=12
 package.showExtends=true
@@ -22,34 +35,58 @@ target1.height=50
 target1.name=Restauracao
 target1.showInterface=false
 target1.type=ClassTarget
+<<<<<<< HEAD
 target1.width=100
 target1.x=10
 target1.y=340
+=======
+target1.width=120
+target1.x=550
+target1.y=180
+>>>>>>> 21b1831c6d930ddb47bc45089323aaf833a843e4
 target10.height=50
 target10.name=Educacao
 target10.showInterface=false
 target10.type=ClassTarget
+<<<<<<< HEAD
 target10.width=80
 target10.x=50
 target10.y=220
+=======
+target10.width=100
+target10.x=10
+target10.y=210
+>>>>>>> 21b1831c6d930ddb47bc45089323aaf833a843e4
 target11.height=50
 target11.name=Veterinario
 target11.showInterface=false
 target11.type=ClassTarget
+<<<<<<< HEAD
 target11.width=90
 target11.x=190
 target11.y=150
+=======
+target11.width=110
+target11.x=120
+target11.y=220
+>>>>>>> 21b1831c6d930ddb47bc45089323aaf833a843e4
 target12.height=50
 target12.name=Imoveis
 target12.showInterface=false
 target12.type=ClassTarget
 target12.width=80
+<<<<<<< HEAD
 target12.x=180
 target12.y=10
+=======
+target12.x=20
+target12.y=290
+>>>>>>> 21b1831c6d930ddb47bc45089323aaf833a843e4
 target2.height=50
 target2.name=DespesasGeraisFamiliares
 target2.showInterface=false
 target2.type=ClassTarget
+<<<<<<< HEAD
 target2.width=180
 target2.x=240
 target2.y=90
@@ -67,10 +104,30 @@ target4.type=ClassTarget
 target4.width=140
 target4.x=10
 target4.y=280
+=======
+target2.width=220
+target2.x=190
+target2.y=290
+target3.height=50
+target3.name=PassesTransportes
+target3.showInterface=false
+target3.type=ClassTarget
+target3.width=170
+target3.x=240
+target3.y=190
+target4.height=50
+target4.name=ReparacaoManutencaoMotociclos
+target4.showInterface=false
+target4.type=ClassTarget
+target4.width=280
+target4.x=400
+target4.y=90
+>>>>>>> 21b1831c6d930ddb47bc45089323aaf833a843e4
 target5.height=50
 target5.name=ReparacaoManutencaoVeiculos
 target5.showInterface=false
 target5.type=ClassTarget
+<<<<<<< HEAD
 target5.width=220
 target5.x=410
 target5.y=110
@@ -88,17 +145,48 @@ target7.type=ClassTarget
 target7.width=80
 target7.x=130
 target7.y=300
+=======
+target5.width=260
+target5.x=440
+target5.y=290
+target6.height=50
+target6.name=Lares
+target6.showInterface=false
+target6.type=ClassTarget
+target6.width=80
+target6.x=10
+target6.y=370
+target7.height=50
+target7.name=Saude
+target7.showInterface=false
+target7.type=ClassTarget
+target7.width=80
+target7.x=620
+target7.y=40
+>>>>>>> 21b1831c6d930ddb47bc45089323aaf833a843e4
 target8.height=50
 target8.name=AtividadeEconomica
 target8.showInterface=false
 target8.type=ClassTarget
+<<<<<<< HEAD
 target8.width=150
 target8.x=30
 target8.y=130
+=======
+target8.width=180
+target8.x=10
+target8.y=90
+>>>>>>> 21b1831c6d930ddb47bc45089323aaf833a843e4
 target9.height=50
 target9.name=CabeleiroBeleza
 target9.showInterface=false
 target9.type=ClassTarget
+<<<<<<< HEAD
 target9.width=120
 target9.x=120
 target9.y=360
+=======
+target9.width=140
+target9.x=100
+target9.y=370
+>>>>>>> 21b1831c6d930ddb47bc45089323aaf833a843e4

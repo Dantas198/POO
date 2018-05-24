@@ -3,7 +3,7 @@ package atividadesEconomicas;
 public class Educacao extends AtividadeEconomica {
 
 	public Educacao() {
-		this.setNomeAtividade("Educação");
+		this.setNomeAtividade(new String("Educacao"));
 		this.setCoef((float) 0.30);
 	}
 
