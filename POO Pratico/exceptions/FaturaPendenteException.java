@@ -1,4 +1,4 @@
-package exceptions;
+ 
 
 public class FaturaPendenteException extends Exception {
 	

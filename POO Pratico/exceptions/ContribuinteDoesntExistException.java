@@ -1,4 +1,4 @@
-package exceptions;
+ 
 
 public class ContribuinteDoesntExistException extends Exception{
 	public ContribuinteDoesntExistException(String m) {

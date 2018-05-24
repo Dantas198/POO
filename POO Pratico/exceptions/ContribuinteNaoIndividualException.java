@@ -1,4 +1,4 @@
-package exceptions;
+ 
 
 public class ContribuinteNaoIndividualException extends Exception {
 	public ContribuinteNaoIndividualException(String m) {

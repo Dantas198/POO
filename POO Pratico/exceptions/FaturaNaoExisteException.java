@@ -1,4 +1,4 @@
-package exceptions;
+ 
 
 public class FaturaNaoExisteException extends Exception {
 	public FaturaNaoExisteException(String m) {
