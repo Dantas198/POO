@@ -8,6 +8,7 @@ import contribuintes.ContribuinteIndividual;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import atividadesEconomicas.AtividadeEconomica;
 
@@ -67,7 +68,12 @@ public class Fatura implements Serializable{
         return emitente.getNif();
     }
     
-
+    /**
+     * Devolve uma lista com as atividades economicas da empresa
+     * */
+    public List<AtividadeEconomica> getNaturezasPossiveis() {
+		return this.emitente.getListAtividadesEmpresa();
+	}
     /** 
      * Devolve copia do Emitente quando a fatura foi criada
      * 

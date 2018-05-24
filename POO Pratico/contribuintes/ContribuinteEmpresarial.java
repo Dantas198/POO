@@ -2,7 +2,9 @@ package contribuintes;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -39,7 +41,7 @@ public class ContribuinteEmpresarial extends Contribuinte implements Serializabl
      * @param a, atividades economicas a inserir
      * Atualiza as atividades economicas de uma empresa
      */
-    private void setAtividadesEmpresa(Map<String, AtividadeEconomica> a) {
+    public void setAtividadesEmpresa(Map<String, AtividadeEconomica> a) {
         for(AtividadeEconomica v : a.values())
             this.atividadesEmpresa.put(v.getNomeAtividade(), v.clone());
     }
@@ -48,7 +50,7 @@ public class ContribuinteEmpresarial extends Contribuinte implements Serializabl
      * Devolve as atividades economicas de uma empresa
      * @returns Map de atividadesEconomicas
      */
-    private Map<String, AtividadeEconomica> getAtividadesEmpresa() {
+    public Map<String, AtividadeEconomica> getAtividadesEmpresa() {
         Map<String, AtividadeEconomica> res = new HashMap<>();
         for(Entry<String, AtividadeEconomica> e : this.atividadesEmpresa.entrySet())
             res.put(e.getKey(), e.getValue().clone());
@@ -56,6 +58,12 @@ public class ContribuinteEmpresarial extends Contribuinte implements Serializabl
         return res;
     }
     
+    public List<AtividadeEconomica> getListAtividadesEmpresa() {
+		ArrayList<AtividadeEconomica> res = new ArrayList<>(); 
+		for(AtividadeEconomica a : this.atividadesEmpresa.values())
+			res.add(a);
+		return res;
+	}
     /**
      * Devolve o contador de faturas emitidas pela empresa
      */
