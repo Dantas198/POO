@@ -1,4 +1,4 @@
-package fatura;
+ 
 
 import contribuintes.BeneficioFiscal;
 import contribuintes.Contribuinte;
