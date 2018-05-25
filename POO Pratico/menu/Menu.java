@@ -155,17 +155,22 @@ public class Menu implements Serializable
      */
     
     private int corrigirClassificacaoDeAtividade(){
+         Fatura fatura;
          int nFat = (int) getInfo("Intruduza o numero da fatura que deseja corrigir", Integer.class);
-         AtividadeEconomica ae = new AtividadeEconomica();
-         ae.setNomeAtividade((String) getInfo("Introduza a nova atividade", String.class));
-         ae.setCoef((float) getInfo("Introduza o novo coeficiente", Float.class));
-         
+         try{
+             fatura = f.getFatura(nFat);
+            } catch(FaturaNaoExisteException e){
+                System.out.println("Fatura nao existe - " + nFat);
+                return menuContrIndiv();
+            }
+         List<AtividadeEconomica> lae = fatura.getNaturezasPossiveis();
+         AtividadeEconomica ae = menuAtividadesEconomicas(lae);
          try{
             f.corrigeAtividadeFatura(this.loggedIn, nFat, ae);
         } catch (FaturaNaoExisteException e){
-            System.out.println("A fatura nao existe");
+            System.out.println("A Fatura nao existe - " + nFat);
         } catch (FaturaPendenteException e){
-            System.out.println("Esta fatura encontra-se pendente");
+            System.out.println("Esta fatura encontra-se pendente - " + nFat);
         }
          
          return menuContrIndiv();
@@ -201,7 +206,7 @@ public class Menu implements Serializable
         toRun.add(this::associaAtividadeADespesa);
         toRun.add(this::corrigirClassificacaoDeAtividade);
         toRun.add(this::verFaturasDeUmaEmpresa);
-        toRun.add(this::welcomeMenu);
+        toRun.add(this::logOut);
         
         return genericMenu(menuString, toRun);
     }
@@ -225,12 +230,7 @@ public class Menu implements Serializable
         }
         String descricao = (String) getInfo("Introduza a descricao da fatura", String.class);
         float despesa = (int) getInfo("Introduza a despesa", Integer.class);
-        
-        
-        
-
-        
-
+  
         if(this.loggedIn instanceof ContribuinteEmpresarial){
             fat = ((ContribuinteEmpresarial) this.loggedIn).emiteFatura(cliente, descricao, despesa);
         }
@@ -268,7 +268,7 @@ public class Menu implements Serializable
     
     private int verFaturasPeloTempo(){
         LocalDateTime start = (LocalDateTime) getInfo("Introduza a data inicial \"YYYY-MM-dd\"", LocalDateTime.class);
-        LocalDateTime end = (LocalDateTime) getInfo("Introduza a data inicial \"YYYY-MM-dd\"", LocalDateTime.class);
+        LocalDateTime end = (LocalDateTime) getInfo("Introduza a data final \"YYYY-MM-dd\"", LocalDateTime.class);
         
         List<Fatura> faturasPeloTempo = f.getFaturasFromEmitenteBetweenDate(this.loggedIn.getNif(), start, end);
         for(Fatura fatura : faturasPeloTempo)
@@ -287,7 +287,7 @@ public class Menu implements Serializable
     
     private int verTotalFaturadoPeloTempo(){
         LocalDateTime start = (LocalDateTime) getInfo("Introduza a data inicial \"YYYY-MM-dd\"", LocalDateTime.class);
-        LocalDateTime end = (LocalDateTime) getInfo("Introduza a data inicial \"YYYY-MM-dd\"", LocalDateTime.class);
+        LocalDateTime end = (LocalDateTime) getInfo("Introduza a data final \"YYYY-MM-dd\"", LocalDateTime.class);
         
         float totalFaturado = f.totalFaturado((ContribuinteEmpresarial) this.loggedIn, start, end);
         System.out.println("Total faturado de " + start.toString() + " a " + end.toString() + " - " + totalFaturado);
@@ -316,7 +316,7 @@ public class Menu implements Serializable
         toRun.add(this::verFaturasPeloTempo);
         toRun.add(this::VerFaturasPorContribuinte);
         toRun.add(this::verTotalFaturadoPeloTempo);
-        toRun.add(this::welcomeMenu);
+        toRun.add(this::logOut);
         
         return genericMenu(menuString, toRun);
         
@@ -520,6 +520,7 @@ public class Menu implements Serializable
             }
             if(op > 0) System.out.println("Funcionalidade nao encontrada");
         }while(op != 0);
+        this.loggedIn = null;
         scan.close();
         return op;
     }
@@ -625,6 +626,11 @@ public class Menu implements Serializable
         }
         s.close();
         return aes.get(op-1);
+    }
+    
+    private int logOut(){
+        this.loggedIn = null;
+        return welcomeMenu();
     }
     
     private void initAtividadesEconomicasPossiveis(){
