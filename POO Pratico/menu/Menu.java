@@ -713,18 +713,18 @@ public class Menu implements Serializable
     }
     
     private void initAtividadesEconomicasPossiveis(){
-        this.atividadesEconomicasPossiveis = new ArrayList<>();
-        this.atividadesEconomicasPossiveis.add(new Saude());
-        this.atividadesEconomicasPossiveis.add(new Educacao());
-        this.atividadesEconomicasPossiveis.add(new DespesasGeraisFamiliares());
-        this.atividadesEconomicasPossiveis.add(new Restauracao());
-        this.atividadesEconomicasPossiveis.add(new PassesTransportes());
-        this.atividadesEconomicasPossiveis.add(new Veterinario());
-        this.atividadesEconomicasPossiveis.add(new Imoveis());
-        this.atividadesEconomicasPossiveis.add(new Lares());
-        this.atividadesEconomicasPossiveis.add(new CabeleiroBeleza());
-        this.atividadesEconomicasPossiveis.add(new ReparacaoManutencaoMotociclos());
-        this.atividadesEconomicasPossiveis.add(new ReparacaoManutencaoVeiculos());
+        Menu.atividadesEconomicasPossiveis = new ArrayList<>();
+        Menu.atividadesEconomicasPossiveis.add(new Saude());
+        Menu.atividadesEconomicasPossiveis.add(new Educacao());
+        Menu.atividadesEconomicasPossiveis.add(new DespesasGeraisFamiliares());
+        Menu.atividadesEconomicasPossiveis.add(new Restauracao());
+        Menu.atividadesEconomicasPossiveis.add(new PassesTransportes());
+        Menu.atividadesEconomicasPossiveis.add(new Veterinario());
+        Menu.atividadesEconomicasPossiveis.add(new Imoveis());
+        Menu.atividadesEconomicasPossiveis.add(new Lares());
+        Menu.atividadesEconomicasPossiveis.add(new CabeleiroBeleza());
+        Menu.atividadesEconomicasPossiveis.add(new ReparacaoManutencaoMotociclos());
+        Menu.atividadesEconomicasPossiveis.add(new ReparacaoManutencaoVeiculos());
     }
     
     public void run(){
