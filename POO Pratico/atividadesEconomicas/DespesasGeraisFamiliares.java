@@ -10,5 +10,10 @@ public class DespesasGeraisFamiliares extends AtividadeEconomica {
 	public DespesasGeraisFamiliares(DespesasGeraisFamiliares a) {
 		super(a);
 	}
+	
+	@Override
+	public DespesasGeraisFamiliares clone() {
+		return new DespesasGeraisFamiliares(this);
+	}
 }
 

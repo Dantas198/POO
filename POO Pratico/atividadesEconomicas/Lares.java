@@ -10,4 +10,9 @@ public class Lares extends AtividadeEconomica {
 	public Lares(Lares a) {
 		super(a);
 	}
+	
+	@Override
+	public Lares clone() {
+		return new Lares(this);
+	}
 }

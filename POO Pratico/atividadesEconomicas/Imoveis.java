@@ -11,4 +11,9 @@ public class Imoveis extends AtividadeEconomica {
 	public Imoveis(Imoveis a) {
 		super(a);
 	}
+	
+	@Override
+	public Imoveis clone() {
+		return new Imoveis(this);
+	}
 }

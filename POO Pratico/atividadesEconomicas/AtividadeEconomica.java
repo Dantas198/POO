@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.lang.StringBuilder;
 
 //Pode vir a ser Imutavel
-public class AtividadeEconomica implements Serializable{
+public abstract class AtividadeEconomica implements Serializable{
     
     private float coef;
     private String nomeAtividade;
@@ -38,9 +38,7 @@ public class AtividadeEconomica implements Serializable{
     /**
      * Clone de uma atividade economica
      */
-    public AtividadeEconomica clone() {
-        return new AtividadeEconomica(this);
-    }
+    public abstract AtividadeEconomica clone();
     
     /**
      * Devolve o coeficiente fiscal
@@ -74,6 +72,5 @@ public class AtividadeEconomica implements Serializable{
         StringBuilder sb = new StringBuilder();
         sb.append(this.getNomeAtividade());
         return sb.toString();
-    }
-    
+    }   
 }

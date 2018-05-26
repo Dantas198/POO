@@ -10,4 +10,9 @@ public class Veterinario extends AtividadeEconomica {
 	public Veterinario(Veterinario a) {
 		super(a);
 	}
+	
+	@Override
+	public Veterinario clone() {
+		return new Veterinario(this);
+	}
 }

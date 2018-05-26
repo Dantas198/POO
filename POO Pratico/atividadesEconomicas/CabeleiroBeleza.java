@@ -10,4 +10,9 @@ public class CabeleiroBeleza extends AtividadeEconomica {
 	public CabeleiroBeleza(CabeleiroBeleza a) {
 		super(a);
 	}
+
+	@Override
+	public CabeleiroBeleza clone() {
+		return new CabeleiroBeleza(this);
+	}
 }

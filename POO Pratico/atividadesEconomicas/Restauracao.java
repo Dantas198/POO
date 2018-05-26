@@ -10,4 +10,9 @@ public class Restauracao extends AtividadeEconomica {
 	public Restauracao(Restauracao a) {
 		super(a);
 	}
+	
+	@Override
+	public Restauracao clone() {
+		return new Restauracao(this);
+	}
 }
