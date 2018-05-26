@@ -32,8 +32,10 @@ import contribuintes.Contribuintes;
 import moradas.Morada;
 import moradas.Localidade;
 import moradas.LocalidadeLitoral;
+import moradas.Localidades;
 import moradas.LocalidadeCentro;
 import exceptions.FaturaPendenteException;
+import exceptions.UserdidntSendInput;
 import exceptions.FaturaNaoPendenteException;
 import exceptions.FaturaNaoExisteException;
 import exceptions.ContribuinteDoesntExistException;
@@ -51,6 +53,7 @@ public class Menu implements Serializable
     private Faturas f;
     private Contribuintes c;
     private Contribuinte loggedIn;
+    private Localidades locs;
     
     public void saveMenu(String filepath) throws FileNotFoundException, IOException, ClassNotFoundException{
         FileOutputStream fos = new FileOutputStream(new File(filepath));
@@ -99,6 +102,31 @@ public class Menu implements Serializable
     }
     
     /**
+     * Adiciona uma localidade a locs
+     * */
+    public int addLocalidadeToSistema() {
+    	String l = (String) getInfo("Intruduza o nome da localidade", String.class);
+    	if (locs.isLocalidade(l))
+    		System.out.println("Localidade ja existe");
+    	else {
+    		Localidade lo = null;
+    		String o;
+    		do {
+    			o = (String) getInfo("Esta localidade È do (centro ou litoral)", String.class);	
+			} while (!(o.equals("centro") || o.equals("litoral")));
+    		if (o.equals("centro")) {
+    			double desc = (Double) getInfo("Insira benificio para empresas do centro (Insira 0 se nao existir)", Double.class);
+    			lo = new LocalidadeCentro(l, desc);
+    		}
+    		else if (o.equals("litoral")) {
+    			lo = new LocalidadeLitoral(l);
+			}
+    		this.locs.addLocalidade(lo);
+    	}
+    	return menuAdmin();
+	}
+    
+    /**
      * Metodo que constroi o menu do administrador
      */
     private int menuAdmin(){
@@ -109,11 +137,13 @@ public class Menu implements Serializable
         menuString.add("Ver os 10 contribuintes que gastam mais no sistema");
         menuString.add("Ver as empresas que faturam mais e as sua dedu√ßao fiscal");
         menuString.add("Ver correcoes pendentes de faturas");
+        menuString.add("Adicionar localidades");
         menuString.add("Log out");
         
         toRun.add(this::ver10ContribuintesMaisDispendiosos);
         toRun.add(this::verEmpresasMaisFaturadas);
         toRun.add(this::verCorrecoesDeFaturas);
+        toRun.add(this::addLocalidadeToSistema);
         toRun.add(this::menuAdmin);
         
         return genericMenu(menuString, toRun);
@@ -356,7 +386,11 @@ public class Menu implements Serializable
         contr.setNif((int) getInfo("Introduza o Nif", Integer.class));
         contr.setNome((String) getInfo("Introduza o Nome", String.class));
         contr.setEmail((String) getInfo("Introduza o Email", String.class));
-        contr.setMorada(moradaMenu());
+        try {
+			contr.setMorada(moradaMenu());
+		} catch (UserdidntSendInput e1) {
+			return welcomeMenu();
+		}
         
         if((boolean) getInfo("Tem contribuintes dependentes no agregado familiar?", Boolean.class))
             contr.setNumDependentesAgregado((int) getInfo("Introduza o numero do agregado familiar", Integer.class)); 
@@ -387,7 +421,11 @@ public class Menu implements Serializable
         contr.setNif((int) getInfo("Introduza o Nif", Integer.class));
         contr.setNome((String) getInfo("Introduza o Nome", String.class));
         contr.setEmail((String) getInfo("Introduza o Email", String.class));
-        contr.setMorada(moradaMenu());
+        try {
+			contr.setMorada(moradaMenu());
+		} catch (UserdidntSendInput e1) {
+			return welcomeMenu();
+		}
        
         ae = menuAtividadesEconomicas(this.atividadesEconomicasPossiveis);
         contr.addAtividadeEmpresa(ae);
@@ -491,12 +529,38 @@ public class Menu implements Serializable
     }
     
     /**
+     * Obtem uma localidade do utilizador
+     * @throws UserdidntSendInput 
+     * */
+    private Localidade getLocalidadeMenu() throws UserdidntSendInput{
+        Localidade l;
+        boolean cycle = true;
+        do {
+        	String localidade = (String) getInfo("Introduza a localidade", String.class);
+			l = this.locs.getLocalidade(localidade);
+        	if(l!=null)
+        		cycle = false;
+        	else {
+        		System.out.println("Localidade n„o existe - Contacte administrador");
+        		System.out.println("Deseja inserir outra localidade");
+        		String o;
+        		do {
+        			o = (String) getInfo("Responda com yes ou no", String.class);	
+				} while (!(o.equals("yes") || o.equals("no")));
+        		if(o.equals("no"))
+        			throw new UserdidntSendInput("Localidade");
+        	}
+		} while (cycle);
+		return l;
+    }
+    
+    /**
      * Constroi o menu de morada
+     * @throws UserdidntSendInput 
      */
-    private Morada moradaMenu(){
+    private Morada moradaMenu() throws UserdidntSendInput{
         int nPorta = ((int) getInfo("Introduza o numero de porta", Integer.class));
-        String localidade = (String) getInfo("Introduza a localidade", String.class);
-        LocalidadeCentro l = new LocalidadeCentro (localidade, (double) getInfo("Introduza o desconto fiscal", Double.class));
+        Localidade l = getLocalidadeMenu();
         Pair<Integer, Integer> codPostal = ((Pair<Integer,Integer>) getInfo("Introduza o seu codigo postal  \"? - ?\"", Pair.class));
         return new Morada(nPorta, codPostal, l);
     }
@@ -671,6 +735,7 @@ public class Menu implements Serializable
     public void initRun(){
         this.c = new Contribuintes();
         this.f = new Faturas();
+        this.locs = new Localidades();
         this.loggedIn = null;
         this.run();
     }

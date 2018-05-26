@@ -10,9 +10,17 @@ public class Localidades implements Serializable {
      * Adiciona uma localidade
      */
     public void addLocalidade(Localidade a) {
-        localidades.put(a.getLocalidade(), a.clone());
+    	if (a!=null)
+    		localidades.put(a.getLocalidade(), a.clone());
     }
     
+    public boolean isLocalidade(String s) {
+		return this.localidades.containsKey(s);
+	}
+    
+    public Localidade getLocalidade(String s) {
+		return this.localidades.get(s);
+	}
     /**
      * Construtor vazio
      */
