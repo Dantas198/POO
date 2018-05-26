@@ -3,8 +3,9 @@ package atividadesEconomicas;
 public class Saude extends AtividadeEconomica {
 
 	public Saude() {
-		this.setNomeAtividade("Saude");
-		this.setCoef((float) 0.15);
+		String s = "Saude";
+		this.setNomeAtividade(s);
+		this.setCoef(0.15f);
 	}
 
 	public Saude(Saude a) {

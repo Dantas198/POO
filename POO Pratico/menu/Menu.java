@@ -736,6 +736,10 @@ public class Menu implements Serializable
         this.c = new Contribuintes();
         this.f = new Faturas();
         this.locs = new Localidades();
+        JavaFaturaDataGenerator j = new JavaFaturaDataGenerator();
+        this.c = j.getC();
+        this.f = j.getF();
+        this.locs = j.getL();
         this.loggedIn = null;
         this.run();
     }

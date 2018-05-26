@@ -413,7 +413,7 @@ public class Faturas implements Serializable {
     }
 
     public Faturas(Faturas f) {
-        super();
+        this();
         this.faturas = getFaturasPendentes();
         this.faturasPendentes = getFaturasValidas();
         this.correcoes = getCorrecoes();
@@ -423,6 +423,4 @@ public class Faturas implements Serializable {
     public Faturas clone() {
         return new Faturas(this);
     }
-    
-
 }
