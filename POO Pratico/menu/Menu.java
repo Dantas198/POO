@@ -108,7 +108,7 @@ public class Menu implements Serializable
         
         menuString.add("Ver os 10 contribuintes que gastam mais no sistema");
         menuString.add("Ver as empresas que faturam mais e as sua deduçao fiscal");
-        menuString.add("Ver correcoes pendentes de faturas");
+        menuString.add("Ver correcoes de faturas");
         menuString.add("Log out");
         
         toRun.add(this::ver10ContribuintesMaisDispendiosos);
@@ -130,7 +130,7 @@ public class Menu implements Serializable
         int nFat = (int) getInfo("Intruduza o numero da fatura que deseja corrigir", Integer.class);
         Fatura fatura;
         try{
-            fatura = f.getFatura(nFat);
+            fatura = f.getFaturaPendente(nFat);
         } catch(FaturaNaoExisteException e){
             System.out.println("A fatura nao existe");
             return menuContrIndiv();
