@@ -1,6 +1,7 @@
 package atividadesEconomicas;
 
 import java.io.Serializable;
+import java.lang.StringBuilder;
 
 //Pode vir a ser Imutavel
 public class AtividadeEconomica implements Serializable{
@@ -22,6 +23,7 @@ public class AtividadeEconomica implements Serializable{
      */
     public AtividadeEconomica(AtividadeEconomica a) {
         this.coef = a.getCoef();
+        this.nomeAtividade = a.getNomeAtividade();
     }
 
     /**
@@ -67,4 +69,11 @@ public class AtividadeEconomica implements Serializable{
     public void setNomeAtividade(String nomeAtividade) {
         this.nomeAtividade = nomeAtividade;
     }
+    
+    public String toString(){
+        StringBuilder sb = new StringBuilder();
+        sb.append(this.getNomeAtividade() + " - " + this.getCoef());
+        return sb.toString();
+    }
+    
 }

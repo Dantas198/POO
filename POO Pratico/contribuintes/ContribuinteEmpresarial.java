@@ -34,7 +34,6 @@ public class ContribuinteEmpresarial extends Contribuinte implements Serializabl
      */
     public ContribuinteEmpresarial(ContribuinteEmpresarial c) {
         super(c);
-        this.atividadesEmpresa = new HashMap<String, AtividadeEconomica>();
         this.setAtividadesEmpresa(c.getAtividadesEmpresa());
         this.countFaturas = c.getCountFaturas();
         this.lucro = c.getLucro();
@@ -45,6 +44,7 @@ public class ContribuinteEmpresarial extends Contribuinte implements Serializabl
      * Atualiza as atividades economicas de uma empresa
      */
     public void setAtividadesEmpresa(Map<String, AtividadeEconomica> a) {
+        this.atividadesEmpresa = new HashMap<String, AtividadeEconomica>();
         for(AtividadeEconomica v : a.values())
             this.atividadesEmpresa.put(v.getNomeAtividade(), v.clone());
     }

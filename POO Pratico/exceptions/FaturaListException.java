@@ -1,3 +1,5 @@
+package exceptions;
+
 
 /**
  * Write a description of class FaturaListException here.

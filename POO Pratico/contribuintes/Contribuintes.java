@@ -53,7 +53,7 @@ public class Contribuintes implements Serializable{
         if (contribuintes.containsKey(nif)){
             Contribuinte c = contribuintes.get(nif);
             if(c.isPassword(password))
-                return c;
+                return c.clone();
         }
         return null;
     }

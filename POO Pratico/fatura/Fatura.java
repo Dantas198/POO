@@ -1,3 +1,5 @@
+package fatura;
+
  
 
 import contribuintes.BeneficioFiscal;
@@ -275,6 +277,7 @@ public class Fatura implements Serializable{
         this.despesa = despesa;
         this.descricao = descricao;
         this.dataDespesa = date;
+        this.naturezaDespesa = null;
     }
     
     /**

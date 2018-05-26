@@ -1,3 +1,5 @@
+package exceptions;
+
  
 
 public class ContribuinteNaoIndividualException extends Exception {

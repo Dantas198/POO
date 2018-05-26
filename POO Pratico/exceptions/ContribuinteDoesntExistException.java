@@ -1,3 +1,5 @@
+package exceptions;
+
  
 
 public class ContribuinteDoesntExistException extends Exception{

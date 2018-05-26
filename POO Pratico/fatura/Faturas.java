@@ -19,7 +19,6 @@ import contribuintes.ContribuinteEmpresarial;
 import comparators.CompareFaturasByDate;
 import comparators.CompareFaturasByValor;
 import comparators.ComparePairDespesa;
-import exceptions.FaturaListException;
 import exceptions.FaturaNaoExisteException;
 import exceptions.FaturaNaoPendenteException;
 import exceptions.FaturaPendenteException;
@@ -33,7 +32,7 @@ public class Faturas implements Serializable {
     
     
     public static String listToString(List<?> list) {
-    String result = "////////////////////////////////////\n";
+    String result = "/////////////////////////////////////////////////////////////////////\n";
     for (int i = 0; i < list.size(); i++) {
         result += list.get(i).toString();
         result += "////////////////////////////////////\n";
@@ -56,6 +55,12 @@ public class Faturas implements Serializable {
         if(!this.faturas.containsKey(num))
             throw new FaturaNaoExisteException(Integer.toString(num));
         return this.faturas.get(num);
+    }
+    
+    public Fatura getFaturaPendente(int num) throws FaturaNaoExisteException{
+        if(!this.faturasPendentes.containsKey(num))
+            throw new FaturaNaoExisteException(Integer.toString(num));
+        return this.faturasPendentes.get(num);
     }
     
     /**
@@ -140,14 +145,11 @@ public class Faturas implements Serializable {
      * deduzida, juntamente com a do agregado
      * @returns res, Pair<faturas, despesa deduzida>
      */
-    public Pair<List<Fatura>,Float> getDespesasAndDFAcumulado(ContribuinteIndividual c) throws FaturaListException{
+    public Pair<List<Fatura>,Float> getDespesasAndDFAcumulado(ContribuinteIndividual c){
         int nif = c.getNif();
         
         List<Fatura> x = getFaturasFromContribuinte(nif);
         float acumulado = getNFAcumuladoAgregado(c);
-        if(x.size() == 0 && acumulado==0){
-            throw new FaturaListException("Contribuinte e agregado nao tem faturas");
-        }
         Pair <List<Fatura>, Float> res = new Pair <List<Fatura>, Float> (x,acumulado);
         return res;
     }
@@ -157,24 +159,16 @@ public class Faturas implements Serializable {
      * Calcula o montante de deducoes fiscais fornecidas de todas as despesas emitidas por uma empresa
      * @returns count, total de deducoes
      */
-    public float getDFEmpresa(ContribuinteEmpresarial c) throws FaturaListException{
+    public float getDFEmpresa(ContribuinteEmpresarial c){
         int nif = c.getNif();
         float count=0;
         List<Fatura> x = getFaturasFromContribuinte(nif);
-        if(x.size() == 0) {
-            throw new FaturaListException("Empresa nao emitiu faturas ou estao todas pendentes");}
         for(Fatura f : x) {
             AtividadeEconomica a = f.getNaturezaDespesa();
             count+= f.getDespesa() * (a.getCoef() + c.reducaoImposto());
             }
         return count;
     }       
-<<<<<<< HEAD
-        
-    /**
-      * Devolve um HashMap temporario com pares de nif e despesa desse contribuinte, caso queiramos
-      * ir buscar os gastos de um contribuinte
-=======
 
     
     /**
@@ -206,7 +200,6 @@ public class Faturas implements Serializable {
      /**
       * Devolve um HashMap temporário com pares de nif e despesa desse contribuinte, caso queiramos
       * ir buscar a faturacao de uma impresa
->>>>>>> 21b1831c6d930ddb47bc45089323aaf833a843e4
       */
     public void makeHashMostSpender(HashMap<Integer, Pair <Integer,Float>> tmp, HashMap<Integer, Fatura> faturas){
        for(Fatura a : faturas.values()){
@@ -229,19 +222,13 @@ public class Faturas implements Serializable {
      * Devolve uma lista com os contribuintes com mais despesas.
      * @returns Lista<Pair<nif, despesa>>
      */
-<<<<<<< HEAD
-    public List<Pair<Integer, Float>> getMostSpenders(int x) throws FaturaListException{
-=======
     public List<Pair<Integer, Float>> getMostSpenders(int x){
->>>>>>> 21b1831c6d930ddb47bc45089323aaf833a843e4
         HashMap<Integer, Pair <Integer,Float>> tmp = new HashMap<>();
         
         makeHashMostSpender(tmp, this.faturas);
         makeHashMostSpender(tmp, this.faturasPendentes);
 
         List<Pair <Integer, Float>> l = tmp.values().stream().collect(Collectors.toList());
-        if(l.size() == 0){
-            throw new FaturaListException("Nao existem contribuintes");}
 
         l.sort(new ComparePairDespesa());
         int size = l.size() > x-1 ? x-1 : l.size();
@@ -254,7 +241,7 @@ public class Faturas implements Serializable {
      * Apresenta a lista de todas as faturas entre beg e end
      * @returns List<Fatura>
      */
-    public List<Fatura> getFaturasFromEmitenteBetweenDate(int nif,LocalDateTime beg, LocalDateTime end) throws FaturaListException{
+    public List<Fatura> getFaturasFromEmitenteBetweenDate(int nif,LocalDateTime beg, LocalDateTime end){
         List<Fatura> x = this.faturas.values().stream().
                 filter(p -> p.getNifEmitente()==nif).
                 filter(p -> p.getDataDespesa().isAfter(beg) && p.getDataDespesa().isBefore(end)).
@@ -265,8 +252,6 @@ public class Faturas implements Serializable {
                 filter(p -> p.getDataDespesa().isAfter(beg) && p.getDataDespesa().isBefore(end)).
                 map(Fatura::clone).
                 map(p -> x.add(p));
-        if(x.size() == 0) 
-            throw new FaturaListException("Contribuinte não tem faturas no sistema ou dentro do intervalo de tempo");
             
         return x;
     }
@@ -293,10 +278,10 @@ public class Faturas implements Serializable {
     }
     
     public List<Pair<Integer,Pair<AtividadeEconomica,AtividadeEconomica>>> getChangestoFatura(int numfatura) {
-		List<Pair<Integer,Pair<AtividadeEconomica,AtividadeEconomica>>>res = new ArrayList<>();
-		this.correcoes.stream().filter(p -> p.getKey()==numfatura).forEach(p -> res.add(p));
-    	return res;
-	}
+        List<Pair<Integer,Pair<AtividadeEconomica,AtividadeEconomica>>>res = new ArrayList<>();
+        this.correcoes.stream().filter(p -> p.getKey()==numfatura).forEach(p -> res.add(p));
+        return res;
+    }
     
     /**
      * @param c, contribuinte
@@ -328,17 +313,11 @@ public class Faturas implements Serializable {
      * Devolve o total faturado por um contribuinte
      * @returns total faturado
      */
-    public float totalFaturado(ContribuinteEmpresarial c, LocalDateTime beg, LocalDateTime end) throws FaturaListException{
+    public float totalFaturado(ContribuinteEmpresarial c, LocalDateTime beg, LocalDateTime end){
         int nif = c.getNif();
         float res = 0;
-        try {
             List<Fatura> x = this.getFaturasFromEmitenteBetweenDate(nif, beg, end);
-            res = (float) x.stream().mapToDouble(Fatura::getDespesa).sum();
-        }
-        catch(FaturaListException e){
-            throw new FaturaListException(e.getMessage());
-        }
-            
+            res = (float) x.stream().mapToDouble(Fatura::getDespesa).sum();       
         return res;
     }
     
@@ -348,11 +327,9 @@ public class Faturas implements Serializable {
      * Devolve uma lista de faturas ordendas por data
      * @returns x, List<Fatura>
      */
-    public List<Fatura> getFaturasByDate(ContribuinteEmpresarial c) throws FaturaListException{
+    public List<Fatura> getFaturasByDate(ContribuinteEmpresarial c){
         int nif = c.getNif();
         List<Fatura> x = getFaturasFromEmitente(nif);
-        if(x.size() == 0)
-            throw new FaturaListException("Contribuinte nao tem faturas");
         x.sort(new CompareFaturasByDate());
         return x;
     }
@@ -363,11 +340,9 @@ public class Faturas implements Serializable {
      * Devolve uma lista de faturas ordenadas por valor
      * @returns x, List<Fatura>
      */
-    public List<Fatura> getFaturasByValor(ContribuinteEmpresarial c) throws FaturaListException{
+    public List<Fatura> getFaturasByValor(ContribuinteEmpresarial c){
         int nif = c.getNif();
         List<Fatura> x = getFaturasFromEmitente(nif);
-        if(x.size() == 0)
-            throw new FaturaListException("Contribuinte nao tem faturas");
         x.sort(new CompareFaturasByValor());
         return x;
     }
@@ -382,11 +357,9 @@ public class Faturas implements Serializable {
      * mas tambem agupadas por nif
      * @returns x, List<Fatura>
      */
-    public List<Fatura> getFaturasByValorDecrescente(ContribuinteEmpresarial c) throws FaturaListException{
+    public List<Fatura> getFaturasByValorDecrescente(ContribuinteEmpresarial c){
         int nif = c.getNif();
         List<Fatura> x = getFaturasFromEmitente(nif);
-        if(x.size() == 0)
-            throw new FaturaListException("Contribuinte nao tem faturas");
         x.sort(Comparator.comparing(Fatura::getNifCliente)
                          .thenComparing(Fatura::getDespesa).reversed()); 
         return x;
@@ -396,39 +369,39 @@ public class Faturas implements Serializable {
     /**
      * Devolve um ArrayList com todas os pares numFatura, AtividadeAntiga -> Atividade nova
      * */
-    private ArrayList<Pair<Integer, Pair<AtividadeEconomica, AtividadeEconomica>>> getCorrecoes() {
-		ArrayList<Pair<Integer, Pair<AtividadeEconomica, AtividadeEconomica>>> res = new ArrayList<>();
-		for (Pair<Integer, Pair<AtividadeEconomica, AtividadeEconomica>> pair : correcoes) {
-			AtividadeEconomica p1 = pair.getValue().getKey().clone();
-			AtividadeEconomica p2 = pair.getValue().getValue().clone();
-			Pair<Integer, Pair<AtividadeEconomica, AtividadeEconomica>> r= new Pair<>(pair.getKey(), new Pair<>(p1,p2));
-			res.add(r);
-		}
-		return res;
-	}
+    public ArrayList<Pair<Integer, Pair<AtividadeEconomica, AtividadeEconomica>>> getCorrecoes() {
+        ArrayList<Pair<Integer, Pair<AtividadeEconomica, AtividadeEconomica>>> res = new ArrayList<>();
+        for (Pair<Integer, Pair<AtividadeEconomica, AtividadeEconomica>> pair : correcoes) {
+            AtividadeEconomica p1 = pair.getValue().getKey().clone();
+            AtividadeEconomica p2 = pair.getValue().getValue().clone();
+            Pair<Integer, Pair<AtividadeEconomica, AtividadeEconomica>> r= new Pair<>(pair.getKey(), new Pair<>(p1,p2));
+            res.add(r);
+        }
+        return res;
+    }
 
     /**
      * Devolve todas as faturas nao pendentes
      * */
-	private HashMap<Integer, Fatura> getFaturasValidas() {
-		HashMap<Integer, Fatura> res = new HashMap<>();
-		for(Fatura f : this.faturas.values()) {
-			res.put(f.getNumFatura(), f.clone());
-		}
-		return res;
-	}
-	
-	/**
+    private HashMap<Integer, Fatura> getFaturasValidas() {
+        HashMap<Integer, Fatura> res = new HashMap<>();
+        for(Fatura f : this.faturas.values()) {
+            res.put(f.getNumFatura(), f.clone());
+        }
+        return res;
+    }
+    
+    /**
      * Devolve todas as faturas pendentes
      * */
-	private HashMap<Integer, Fatura> getFaturasPendentes() {
-		HashMap<Integer, Fatura> res = new HashMap<>();
-		for(Fatura f : this.faturasPendentes.values()) {
-			res.put(f.getNumFatura(), f.clone());
-		}
-		return res;
-	}
-	
+    private HashMap<Integer, Fatura> getFaturasPendentes() {
+        HashMap<Integer, Fatura> res = new HashMap<>();
+        for(Fatura f : this.faturasPendentes.values()) {
+            res.put(f.getNumFatura(), f.clone());
+        }
+        return res;
+    }
+    
     /**
      * Construtor vazio de Faturas
      */
@@ -440,16 +413,16 @@ public class Faturas implements Serializable {
     }
 
     public Faturas(Faturas f) {
-    	super();
-		this.faturas = getFaturasPendentes();
-		this.faturasPendentes = getFaturasValidas();
-		this.correcoes = getCorrecoes();
-		this.numFaturas = getNumFaturas();
-	}
+        super();
+        this.faturas = getFaturasPendentes();
+        this.faturasPendentes = getFaturasValidas();
+        this.correcoes = getCorrecoes();
+        this.numFaturas = getNumFaturas();
+    }
 
     public Faturas clone() {
-		return new Faturas(this);
-	}
-	
+        return new Faturas(this);
+    }
+    
 
 }

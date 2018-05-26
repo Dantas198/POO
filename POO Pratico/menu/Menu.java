@@ -59,20 +59,6 @@ public class Menu implements Serializable
         oos.close();
     }
     
-    //Funcao nao usada, apenas uma ideia
-    public int handleContrIndivPerm(){
-        if(!(this.loggedIn instanceof ContribuinteIndividual))
-            return welcomeMenu();
-         return -1;
-    }
-    
-    //Funcao nao usada, apenas uma ideia
-    public int handleContrEmprPerm(){
-        if(!(this.loggedIn instanceof ContribuinteEmpresarial))
-            return welcomeMenu();
-         return -1;
-    }
-    
     
     private int ver10ContribuintesMaisDispendiosos(){
         System.out.println("Os contribuintes com mais depesas:");
@@ -98,6 +84,20 @@ public class Menu implements Serializable
         return menuAdmin();
     }
     
+    
+    //Ainda por acabar
+    private int verCorrecoesDeFaturas(){
+        ArrayList<Pair<Integer, Pair<AtividadeEconomica, AtividadeEconomica>>> fixes = f.getCorrecoes();
+        for(Pair<Integer, Pair<AtividadeEconomica, AtividadeEconomica>> fix : fixes){
+            System.out.println("/////////////////////////////////////////////////////////");
+            System.out.println("Nif: " + fix.getKey() + "\n");
+            System.out.println("Atividade Economica alterada: " + fix.getValue().getKey() + "\n");
+            System.out.println("Atividade Economica colocada: " +  fix.getValue().getValue()+ "\n");
+            System.out.println("/////////////////////////////////////////////////////////");
+        }
+        return menuAdmin();
+    }
+    
     /**
      * Metodo que constroi o menu do administrador
      */
@@ -108,25 +108,17 @@ public class Menu implements Serializable
         
         menuString.add("Ver os 10 contribuintes que gastam mais no sistema");
         menuString.add("Ver as empresas que faturam mais e as sua deduçao fiscal");
+        menuString.add("Ver correcoes pendentes de faturas");
         menuString.add("Log out");
         
         toRun.add(this::ver10ContribuintesMaisDispendiosos);
         toRun.add(this::verEmpresasMaisFaturadas);
+        toRun.add(this::verCorrecoesDeFaturas);
         toRun.add(this::menuAdmin);
         
         return genericMenu(menuString, toRun);
     }
     
-    /**
-     * Adiciona opcoes de ver despesas ao menu
-     */
-    private int verDespesas(){
-        List<Fatura> faturas = f.getFaturasFromContribuinte(this.loggedIn.getNif());
-        for(Fatura fat : faturas)
-            System.out.println(fat.toString());
-            
-        return menuContrIndiv();
-    }
     
     private int verMonstanteDeDeducaoFiscal(){
         float deducaoFiscalDoAgregado = f.getNFAcumuladoAgregado((ContribuinteIndividual) this.loggedIn);
@@ -136,9 +128,15 @@ public class Menu implements Serializable
     
     private int associaAtividadeADespesa(){
         int nFat = (int) getInfo("Intruduza o numero da fatura que deseja corrigir", Integer.class);
-        AtividadeEconomica ae = new AtividadeEconomica();
-        ae.setNomeAtividade((String) getInfo("Introduza a nova atividade", String.class));
-        ae.setCoef((float) getInfo("Introduza o novo coeficiente", Float.class));
+        Fatura fatura;
+        try{
+            fatura = f.getFatura(nFat);
+        } catch(FaturaNaoExisteException e){
+            System.out.println("A fatura nao existe");
+            return menuContrIndiv();
+        }
+        List<AtividadeEconomica> lae = fatura.getNaturezasPossiveis();
+        AtividadeEconomica ae = menuAtividadesEconomicas(lae);
         
         try{
             f.associaAtividadeEconcomica(this.loggedIn, nFat, ae);
@@ -183,6 +181,17 @@ public class Menu implements Serializable
         for(Fatura fat : fatDeEmpresa)
             System.out.println(fat.toString());
        
+        return menuContrIndiv();
+    }
+    
+        /**
+     * Adiciona opcoes de ver despesas ao menu
+     */
+    private int verDespesas(){   
+        List<Fatura> faturas = f.getFaturasFromContribuinte(this.loggedIn.getNif());
+        for(Fatura fat : faturas)
+            System.out.println(fat.toString());
+            
         return menuContrIndiv();
     }
     
@@ -250,16 +259,28 @@ public class Menu implements Serializable
         return menuContrEmpr();
     }    
     
+    
+    private int verTodasFaturas(){
+        List<Fatura> faturas = f.getFaturasFromEmitente(this.loggedIn.getNif());
+        System.out.println(f.listToString(faturas));
+        return menuVerFaturas();
+    }
+    
     /**
      * Adiciona ao menu a possibilidade de ver as faturas de um contribuinte
      */
-    private int verFaturas(){
+    private int menuVerFaturas(){
         ArrayList<String> menuString = new ArrayList<>();
         ArrayList<Callable<Integer>> toRun = new ArrayList<>();
-        List<Fatura> faturas = f.getFaturasFromEmitente(this.loggedIn.getNif());
         
-        System.out.println(f.listToString(faturas));
+        menuString.add("Ver todas as faturas");
+        menuString.add("Ver faturas por contribuinte num intervalo de tempo");
+        menuString.add("Ver faturas por contribuinte por ordem decrescente");
         menuString.add("Retroceder");
+       
+        toRun.add(this::verTodasFaturas);
+        toRun.add(this::verFaturasPeloTempo);
+        toRun.add(this::VerFaturasPorContribuinte);
         toRun.add(this::menuContrEmpr);
         
         return genericMenu(menuString, toRun);
@@ -274,7 +295,7 @@ public class Menu implements Serializable
         for(Fatura fatura : faturasPeloTempo)
             System.out.println(fatura.toString());
 
-        return menuContrEmpr();
+        return menuVerFaturas();
     }
     
     private int VerFaturasPorContribuinte(){
@@ -282,7 +303,7 @@ public class Menu implements Serializable
         for(Fatura fatura : faturas)
             System.out.println(fatura.toString());
         
-        return menuContrEmpr();
+        return menuVerFaturas();
     }
     
     private int verTotalFaturadoPeloTempo(){
@@ -292,7 +313,7 @@ public class Menu implements Serializable
         float totalFaturado = f.totalFaturado((ContribuinteEmpresarial) this.loggedIn, start, end);
         System.out.println("Total faturado de " + start.toString() + " a " + end.toString() + " - " + totalFaturado);
         
-        return menuContrEmpr();
+        return menuVerFaturas();
     }
     
     /**
@@ -302,24 +323,18 @@ public class Menu implements Serializable
         System.out.println("Em que lhe posso ajudar "+ this.loggedIn.getNome());
         ArrayList<String> menuString = new ArrayList<>();
         ArrayList<Callable<Integer>> toRun = new ArrayList<>();
-
         
         menuString.add("Criar fatura");
         menuString.add("Ver faturas");
-        menuString.add("Ver faturas por contribuinte num intervalo de tempo");
-        menuString.add("Ver faturas por contribuinte por ordem decrescente");
         menuString.add("Ver total faturado num intervalo de tempo");
         menuString.add("Log out");
         
         toRun.add(this::criarFatura);
-        toRun.add(this::verFaturas);
-        toRun.add(this::verFaturasPeloTempo);
-        toRun.add(this::VerFaturasPorContribuinte);
+        toRun.add(this::menuVerFaturas);
         toRun.add(this::verTotalFaturadoPeloTempo);
         toRun.add(this::logOut);
         
         return genericMenu(menuString, toRun);
-        
     }
     
     
