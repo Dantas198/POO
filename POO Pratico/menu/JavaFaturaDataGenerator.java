@@ -110,7 +110,6 @@ public class JavaFaturaDataGenerator {
 		ContribuinteEmpresarial hospital = (ContribuinteEmpresarial) this.c.getContribuinte(112);
 		Contribuinte client = this.c.getContribuinte(272390208);
 		Fatura fa = hospital.emiteFatura(client, "perna partida", 2.0f);
-		System.out.println(fa.toString());
 		this.f.addFatura(fa);
 	}
 	
