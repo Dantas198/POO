@@ -33,35 +33,7 @@ public class Fatura implements Serializable{
     public boolean isClientIndividual(){
         return (cliente instanceof ContribuinteIndividual);
     }
-
-    /**
-     * Devolve a deducaoGlobal da Fatura, que é a percentagem total de deducao, contendo o coeficiente do 
-     * contribuinte individual e a deducao oferecida pela empresa
-     * 
-     * @returns deducaoGlobal
-     */
-    public float getDeducaoGlobal(){
-        return this.deducaoGlobal;
-    }
     
-    /**
-     * @param deducao Global da Fatura
-     * 
-     * Atualiza o valor da variável deducaoGlobal
-     */
-    public void setDeducaoGlobal(float deducaoGlobal){
-        this.deducaoGlobal = deducaoGlobal;
-    }
-    
-    /**
-     * @param Contribuinte c
-     * 
-     * Método que Atualiza o valor da variável deducaoGlobal de acordo com o Coeficiente Fiscal de um contribuinte
-     * e do Coeficiente Fiscal da Natureza da Despesa, ou seja, a Atividade Económica
-     */
-    public void setDeducaoGlobal(Contribuinte c){
-        this.deducaoGlobal = ((ContribuinteIndividual) c).getCoefFiscal() * this.naturezaDespesa.getCoef();
-    }
     
     /** 
      * Devolve o nif do Emitente

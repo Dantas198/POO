@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.Collections;
 
 import atividadesEconomicas.AtividadeEconomica;
 
@@ -181,10 +182,12 @@ public class Faturas implements Serializable {
 
     
     /**
-     * Devolve uma lista com as faturas que o cliente e a empresa tem em comum
+     * Devolve uma lista com as faturas que o cliente e a empresa tem em comum, ordenadas consoante um comparador
      */
-    public List<Fatura> getFaturasFromEmpresa(int nifCliente, int nifEmpresa){
-        return this.getFaturasFromContribuinte(nifCliente).stream().filter(f -> f.getEmitente().getNif() == nifEmpresa).collect(Collectors.toList());
+    public List<Fatura> getFaturasOfClienteFromEmitente(int nifCliente, int nifEmpresa, Comparator<Fatura> cmp){
+        List<Fatura> faturasOrdenadas = this.getFaturasFromContribuinte(nifCliente).stream().filter(f -> f.getEmitente().getNif() == nifEmpresa).collect(Collectors.toList());
+        Collections.sort(faturasOrdenadas, cmp);
+        return faturasOrdenadas;
     }
     
      /**
@@ -296,7 +299,7 @@ public class Faturas implements Serializable {
      * @param c, contribuinte
      * @param numFatura, numero de cada fatura
      * @param nova, atividade economica
-     * Corrige uma atividade economica, ou seja, atualiza a atividade nas faturas pendentes
+     * Corrige uma atividade economica, ou seja, atualiza a atividade nas faturas
      */
     public void corrigeAtividadeFatura(Contribuinte c, int numFatura, AtividadeEconomica nova) throws FaturaNaoExisteException, FaturaPendenteException {
         if(!this.faturas.containsKey(numFatura)) {

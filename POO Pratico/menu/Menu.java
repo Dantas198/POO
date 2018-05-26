@@ -39,6 +39,8 @@ import exceptions.UserdidntSendInput;
 import exceptions.FaturaNaoPendenteException;
 import exceptions.FaturaNaoExisteException;
 import exceptions.ContribuinteDoesntExistException;
+import comparators.CompareFaturasByDate;
+import comparators.CompareFaturasByValor;
 
 /**
  * Write a description of class Menu here.
@@ -200,18 +202,41 @@ public class Menu implements Serializable
         } catch (FaturaPendenteException e){
             System.out.println("Esta fatura encontra-se pendente - " + nFat);
         }
-         
          return menuContrIndiv();
     }
     
-    private int verFaturasDeUmaEmpresa(){
+    private int verFaturasDeUmaEmpresaPorValor(){
         int nifEmpresa = (int) getInfo("Introduza o Nif da empresa da qual quer ver as faturas", Integer.class);
-        List<Fatura> fatDeEmpresa = f.getFaturasFromEmpresa(this.loggedIn.getNif(), nifEmpresa);
+        List<Fatura> fatDeEmpresa = f.getFaturasOfClienteFromEmitente(this.loggedIn.getNif(), nifEmpresa, new CompareFaturasByValor());
         if(fatDeEmpresa.size() == 0) System.out.println("Nao possui faturas com esta empresa");
-        for(Fatura fat : fatDeEmpresa)
-            System.out.println(fat.toString());
-       
+        f.listToString(fatDeEmpresa);
+        
         return menuContrIndiv();
+    }
+    
+    
+    private int verFaturasDeUmaEmpresaPorData(){
+        int nifEmpresa = (int) getInfo("Introduza o Nif da empresa da qual quer ver as faturas", Integer.class);
+        List<Fatura> fatDeEmpresa = f.getFaturasOfClienteFromEmitente(this.loggedIn.getNif(), nifEmpresa, new CompareFaturasByDate());
+        if(fatDeEmpresa.size() == 0) System.out.println("Nao possui faturas com esta empresa");
+        f.listToString(fatDeEmpresa);
+        
+        return menuContrIndiv();
+    }
+    
+    private int verFaturasDeUmaEmpresa(){
+        ArrayList<String> menuString = new ArrayList<>();
+        ArrayList<Callable<Integer>> toRun = new ArrayList<>();
+        
+        menuString.add("Ver faturas de uma empresa ordenada por data");
+        menuString.add("Ver faturas de uma empresa ordenada por valor");
+        menuString.add("Retroceder");
+        
+        toRun.add(this::verFaturasDeUmaEmpresaPorData);
+        toRun.add(this::verFaturasDeUmaEmpresaPorData);
+        toRun.add(this::menuContrIndiv);
+        
+        return genericMenu(menuString, toRun);
     }
     
     private int verDespesasPendentes(){
@@ -245,7 +270,7 @@ public class Menu implements Serializable
         menuString.add("Ver montante de deduçao fiscal acumulado do agregado familiar");
         menuString.add("Associar uma atividade economica a uma despesa");
         menuString.add("Corrigir classificaçao de uma atividade economica");
-        menuString.add("Ver lista de facturas de uma empresa");
+        menuString.add("Ver lista de faturas de uma empresa");
         menuString.add("Log out");
         
         toRun.add(this::verDespesas);
@@ -404,9 +429,8 @@ public class Menu implements Serializable
         if((boolean) getInfo("Tem contribuintes dependentes no agregado familiar?", Boolean.class))
             contr.setNumDependentesAgregado((int) getInfo("Introduza o numero do agregado familiar", Integer.class)); 
         else contr.setNumDependentesAgregado(0); 
-        contr.addAgregado(contr.getNif());
         
-        contr.setCoefFiscal((int) getInfo("Introduza o coeficiente fiscal", Integer.class));
+        contr.addAgregado(contr.getNif());     
         contr.setPassword((String) getInfo("Introduza a sua palavra-passe", String.class));
         
         try{
@@ -442,6 +466,7 @@ public class Menu implements Serializable
             ae = menuAtividadesEconomicas(this.atividadesEconomicasPossiveis);
             contr.addAtividadeEmpresa(ae);
         }
+        
         contr.setPassword((String) getInfo("Introduza a sua palavra-passe", String.class));
         try{
             if(c.existeContribuinte(contr))
@@ -458,12 +483,12 @@ public class Menu implements Serializable
      * Constroi o menu de registo que permite escolher o tipo de contribuinte que está em causa
      */
     private int registerMenu(){
-        System.out.println("Registrando um novo Contribuinte");
+        System.out.println("Registando um novo Contribuinte");
         ArrayList<String> menuString = new ArrayList<>();
         ArrayList<Callable<Integer>> toRun = new ArrayList<>();
         
-        menuString.add("Registrar contribuinte Individual");
-        menuString.add("Registrar contribuinte Empresarial");
+        menuString.add("Registar contribuinte Individual");
+        menuString.add("Registar contribuinte Empresarial");
         menuString.add("Retroceder");
         toRun.add(this::registerMenuContrInd);
         toRun.add(this::registerMenuContrEmpr);
@@ -526,7 +551,7 @@ public class Menu implements Serializable
         ArrayList<String> menuString = new ArrayList<>();
         ArrayList<Callable<Integer>> toRun = new ArrayList<>();
         
-        menuString.add("Registrar novo Contribuinte");
+        menuString.add("Registar novo Contribuinte");
         menuString.add("Log In");
         toRun.add(this::registerMenu);
         toRun.add(this::loginMenu);
