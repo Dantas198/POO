@@ -81,7 +81,7 @@ public class Menu implements Serializable
         List<ContribuinteEmpresarial> empresas = c.getXMostFaturado(x);
        
         for(ContribuinteEmpresarial p : empresas){
-            float deducao = f.getDFEmpresa(p);
+            float deducao = 0; // por acabar
             System.out.println("Nif: " + p.getNif() + " - " + p.getLucro() + " faturado | Deducao fiscal - " + deducao);
         }
         return menuAdmin();
@@ -144,7 +144,7 @@ public class Menu implements Serializable
         toRun.add(this::verEmpresasMaisFaturadas);
         toRun.add(this::verCorrecoesDeFaturas);
         toRun.add(this::addLocalidadeToSistema);
-        toRun.add(this::menuAdmin);
+        toRun.add(this::logOut);
         
         return genericMenu(menuString, toRun);
     }

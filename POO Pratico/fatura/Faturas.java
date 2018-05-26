@@ -175,7 +175,7 @@ public class Faturas implements Serializable {
         for(Fatura f : x) {
             AtividadeEconomica a = f.getNaturezaDespesa();
             count+= f.getDespesa() * (a.getCoef() + c.reducaoImposto());
-            }
+        }
         return count;
     }       
 
