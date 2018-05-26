@@ -136,8 +136,12 @@ public class Menu implements Serializable
         
         menuString.add("Ver os 10 contribuintes que gastam mais no sistema");
         menuString.add("Ver as empresas que faturam mais e as sua deduçao fiscal");
+<<<<<<< HEAD
+        menuString.add("Ver correcoes de faturas");
+=======
         menuString.add("Ver correcoes pendentes de faturas");
         menuString.add("Adicionar localidades");
+>>>>>>> 4bd997978b73782ace34da49db1df00a43be59df
         menuString.add("Log out");
         
         toRun.add(this::ver10ContribuintesMaisDispendiosos);
