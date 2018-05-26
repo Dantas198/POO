@@ -164,7 +164,7 @@ public class Menu implements Serializable
         int nFat = (int) getInfo("Intruduza o numero da fatura que deseja corrigir", Integer.class);
         Fatura fatura;
         try{
-            fatura = f.getFatura(nFat);
+            fatura = f.getFaturaPendente(nFat);
         } catch(FaturaNaoExisteException e){
             System.out.println("A fatura nao existe");
             return menuContrIndiv();
