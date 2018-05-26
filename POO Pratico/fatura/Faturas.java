@@ -189,26 +189,6 @@ public class Faturas implements Serializable {
         Collections.sort(faturasOrdenadas, cmp);
         return faturasOrdenadas;
     }
-    
-     /**
-     * Devolve um HashMap temporário com pares de nif e despesa desse contribuinte, caso queiramos
-     * ir buscar a despesa de um contribuinte individual
-     */
-    public void makeHashIndividual(HashMap<Integer, Pair <Integer,Float>> tmp){
-        for(Fatura a : faturas.values()){
-            if(a.isClientIndividual()){
-                int nif = a.getNifCliente();
-                float despesa = a.getDespesa();
-                if(tmp.containsKey(nif)){
-                    Pair <Integer, Float> older = tmp.get(nif);
-                    despesa += older.getValue();
-                 }
-                else {
-                    Pair <Integer, Float> newer = new Pair <Integer, Float>(nif, despesa);
-                    tmp.put(nif,newer);}  
-        }}
-     }
-     
      /**
       * Devolve um HashMap temporário com pares de nif e despesa desse contribuinte, caso queiramos
       * ir buscar a faturacao de uma impresa
