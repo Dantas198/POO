@@ -392,7 +392,7 @@ public class Faturas implements Serializable {
     /**
      * Devolve todas as faturas nao pendentes
      * */
-    private HashMap<Integer, Fatura> getFaturasValidas() {
+    public HashMap<Integer, Fatura> getFaturasValidas() {
         HashMap<Integer, Fatura> res = new HashMap<>();
         for(Fatura f : this.faturas.values()) {
             res.put(f.getNumFatura(), f.clone());
@@ -403,7 +403,7 @@ public class Faturas implements Serializable {
     /**
      * Devolve todas as faturas pendentes
      * */
-    private HashMap<Integer, Fatura> getFaturasPendentes() {
+    public HashMap<Integer, Fatura> getFaturasPendentes() {
         HashMap<Integer, Fatura> res = new HashMap<>();
         for(Fatura f : this.faturasPendentes.values()) {
             res.put(f.getNumFatura(), f.clone());
@@ -423,10 +423,10 @@ public class Faturas implements Serializable {
 
     public Faturas(Faturas f) {
         this();
-        this.faturas = getFaturasPendentes();
-        this.faturasPendentes = getFaturasValidas();
-        this.correcoes = getCorrecoes();
-        this.numFaturas = getNumFaturas();
+        this.faturas = f.getFaturasValidas();
+        this.faturasPendentes = f.getFaturasPendentes();
+        this.correcoes = f.getCorrecoes();
+        this.numFaturas = f.getNumFaturas();
     }
 
     public Faturas clone() {
