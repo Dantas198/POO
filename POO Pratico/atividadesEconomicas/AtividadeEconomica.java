@@ -72,7 +72,7 @@ public class AtividadeEconomica implements Serializable{
     
     public String toString(){
         StringBuilder sb = new StringBuilder();
-        sb.append(this.getNomeAtividade() + " - " + this.getCoef());
+        sb.append(this.getNomeAtividade());
         return sb.toString();
     }
     

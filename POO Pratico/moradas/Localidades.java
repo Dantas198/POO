@@ -32,7 +32,7 @@ public class Localidades implements Serializable {
      * Construtor parametrizado
      */
     public Localidades(HashMap<String, Localidade> loc){
-        super();
+        this();
     	for (Localidade l : loc.values()) {
 			this.localidades.put(l.getLocalidade(), l.clone());
 		}

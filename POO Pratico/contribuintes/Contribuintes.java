@@ -38,6 +38,7 @@ public class Contribuintes implements Serializable{
      * Adiciona um Set de contribuintes
      */
     public void addContribuintes(Set<? extends Contribuinte> c){
+        
         c.stream().map(p -> contribuintes.put(p.getNif(), p.clone()));      
     }
     
@@ -90,7 +91,7 @@ public class Contribuintes implements Serializable{
                   .collect(Collectors.toList());
         tmp.sort(Comparator.comparing(ContribuinteEmpresarial::getLucro).reversed());
         
-        int size = tmp.size() > x-1 ? x-1 : tmp.size();
+        int size = tmp.size() > x ? x : tmp.size();
         List<ContribuinteEmpresarial> result = tmp.subList(0, size);
         return result;
     }

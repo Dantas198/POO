@@ -31,6 +31,7 @@ public class Main implements Serializable{
         try{
             menu = (Menu) ois.readObject();
         } catch (ClassNotFoundException e){
+        	System.out.println("New menu");
             menu = new Menu();
         }
         ois.close();
@@ -40,7 +41,7 @@ public class Main implements Serializable{
     private static void run(){
         menu = new Menu();
         try{
-          initMenu("Menu.txt");
+          initMenu("Menu");
           menu.run();
         }
         catch (FileNotFoundException e){
@@ -51,7 +52,7 @@ public class Main implements Serializable{
             System.out.println("Menu doesn't exist"); menu.initRun();
         }
          try{
-             menu.saveMenu("Menu.txt");
+             menu.saveMenu("Menu");
          } catch (FileNotFoundException e){
              System.out.println("Could not find a file with that name");
          } catch (IOException e){

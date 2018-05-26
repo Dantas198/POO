@@ -74,17 +74,16 @@ public class Menu implements Serializable
         }  
         return menuAdmin();
     }
-    
-    
-    //Ainda por acabar ( falta colocar as deduçoes discais)
+   
     private int verEmpresasMaisFaturadas(){
         System.out.println("As empresas que mais faturam:");
         int x = (int) getInfo("Introduza o numero de empresas que quer ver", Integer.class);
         List<ContribuinteEmpresarial> empresas = c.getXMostFaturado(x);
        
-        for(ContribuinteEmpresarial p : empresas)
-            System.out.println("Nif: " + p.getNif() + " - " + p.getLucro() + " faturado");
-        
+        for(ContribuinteEmpresarial p : empresas){
+            float deducao = f.getDFEmpresa(p);
+            System.out.println("Nif: " + p.getNif() + " - " + p.getLucro() + " faturado | Deducao fiscal - " + deducao);
+        }
         return menuAdmin();
     }
     
@@ -138,7 +137,6 @@ public class Menu implements Serializable
         menuString.add("Ver os 10 contribuintes que gastam mais no sistema");
         menuString.add("Ver as empresas que faturam mais e as sua deduçao fiscal");
         menuString.add("Ver correcoes de faturas");
-        menuString.add("Ver correcoes pendentes de faturas");
         menuString.add("Adicionar localidades");
         menuString.add("Log out");
         
@@ -291,7 +289,7 @@ public class Menu implements Serializable
         
         try{
             f.addFatura(fat);
-            System.out.println("Fatura inserida - " + f.getNumFaturas());
+            System.out.println("Fatura inserida - " + fat.getNumFatura());
         } catch (Exception e){
             System.out.println("Couldn't insert Fatura" + e.getMessage());
             e.printStackTrace(System.out);
@@ -503,17 +501,14 @@ public class Menu implements Serializable
             this.loggedIn = c.login(nif, pass);
             
         if(this.loggedIn == null){
-            System.out.println("Utilizador nao encontrado/password errada");
-            return welcomeMenu();
-        }
-        else{
-            if(loggedIn.getNif() == -777 && loggedIn.isPassword(pass))
+            if(nif == -777 && pass.equals("Administrador"))
                 return menuAdmin();
-           
             
+                System.out.println("Utilizador nao encontrado/password errada");
+            return welcomeMenu();
+        }             
             System.out.println("Authentication sucessful");
             return menuContr();
-        }
     }
     
     /**
@@ -724,18 +719,18 @@ public class Menu implements Serializable
     }
     
     private void initAtividadesEconomicasPossiveis(){
-        this.atividadesEconomicasPossiveis = new ArrayList<>();
-        this.atividadesEconomicasPossiveis.add(new Saude());
-        this.atividadesEconomicasPossiveis.add(new Educacao());
-        this.atividadesEconomicasPossiveis.add(new DespesasGeraisFamiliares());
-        this.atividadesEconomicasPossiveis.add(new Restauracao());
-        this.atividadesEconomicasPossiveis.add(new PassesTransportes());
-        this.atividadesEconomicasPossiveis.add(new Veterinario());
-        this.atividadesEconomicasPossiveis.add(new Imoveis());
-        this.atividadesEconomicasPossiveis.add(new Lares());
-        this.atividadesEconomicasPossiveis.add(new CabeleiroBeleza());
-        this.atividadesEconomicasPossiveis.add(new ReparacaoManutencaoMotociclos());
-        this.atividadesEconomicasPossiveis.add(new ReparacaoManutencaoVeiculos());
+        Menu.atividadesEconomicasPossiveis = new ArrayList<>();
+        Menu.atividadesEconomicasPossiveis.add(new Saude());
+        Menu.atividadesEconomicasPossiveis.add(new Educacao());
+        Menu.atividadesEconomicasPossiveis.add(new DespesasGeraisFamiliares());
+        Menu.atividadesEconomicasPossiveis.add(new Restauracao());
+        Menu.atividadesEconomicasPossiveis.add(new PassesTransportes());
+        Menu.atividadesEconomicasPossiveis.add(new Veterinario());
+        Menu.atividadesEconomicasPossiveis.add(new Imoveis());
+        Menu.atividadesEconomicasPossiveis.add(new Lares());
+        Menu.atividadesEconomicasPossiveis.add(new CabeleiroBeleza());
+        Menu.atividadesEconomicasPossiveis.add(new ReparacaoManutencaoMotociclos());
+        Menu.atividadesEconomicasPossiveis.add(new ReparacaoManutencaoVeiculos());
     }
     
     public void run(){
@@ -747,6 +742,10 @@ public class Menu implements Serializable
         this.c = new Contribuintes();
         this.f = new Faturas();
         this.locs = new Localidades();
+        JavaFaturaDataGenerator j = new JavaFaturaDataGenerator();
+        this.c = j.getC();
+        this.f = j.getF();
+        this.locs = j.getL();
         this.loggedIn = null;
         this.run();
     }

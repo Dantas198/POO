@@ -15,6 +15,7 @@ import moradas.LocalidadeCentro;
 import moradas.Morada;
 
 public class ContribuinteEmpresarial extends Contribuinte implements Serializable,BeneficioFiscal {
+    
     private HashMap<String,AtividadeEconomica> atividadesEmpresa;
     private int countFaturas;
     private float lucro;
@@ -24,6 +25,16 @@ public class ContribuinteEmpresarial extends Contribuinte implements Serializabl
      */
     public ContribuinteEmpresarial(){
         super();
+        this.atividadesEmpresa = new HashMap<String, AtividadeEconomica>();
+        this.countFaturas = 0;
+        this.lucro = 0;
+    }
+    
+    /**
+     * Construturor de superclass
+     * */
+    public ContribuinteEmpresarial(String nome, int nif, String email, Morada morada, String password) {
+        super(nome, nif, email, morada, password);
         this.atividadesEmpresa = new HashMap<String, AtividadeEconomica>();
         this.countFaturas = 0;
         this.lucro = 0;
@@ -50,7 +61,7 @@ public class ContribuinteEmpresarial extends Contribuinte implements Serializabl
     }
     
     public void addAtividadeEmpresa(AtividadeEconomica ae){
-        if(!this.atividadesEmpresa.containsKey(ae.getNomeAtividade()))
+        if(ae != null && !this.atividadesEmpresa.containsKey(ae.getNomeAtividade()))
             this.atividadesEmpresa.put(ae.getNomeAtividade() , ae.clone());
     }
     

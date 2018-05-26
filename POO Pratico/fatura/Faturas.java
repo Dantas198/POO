@@ -88,6 +88,15 @@ public class Faturas implements Serializable {
     public List<Fatura> getFaturasFromContribuinte(int nif){
         return this.faturas.values().stream().filter(p -> p.getNifCliente()==nif).map(Fatura::clone).collect(Collectors.toList());
     }
+   
+     /**
+     * @param nif do contribuinte
+     * Devolve uma lista de faturas
+     * @returns List<Fatura>
+     */
+    public List<Fatura> getFaturasValidasFromEmitente(int nif){
+        return this.faturas.values().stream().filter(p -> p.getNifEmitente()==nif).map(Fatura::clone).collect(Collectors.toList());
+    }
     
     /**
      * @param nif do contribuinte
@@ -162,7 +171,7 @@ public class Faturas implements Serializable {
     public float getDFEmpresa(ContribuinteEmpresarial c){
         int nif = c.getNif();
         float count=0;
-        List<Fatura> x = getFaturasFromContribuinte(nif);
+        List<Fatura> x = getFaturasValidasFromEmitente(nif);
         for(Fatura f : x) {
             AtividadeEconomica a = f.getNaturezaDespesa();
             count+= f.getDespesa() * (a.getCoef() + c.reducaoImposto());
@@ -413,7 +422,7 @@ public class Faturas implements Serializable {
     }
 
     public Faturas(Faturas f) {
-        super();
+        this();
         this.faturas = getFaturasPendentes();
         this.faturasPendentes = getFaturasValidas();
         this.correcoes = getCorrecoes();
@@ -423,6 +432,4 @@ public class Faturas implements Serializable {
     public Faturas clone() {
         return new Faturas(this);
     }
-    
-
 }
