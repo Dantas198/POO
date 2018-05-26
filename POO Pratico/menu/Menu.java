@@ -80,9 +80,10 @@ public class Menu implements Serializable
     private int verEmpresasMaisFaturadas(){
         System.out.println("As empresas que mais faturam:");
         int x = (int) getInfo("Introduza o numero de empresas que quer ver", Integer.class);
-        List<Pair<Integer, Float>> empresas = f.getMostSpenders(x);
-        for(Pair<Integer, Float> p : empresas)
-            System.out.println("Nif: " + p.getKey() + " - " + p.getValue() + " faturado");
+        List<ContribuinteEmpresarial> empresas = c.getXMostFaturado(x);
+       
+        for(ContribuinteEmpresarial p : empresas)
+            System.out.println("Nif: " + p.getNif() + " - " + p.getLucro() + " faturado");
         
         return menuAdmin();
     }
@@ -105,26 +106,26 @@ public class Menu implements Serializable
      * Adiciona uma localidade a locs
      * */
     public int addLocalidadeToSistema() {
-    	String l = (String) getInfo("Intruduza o nome da localidade", String.class);
-    	if (locs.isLocalidade(l))
-    		System.out.println("Localidade ja existe");
-    	else {
-    		Localidade lo = null;
-    		String o;
-    		do {
-    			o = (String) getInfo("Esta localidade È do (centro ou litoral)", String.class);	
-			} while (!(o.equals("centro") || o.equals("litoral")));
-    		if (o.equals("centro")) {
-    			double desc = (Double) getInfo("Insira benificio para empresas do centro (Insira 0 se nao existir)", Double.class);
-    			lo = new LocalidadeCentro(l, desc);
-    		}
-    		else if (o.equals("litoral")) {
-    			lo = new LocalidadeLitoral(l);
-			}
-    		this.locs.addLocalidade(lo);
-    	}
-    	return menuAdmin();
-	}
+        String l = (String) getInfo("Intruduza o nome da localidade", String.class);
+        if (locs.isLocalidade(l))
+            System.out.println("Localidade ja existe");
+        else {
+            Localidade lo = null;
+            String o;
+            do {
+                o = (String) getInfo("Esta localidade e do (centro ou litoral)", String.class); 
+            } while (!(o.equals("centro") || o.equals("litoral")));
+            if (o.equals("centro")) {
+                double desc = (Double) getInfo("Insira benificio para empresas do centro (Insira 0 se nao existir)", Double.class);
+                lo = new LocalidadeCentro(l, desc);
+            }
+            else if (o.equals("litoral")) {
+                lo = new LocalidadeLitoral(l);
+            }
+            this.locs.addLocalidade(lo);
+        }
+        return menuAdmin();
+    }
     
     /**
      * Metodo que constroi o menu do administrador
@@ -136,12 +137,9 @@ public class Menu implements Serializable
         
         menuString.add("Ver os 10 contribuintes que gastam mais no sistema");
         menuString.add("Ver as empresas que faturam mais e as sua dedu√ßao fiscal");
-<<<<<<< HEAD
         menuString.add("Ver correcoes de faturas");
-=======
         menuString.add("Ver correcoes pendentes de faturas");
         menuString.add("Adicionar localidades");
->>>>>>> 4bd997978b73782ace34da49db1df00a43be59df
         menuString.add("Log out");
         
         toRun.add(this::ver10ContribuintesMaisDispendiosos);
@@ -218,6 +216,13 @@ public class Menu implements Serializable
         return menuContrIndiv();
     }
     
+    private int verDespesasPendentes(){
+        List<Fatura> faturas = f.getFaturasPendentesFromContribuinte(this.loggedIn.getNif());
+        for(Fatura fat : faturas)
+            System.out.println(fat.toString());
+        return menuContrIndiv();
+    }
+    
         /**
      * Adiciona opcoes de ver despesas ao menu
      */
@@ -238,6 +243,7 @@ public class Menu implements Serializable
         ArrayList<Callable<Integer>> toRun = new ArrayList<>();
         
         menuString.add("Ver despesas");
+        menuString.add("Ver despesas pendentes");
         menuString.add("Ver montante de dedu√ßao fiscal acumulado do agregado familiar");
         menuString.add("Associar uma atividade economica a uma despesa");
         menuString.add("Corrigir classifica√ßao de uma atividade economica");
@@ -245,6 +251,7 @@ public class Menu implements Serializable
         menuString.add("Log out");
         
         toRun.add(this::verDespesas);
+        toRun.add(this::verDespesasPendentes);
         toRun.add(this::verMonstanteDeDeducaoFiscal);
         toRun.add(this::associaAtividadeADespesa);
         toRun.add(this::corrigirClassificacaoDeAtividade);
@@ -391,10 +398,10 @@ public class Menu implements Serializable
         contr.setNome((String) getInfo("Introduza o Nome", String.class));
         contr.setEmail((String) getInfo("Introduza o Email", String.class));
         try {
-			contr.setMorada(moradaMenu());
-		} catch (UserdidntSendInput e1) {
-			return welcomeMenu();
-		}
+            contr.setMorada(moradaMenu());
+        } catch (UserdidntSendInput e1) {
+            return welcomeMenu();
+        }
         
         if((boolean) getInfo("Tem contribuintes dependentes no agregado familiar?", Boolean.class))
             contr.setNumDependentesAgregado((int) getInfo("Introduza o numero do agregado familiar", Integer.class)); 
@@ -426,10 +433,10 @@ public class Menu implements Serializable
         contr.setNome((String) getInfo("Introduza o Nome", String.class));
         contr.setEmail((String) getInfo("Introduza o Email", String.class));
         try {
-			contr.setMorada(moradaMenu());
-		} catch (UserdidntSendInput e1) {
-			return welcomeMenu();
-		}
+            contr.setMorada(moradaMenu());
+        } catch (UserdidntSendInput e1) {
+            return welcomeMenu();
+        }
        
         ae = menuAtividadesEconomicas(this.atividadesEconomicasPossiveis);
         contr.addAtividadeEmpresa(ae);
@@ -540,22 +547,22 @@ public class Menu implements Serializable
         Localidade l;
         boolean cycle = true;
         do {
-        	String localidade = (String) getInfo("Introduza a localidade", String.class);
-			l = this.locs.getLocalidade(localidade);
-        	if(l!=null)
-        		cycle = false;
-        	else {
-        		System.out.println("Localidade n„o existe - Contacte administrador");
-        		System.out.println("Deseja inserir outra localidade");
-        		String o;
-        		do {
-        			o = (String) getInfo("Responda com yes ou no", String.class);	
-				} while (!(o.equals("yes") || o.equals("no")));
-        		if(o.equals("no"))
-        			throw new UserdidntSendInput("Localidade");
-        	}
-		} while (cycle);
-		return l;
+            String localidade = (String) getInfo("Introduza a localidade", String.class);
+            l = this.locs.getLocalidade(localidade);
+            if(l!=null)
+                cycle = false;
+            else {
+                System.out.println("Localidade nao existe - Contacte administrador");
+                System.out.println("Deseja inserir outra localidade");
+                String o;
+                do {
+                    o = (String) getInfo("Responda com yes ou no", String.class);   
+                } while (!(o.equals("yes") || o.equals("no")));
+                if(o.equals("no"))
+                    throw new UserdidntSendInput("Localidade");
+            }
+        } while (cycle);
+        return l;
     }
     
     /**

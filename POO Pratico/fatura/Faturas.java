@@ -94,7 +94,7 @@ public class Faturas implements Serializable {
      * Devolve uma lista de faturas pendentes
      * @returns List<Fatura>
      */
-    public List<Fatura> getFaturaPendentesFromContribuinte(int nif){
+    public List<Fatura> getFaturasPendentesFromContribuinte(int nif){
         return this.faturasPendentes.values().stream().filter(p -> p.getNifCliente()==nif).map(Fatura::clone).collect(Collectors.toList());
     }
     
