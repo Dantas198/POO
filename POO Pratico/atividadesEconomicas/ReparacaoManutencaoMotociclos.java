@@ -10,4 +10,9 @@ public class ReparacaoManutencaoMotociclos extends AtividadeEconomica {
 	public ReparacaoManutencaoMotociclos(ReparacaoManutencaoMotociclos a) {
 		super(a);
 	}
+	
+	@Override
+	public ReparacaoManutencaoMotociclos clone() {
+		return new ReparacaoManutencaoMotociclos(this);
+	}
 }

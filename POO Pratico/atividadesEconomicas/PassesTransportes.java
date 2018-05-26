@@ -11,4 +11,9 @@ public class PassesTransportes extends AtividadeEconomica {
 	public PassesTransportes(PassesTransportes a) {
 		super(a);
 	}
+	
+	@Override
+	public PassesTransportes clone() {
+		return new PassesTransportes(this);
+	}
 }

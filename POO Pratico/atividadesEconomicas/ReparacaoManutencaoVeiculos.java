@@ -10,4 +10,10 @@ public class ReparacaoManutencaoVeiculos extends AtividadeEconomica {
 	public ReparacaoManutencaoVeiculos(ReparacaoManutencaoVeiculos a) {
 		super(a);
 	}
+	
+	@Override
+	public ReparacaoManutencaoVeiculos clone() {
+		// TODO Auto-generated method stub
+		return new ReparacaoManutencaoVeiculos(this);
+	}
 }

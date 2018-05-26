@@ -10,4 +10,9 @@ public class Educacao extends AtividadeEconomica {
 	public Educacao(Educacao a) {
 		super(a);
 	}
+	
+	@Override
+	public Educacao clone() {
+		return new Educacao(this);
+	}
 }

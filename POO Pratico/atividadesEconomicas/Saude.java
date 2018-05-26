@@ -11,4 +11,9 @@ public class Saude extends AtividadeEconomica {
 	public Saude(Saude a) {
 		super(a);
 	}
+	
+	@Override
+	public Saude clone() {
+		return new Saude();
+	}
 }
