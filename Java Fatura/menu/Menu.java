@@ -34,11 +34,7 @@ import moradas.Localidade;
 import moradas.LocalidadeLitoral;
 import moradas.Localidades;
 import moradas.LocalidadeCentro;
-import exceptions.FaturaPendenteException;
-import exceptions.UserdidntSendInput;
-import exceptions.FaturaNaoPendenteException;
-import exceptions.FaturaNaoExisteException;
-import exceptions.ContribuinteDoesntExistException;
+import exceptions.*;
 import comparators.CompareFaturasByDate;
 import comparators.CompareFaturasByValor;
 
@@ -282,6 +278,18 @@ public class Menu implements Serializable
         return menuContrIndiv();
     }
     
+    private int alterarNumDependentesNoAgregado(){
+        int nDependentes = (int) getInfo("Introduza o novo numero de dependentes no agregado", Integer.class);
+        try{
+            c.addDependenteToAgregado(this.loggedIn.getNif(), nDependentes);
+        } catch(ContribuinteDoesntExistException e){
+              System.out.println("Contribuinte nao existe - " + this.loggedIn.getNif());
+        } catch(ContribuinteNaoIndividualException e){
+                System.out.println("Nao se pode adicionar uma empresa a um agregado familiar - " + this.loggedIn.getNif());
+        }
+        return menuContrIndiv();
+    }
+    
     /**
      * Constroi o menu do contribuinte individual
      */
@@ -296,6 +304,7 @@ public class Menu implements Serializable
         menuString.add("Associar uma atividade economica a uma despesa");
         menuString.add("Corrigir classificaçao de uma atividade economica");
         menuString.add("Ver lista de faturas de uma empresa");
+        menuString.add("Alterar numero de dependentes no agregado");
         menuString.add("Log out");
         
         toRun.add(this::verDespesas);
@@ -304,6 +313,7 @@ public class Menu implements Serializable
         toRun.add(this::associaAtividadeADespesa);
         toRun.add(this::corrigirClassificacaoDeAtividade);
         toRun.add(this::verFaturasDeUmaEmpresa);
+        toRun.add(this::alterarNumDependentesNoAgregado);
         toRun.add(this::logOut);
         
         return genericMenu(menuString, toRun);
@@ -452,19 +462,31 @@ public class Menu implements Serializable
         contr.setNif((int) getInfo("Introduza o Nif", Integer.class));
         contr.setNome((String) getInfo("Introduza o Nome", String.class));
         contr.setEmail((String) getInfo("Introduza o Email", String.class));
+        
+        String password = (String) getInfo("Introduza a sua palavra-passe", String.class);
+        
+        boolean temAgregado = (boolean) getInfo("Ja faz parte de algum agregado familiar", Boolean.class);
+        while(temAgregado){
+            int nifDeAgregado = (int) getInfo("Introduza um nif que esta incluido no seu agregado familiar", Integer.class);
+            try{
+                c.addNewContribuinteToAgregado(nifDeAgregado, contr.getNome(), contr.getNif(), contr.getEmail(), password);
+                return welcomeMenu();
+            } catch(ContribuinteDoesntExistException e){
+                System.out.println("Contribuinte nao existe - " + nifDeAgregado);
+            } catch(ContribuinteNaoIndividualException e){
+                System.out.println("Nao se pode adicionar uma empresa a um agregado familiar - " + nifDeAgregado);
+            }
+            temAgregado = !((boolean) getInfo("Quer continuar sem introduzir o agregado?", Boolean.class));
+        }
+        contr.setNumDependentesAgregado(0); 
+        contr.addAgregado(contr.getNif());    
+        contr.setPassword(password);
+        
         try {
             contr.setMorada(moradaMenu());
         } catch (UserdidntSendInput e1) {
             return welcomeMenu();
         }
-        
-        if((boolean) getInfo("Tem contribuintes dependentes no agregado familiar?", Boolean.class))
-            contr.setNumDependentesAgregado((int) getInfo("Introduza o numero do agregado familiar", Integer.class)); 
-        else contr.setNumDependentesAgregado(0); 
-        
-        contr.addAgregado(contr.getNif());     
-        contr.setPassword((String) getInfo("Introduza a sua palavra-passe", String.class));
-        
         try{
             if(c.existeContribuinte(contr))
                 System.out.println("User already exists");

@@ -25,6 +25,7 @@ public class ContribuinteIndividual extends Contribuinte implements Serializable
         return numDependentesAgregado;
     }
     
+    
     /**
      * Atualiza o numero de dependentes do agregado
      */
@@ -93,11 +94,10 @@ public class ContribuinteIndividual extends Contribuinte implements Serializable
      * Construtor vazio
      */
     public ContribuinteIndividual() {
-        // TODO Auto-generated constructor stub
         super();
         this.actDeduziveis = new HashMap<>();
         this.nifsAgregado = new ArrayList<Integer>();
-        this.coefFiscal = 0;
+        this.coefFiscal = 0.2f;
         this.numDependentesAgregado = 0;
     }
     
