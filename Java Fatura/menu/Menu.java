@@ -57,6 +57,9 @@ public class Menu implements Serializable
     private Contribuinte loggedIn;
     private Localidades locs;
     
+    /**
+     * Permite salvar todos os dados num ficheiro
+     */
     public void saveMenu(String filepath) throws FileNotFoundException, IOException, ClassNotFoundException{
         FileOutputStream fos = new FileOutputStream(new File(filepath));
         ObjectOutputStream oos = new ObjectOutputStream(fos);
@@ -64,33 +67,41 @@ public class Menu implements Serializable
         oos.close();
     }
     
-    
+    /**
+     * Permite ver os 10 contribuintes mais dispendiosos do sistema
+     */
     private int ver10ContribuintesMaisDispendiosos(){
         System.out.println("Os contribuintes com mais depesas:");
         List<Pair<Integer, Float>> osDez = f.getMostSpenders(10);
 
         for(Pair<Integer, Float> despesa : osDez){
-            List<Fatura> lFaturas = f.getFaturasFromEmitente(despesa.getKey());
+            List<Fatura> lFaturas = f.getFaturasFromContribuinte(despesa.getKey());
             float deducao = f.getDeducao(lFaturas);
-            System.out.println("Nif: "+ despesa.getKey() + " -> Despesa:" + despesa.getValue() + " Deduçao Fiscal:" + deducao);
+            System.out.println("Nif: "+ despesa.getKey() + " -> Despesa:" + despesa.getValue() + " | Deduçao Fiscal:" + deducao);
         }  
         return menuAdmin();
     }
    
+    /**
+     * Permite ver as empresas que mais faturam no sistema
+     */
     private int verEmpresasMaisFaturadas(){
         System.out.println("As empresas que mais faturam:");
         int x = (int) getInfo("Introduza o numero de empresas que quer ver", Integer.class);
         List<ContribuinteEmpresarial> empresas = c.getXMostFaturado(x);
        
         for(ContribuinteEmpresarial p : empresas){
-            float deducao = 0; // por acabar
+            List<Fatura> faturas = f.getFaturasFromEmitente(p.getNif());
+            float deducao = f.getDeducao(faturas);
             System.out.println("Nif: " + p.getNif() + " - " + p.getLucro() + " faturado | Deducao fiscal - " + deducao);
         }
         return menuAdmin();
     }
     
     
-    //Ainda por acabar
+    /**
+     * Permite ver as correçoes que foram feitas em faturas por contribuintes individuais
+     */
     private int verCorrecoesDeFaturas(){
         ArrayList<Pair<Integer, Pair<AtividadeEconomica, AtividadeEconomica>>> fixes = f.getCorrecoes();
         for(Pair<Integer, Pair<AtividadeEconomica, AtividadeEconomica>> fix : fixes){
@@ -151,13 +162,18 @@ public class Menu implements Serializable
         return genericMenu(menuString, toRun);
     }
     
-    
+    /**
+     * Permite ver o montante de deducao fiscal do agregado familiar
+     */
     private int verMonstanteDeDeducaoFiscal(){
         float deducaoFiscalDoAgregado = f.getNFAcumuladoAgregado((ContribuinteIndividual) this.loggedIn);
         System.out.println("Deducao fiscal do agregado familiar - " + deducaoFiscalDoAgregado + "\n"); 
         return menuContrIndiv();
     }
     
+    /**
+     * Oermite associar uma atividade economica a uma despesa
+     */
     private int associaAtividadeADespesa(){
         int nFat = (int) getInfo("Intruduza o numero da fatura que deseja associar", Integer.class);
         Fatura fatura;
@@ -205,6 +221,9 @@ public class Menu implements Serializable
          return menuContrIndiv();
     }
     
+    /**
+     * Permite ver as Fturas de um contribuinte empresarial ordenadas por contribuinte e de seguida por Valor
+     */
     private int verFaturasDeUmaEmpresaPorValor(){
         int nifEmpresa = (int) getInfo("Introduza o Nif da empresa da qual quer ver as faturas", Integer.class);
         List<Fatura> fatDeEmpresa = f.getFaturasOfClienteFromEmitente(this.loggedIn.getNif(), nifEmpresa, new CompareFaturasByValor());
@@ -214,7 +233,9 @@ public class Menu implements Serializable
         return menuContrIndiv();
     }
     
-    
+    /**
+     *  Permite ver as Fturas de um contribuinte empresarial ordenadas por contribuinte e de seguida por Data
+     */
     private int verFaturasDeUmaEmpresaPorData(){
         int nifEmpresa = (int) getInfo("Introduza o Nif da empresa da qual quer ver as faturas", Integer.class);
         List<Fatura> fatDeEmpresa = f.getFaturasOfClienteFromEmitente(this.loggedIn.getNif(), nifEmpresa, new CompareFaturasByDate());
@@ -224,6 +245,9 @@ public class Menu implements Serializable
         return menuContrIndiv();
     }
     
+    /**
+     * Menu com as opçoes para ver as faturas de um contribuinte empresarial
+     */
     private int verFaturasDeUmaEmpresa(){
         ArrayList<String> menuString = new ArrayList<>();
         ArrayList<Callable<Integer>> toRun = new ArrayList<>();
@@ -239,14 +263,17 @@ public class Menu implements Serializable
         return genericMenu(menuString, toRun);
     }
     
+    /**
+     * Permite ver as despesas pendentes de um contribuinte individual
+     */
     private int verDespesasPendentes(){
         List<Fatura> faturas = f.getFaturasPendentesFromContribuinte(this.loggedIn.getNif());
         System.out.println(Faturas.listToString(faturas));
         return menuContrIndiv();
     }
     
-        /**
-     * Adiciona opcoes de ver despesas ao menu
+     /**
+     * Permite ver todas as despesas de um contribuinte individual
      */
     private int verDespesas(){   
         List<Fatura> faturas = f.getFaturasFromContribuinte(this.loggedIn.getNif());
@@ -320,7 +347,9 @@ public class Menu implements Serializable
         return menuContrEmpr();
     }    
     
-    
+    /**
+     * Permite ao contribuinte empresarial ver todas as faturas
+     */
     private int verTodasFaturas(){
         List<Fatura> faturas = f.getFaturasFromEmitente(this.loggedIn.getNif());
         System.out.println(f.listToString(faturas));
@@ -347,7 +376,9 @@ public class Menu implements Serializable
         return genericMenu(menuString, toRun);
     }
     
-    
+    /**
+     * Permite ao contribuinte empresarial ver as faturas ordenadas pelo tempo
+     */
     private int verFaturasPeloTempo(){
         LocalDateTime start = (LocalDateTime) getInfo("Introduza a data inicial \"YYYY-MM-dd\"", LocalDateTime.class);
         LocalDateTime end = (LocalDateTime) getInfo("Introduza a data final \"YYYY-MM-dd\"", LocalDateTime.class);
@@ -358,6 +389,9 @@ public class Menu implements Serializable
         return menuVerFaturas();
     }
     
+    /**
+     * Permite ao contribuinte empresarial ver as faturas ordenadas por contribuinte
+     */
     private int VerFaturasPorContribuinte(){
         List<Fatura> faturas = f.getFaturasByValorDecrescente((ContribuinteEmpresarial) this.loggedIn);
         System.out.println(Faturas.listToString(faturas));
@@ -365,6 +399,9 @@ public class Menu implements Serializable
         return menuVerFaturas();
     }
     
+    /**
+     * Permite ao contribuinte empresarial ver o total Fatura num intervalo de tempo
+     */
     private int verTotalFaturadoPeloTempo(){
         LocalDateTime start = (LocalDateTime) getInfo("Introduza a data inicial \"YYYY-MM-dd\"", LocalDateTime.class);
         LocalDateTime end = (LocalDateTime) getInfo("Introduza a data final \"YYYY-MM-dd\"", LocalDateTime.class);
@@ -590,7 +627,7 @@ public class Menu implements Serializable
     }
     
     /**
-     * 
+     * Menu generico usado regularmente (feito para simplificar codigo)
      */
     private int genericMenu(ArrayList<String> menuString, ArrayList<Callable<Integer>> toRun){
         int op;
@@ -627,7 +664,9 @@ public class Menu implements Serializable
         return op;
     }
     
-        
+    /**
+     * Pede ao utilizador certo dado e converte-o adequadamente
+     */
     private Object getInfo(String message, Class<?> cl){
         do{
             Scanner s = new Scanner(System.in);
@@ -708,6 +747,9 @@ public class Menu implements Serializable
         } while(true);
     }
     
+    /**
+     * Mini-Menu de escolha para as atividades economicas
+     */
     private AtividadeEconomica menuAtividadesEconomicas(List<AtividadeEconomica> aes){
         int i = 1, op = aes.size() + 1;
         System.out.println("Escolha a atividade economica desejada: ");
@@ -727,11 +769,17 @@ public class Menu implements Serializable
         return aes.get(op-1);
     }
     
+    /**
+     * Faz log out do contribuinte
+     */
     private int logOut(){
         this.loggedIn = null;
         return welcomeMenu();
     }
     
+    /**
+     * Inicializa as atividades economicas possiveis
+     */
     private void initAtividadesEconomicasPossiveis(){
         Menu.atividadesEconomicasPossiveis = new ArrayList<>();
         Menu.atividadesEconomicasPossiveis.add(new Saude());
@@ -747,11 +795,17 @@ public class Menu implements Serializable
         Menu.atividadesEconomicasPossiveis.add(new ReparacaoManutencaoVeiculos());
     }
     
+    /**
+     * Começa o menu com os dados de um ficheiro
+     */
     public void run(){
         initAtividadesEconomicasPossiveis();
         welcomeMenu();
     }
     
+    /**
+     * Começa o menu com dados pr feitos
+     */
     public void initRun(){
         this.c = new Contribuintes();
         this.f = new Faturas();

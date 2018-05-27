@@ -24,7 +24,9 @@ import fatura.Faturas;
 public class Main implements Serializable{
     private static Menu menu;
 
-    
+    /**
+     * Inicializa o menu de um ficheiro em que este foi previamente guardado
+     */
     private static void initMenu(String filepath) throws FileNotFoundException, IOException{
         FileInputStream fis = new FileInputStream(new File(filepath));
         ObjectInputStream ois = new ObjectInputStream(fis);
@@ -37,18 +39,19 @@ public class Main implements Serializable{
         ois.close();
     }
     
-    
+    /**
+     * Inicia o Menu guardado num ficheiro, caso nao o consiga, inicializa uma instancia pre-feita
+     */
     private static void run(){
         menu = new Menu();
         try{
           initMenu("Menu");
-          //menu.run();
-          menu.initRun();
+          menu.run();
         }
         catch (FileNotFoundException e){
             System.out.println("Could not find a file with that name"); menu.initRun();}
         catch (IOException e){
-            System.out.println("There was an unexpected error when accessing to that file"); menu.initRun(); e.printStackTrace(System.out);}
+            System.out.println("There was an unexpected error when accessing to that file"); menu.initRun();}
         catch (NullPointerException e){
             System.out.println("Menu doesn't exist"); menu.initRun();
         }

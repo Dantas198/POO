@@ -98,6 +98,10 @@ public class Contribuintes implements Serializable{
         return result;
     }
     
+    /**
+     * Adiciona um novo Contribuinte ao agregado
+     */
+    
     public void addNewContribuinteToAgregado(int nifdeAgregado, String nome, int nif, String email, String password) throws ContribuinteDoesntExistException, ContribuinteNaoIndividualException {
         if(!this.contribuintes.containsKey(nifdeAgregado))
             throw new ContribuinteDoesntExistException(Integer.toString(nifdeAgregado));
@@ -121,6 +125,9 @@ public class Contribuintes implements Serializable{
         novo.addAgregado(nif);
         this.contribuintes.put(nif, novo);
     }
+    /**
+     * Adiciona um elemento dependente a um agregado familiar
+     */
     
     public void addDependenteToAgregado(int nifdeAgregado, int numDependentes) throws ContribuinteNaoIndividualException, ContribuinteDoesntExistException {
         if(!this.contribuintes.containsKey(nifdeAgregado))
