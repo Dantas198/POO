@@ -13,10 +13,10 @@ import moradas.Morada;
 
 public class ContribuinteIndividual extends Contribuinte implements Serializable,BeneficioFiscal {
     private int numDependentesAgregado;
-    private ArrayList<Integer> nifsAgregado; //Fazer Getters e Setters
+    private ArrayList<Integer> nifsAgregado;
     private float coefFiscal;
     //AtividadesEconomicas 
-    private HashMap<String,AtividadeEconomica> actDeduziveis; //Fazer Getters e Setters
+    private HashMap<String,AtividadeEconomica> actDeduziveis;
     
     /**
      * Devolve o numero de dependentes do agregado

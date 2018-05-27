@@ -95,9 +95,9 @@ public class Menu implements Serializable
         ArrayList<Pair<Integer, Pair<AtividadeEconomica, AtividadeEconomica>>> fixes = f.getCorrecoes();
         for(Pair<Integer, Pair<AtividadeEconomica, AtividadeEconomica>> fix : fixes){
             System.out.println("/////////////////////////////////////////////////////////");
-            System.out.println("Nif: " + fix.getKey() + "\n");
-            System.out.println("Atividade Economica alterada: " + fix.getValue().getKey() + "\n");
-            System.out.println("Atividade Economica colocada: " +  fix.getValue().getValue()+ "\n");
+            System.out.println("Numero de fatura: " + fix.getKey());
+            System.out.println("Atividade Economica alterada: " + fix.getValue().getKey());
+            System.out.println("Atividade Economica colocada: " +  fix.getValue().getValue());
             System.out.println("/////////////////////////////////////////////////////////");
         }
         return menuAdmin();
@@ -114,7 +114,7 @@ public class Menu implements Serializable
             Localidade lo = null;
             String o;
             do {
-                o = (String) getInfo("Esta localidade e do (centro ou litoral)", String.class); 
+                o = (String) getInfo("Esta localidade e do (centro ou litoral)?", String.class); 
             } while (!(o.equals("centro") || o.equals("litoral")));
             if (o.equals("centro")) {
                 double desc = (Double) getInfo("Insira benificio para empresas do centro (Insira 0 se nao existir)", Double.class);
@@ -154,12 +154,12 @@ public class Menu implements Serializable
     
     private int verMonstanteDeDeducaoFiscal(){
         float deducaoFiscalDoAgregado = f.getNFAcumuladoAgregado((ContribuinteIndividual) this.loggedIn);
-        System.out.println("Deducao fiscal do agregado familiar - " + deducaoFiscalDoAgregado); 
+        System.out.println("Deducao fiscal do agregado familiar - " + deducaoFiscalDoAgregado + "\n"); 
         return menuContrIndiv();
     }
     
     private int associaAtividadeADespesa(){
-        int nFat = (int) getInfo("Intruduza o numero da fatura que deseja corrigir", Integer.class);
+        int nFat = (int) getInfo("Intruduza o numero da fatura que deseja associar", Integer.class);
         Fatura fatura;
         try{
             fatura = f.getFaturaPendente(nFat);
@@ -209,7 +209,7 @@ public class Menu implements Serializable
         int nifEmpresa = (int) getInfo("Introduza o Nif da empresa da qual quer ver as faturas", Integer.class);
         List<Fatura> fatDeEmpresa = f.getFaturasOfClienteFromEmitente(this.loggedIn.getNif(), nifEmpresa, new CompareFaturasByValor());
         if(fatDeEmpresa.size() == 0) System.out.println("Nao possui faturas com esta empresa");
-        f.listToString(fatDeEmpresa);
+        System.out.println(f.listToString(fatDeEmpresa));
         
         return menuContrIndiv();
     }
@@ -219,7 +219,7 @@ public class Menu implements Serializable
         int nifEmpresa = (int) getInfo("Introduza o Nif da empresa da qual quer ver as faturas", Integer.class);
         List<Fatura> fatDeEmpresa = f.getFaturasOfClienteFromEmitente(this.loggedIn.getNif(), nifEmpresa, new CompareFaturasByDate());
         if(fatDeEmpresa.size() == 0) System.out.println("Nao possui faturas com esta empresa");
-        f.listToString(fatDeEmpresa);
+        System.out.println(f.listToString(fatDeEmpresa));
         
         return menuContrIndiv();
     }
@@ -241,8 +241,7 @@ public class Menu implements Serializable
     
     private int verDespesasPendentes(){
         List<Fatura> faturas = f.getFaturasPendentesFromContribuinte(this.loggedIn.getNif());
-        for(Fatura fat : faturas)
-            System.out.println(fat.toString());
+        System.out.println(Faturas.listToString(faturas));
         return menuContrIndiv();
     }
     
@@ -251,8 +250,7 @@ public class Menu implements Serializable
      */
     private int verDespesas(){   
         List<Fatura> faturas = f.getFaturasFromContribuinte(this.loggedIn.getNif());
-        for(Fatura fat : faturas)
-            System.out.println(fat.toString());
+        System.out.println(Faturas.listToString(faturas));
             
         return menuContrIndiv();
     }
@@ -285,7 +283,6 @@ public class Menu implements Serializable
     }
     
 
-    // Nao funciona ate se definir a estrutura da fatura
     /**
      * Permite a uma empresa, atraves do menu, emitir uma fatura por parte de uma empresa(menu c. empresarial)
      */
@@ -314,7 +311,7 @@ public class Menu implements Serializable
         
         try{
             f.addFatura(fat);
-            System.out.println("Fatura inserida - " + fat.getNumFatura());
+            System.out.println("Fatura inserida - " + (f.getNumFaturas() - 1));
         } catch (Exception e){
             System.out.println("Couldn't insert Fatura" + e.getMessage());
             e.printStackTrace(System.out);
@@ -356,16 +353,14 @@ public class Menu implements Serializable
         LocalDateTime end = (LocalDateTime) getInfo("Introduza a data final \"YYYY-MM-dd\"", LocalDateTime.class);
         
         List<Fatura> faturasPeloTempo = f.getFaturasFromEmitenteBetweenDate(this.loggedIn.getNif(), start, end);
-        for(Fatura fatura : faturasPeloTempo)
-            System.out.println(fatura.toString());
+        System.out.println(Faturas.listToString(faturasPeloTempo));
 
         return menuVerFaturas();
     }
     
     private int VerFaturasPorContribuinte(){
         List<Fatura> faturas = f.getFaturasByValorDecrescente((ContribuinteEmpresarial) this.loggedIn);
-        for(Fatura fatura : faturas)
-            System.out.println(fatura.toString());
+        System.out.println(Faturas.listToString(faturas));
         
         return menuVerFaturas();
     }
@@ -375,7 +370,7 @@ public class Menu implements Serializable
         LocalDateTime end = (LocalDateTime) getInfo("Introduza a data final \"YYYY-MM-dd\"", LocalDateTime.class);
         
         float totalFaturado = f.totalFaturado((ContribuinteEmpresarial) this.loggedIn, start, end);
-        System.out.println("Total faturado de " + start.toString() + " a " + end.toString() + " - " + totalFaturado);
+        System.out.println("Total faturado de " + start.toString() + " a " + end.toString() + " - " + totalFaturado + "\n");
         
         return menuVerFaturas();
     }
@@ -438,8 +433,6 @@ public class Menu implements Serializable
                 System.out.println("User already exists");
             else c.addContribuinte(contr);
         } catch (NullPointerException e){
-            System.out.println(contr);
-            System.out.println(c);
             System.out.println("Couldn't register Contribuinte");
         }   
         return welcomeMenu();
@@ -607,7 +600,6 @@ public class Menu implements Serializable
             i++;
         }
         System.out.println("0-Sair");
-        //System.out.println("c: "+ c);
         
         Scanner scan = new Scanner(System.in);
         do{
@@ -672,11 +664,8 @@ public class Menu implements Serializable
                     int cod1, cod2;
                     String str;
                     cod1 = s.nextInt();
-                    System.out.println(cod1);
                     str = s.next();
-                    System.out.println(str);
                     cod2 = s.nextInt();
-                    System.out.println(cod2);
                     return new Pair<Integer,Integer>(cod1, cod2);    
                 } catch (InputMismatchException e){
                     System.out.println("Follow the format \"Number - Number\"");
@@ -727,7 +716,7 @@ public class Menu implements Serializable
             i++;
         }
         Scanner s = new Scanner(System.in);
-        while(op < 0 || op > aes.size()){
+        while(op <= 0 || op > aes.size()){
             try{
                 op = s.nextInt();
             } catch (InputMismatchException e){

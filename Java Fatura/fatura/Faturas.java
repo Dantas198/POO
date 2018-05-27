@@ -33,10 +33,11 @@ public class Faturas implements Serializable {
     
     
     public static String listToString(List<?> list) {
+    if(list.size() == 0) return "";
     String result = "/////////////////////////////////////////////////////////////////////\n";
     for (int i = 0; i < list.size(); i++) {
         result += list.get(i).toString();
-        result += "////////////////////////////////////\n";
+        result += "/////////////////////////////////////////////////////////////////////\n";
     }
     return result;
 }
@@ -115,7 +116,9 @@ public class Faturas implements Serializable {
      */
     public List<Fatura> getFaturasFromEmitente(int nif){
         List<Fatura> x = this.faturas.values().stream().filter(p -> p.getNifEmitente()==nif).map(Fatura::clone).collect(Collectors.toList());
-        this.faturasPendentes.values().stream().filter(p -> p.getNifEmitente()==nif).map(Fatura::clone).map(p -> x.add(p));
+        this.faturasPendentes.values().stream()
+                                      .filter(p -> p.getNifEmitente()==nif)
+                                      .forEach(p-> x.add(p.clone()));
         return x;
     }
     
@@ -241,12 +244,9 @@ public class Faturas implements Serializable {
                 filter(p -> p.getDataDespesa().isAfter(beg) && p.getDataDespesa().isBefore(end)).
                 map(Fatura::clone).
                 collect(Collectors.toList());
-        this.faturasPendentes.values().stream().
-                filter(p -> p.getNifCliente()==nif).
-                filter(p -> p.getDataDespesa().isAfter(beg) && p.getDataDespesa().isBefore(end)).
-                map(Fatura::clone).
-                map(p -> x.add(p));
-            
+        this.faturasPendentes.values().stream()
+                                      .filter(p -> p.getNifEmitente()==nif && p.getDataDespesa().isAfter(beg) && p.getDataDespesa().isBefore(end))
+                                      .forEach(p-> x.add(p.clone()));
         return x;
     }
     
@@ -266,8 +266,8 @@ public class Faturas implements Serializable {
         }
         Fatura f = this.faturasPendentes.get(numFatura);
         f.setNaturezaDespesa(a);
-        //Contribuinte tem de ser Individual
-        //f.setDeducaoGlobal(c);
+        this.faturas.put(f.getNumFatura(), f);
+        this.faturasPendentes.remove(f.getNumFatura());
         return;
     }
     
@@ -295,10 +295,7 @@ public class Faturas implements Serializable {
         AtividadeEconomica old = f.getNaturezaDespesa();
         Pair <AtividadeEconomica,AtividadeEconomica> atividades = new Pair<AtividadeEconomica, AtividadeEconomica>(old,nova);
         Pair <Integer,Pair<AtividadeEconomica,AtividadeEconomica>> change = new Pair<Integer, Pair<AtividadeEconomica,AtividadeEconomica>>(f.getNumFatura(), atividades);
-        //O Zé esqueceu-se.
         f.setNaturezaDespesa(nova);
-        //Contribuinte tem de ser individual. Vejam isto pff!!
-        //f.setDeducaoGlobal(c);
         this.correcoes.add(change);
     }
     

@@ -42,7 +42,8 @@ public class Main implements Serializable{
         menu = new Menu();
         try{
           initMenu("Menu");
-          menu.run();
+          //menu.run();
+          menu.initRun();
         }
         catch (FileNotFoundException e){
             System.out.println("Could not find a file with that name"); menu.initRun();}

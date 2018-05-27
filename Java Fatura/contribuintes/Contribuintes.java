@@ -43,6 +43,8 @@ public class Contribuintes implements Serializable{
     }
     
     public void addContribuinte(Contribuinte c){
+        if(c instanceof ContribuinteIndividual)
+                ((ContribuinteIndividual) c).setCoefFiscal( 0.20f);
         contribuintes.put(c.getNif(), c.clone());
     }
     
@@ -97,63 +99,63 @@ public class Contribuintes implements Serializable{
     }
     
     public void addNewContribuinteToAgregado(int nifdeAgregado, String nome, int nif, String email, String password) throws ContribuinteDoesntExistException, ContribuinteNaoIndividualException {
-    	if(!this.contribuintes.containsKey(nifdeAgregado))
-    		throw new ContribuinteDoesntExistException(Integer.toString(nifdeAgregado));
-    	Contribuinte s = this.contribuintes.get(nifdeAgregado);
-    	if (!(s instanceof ContribuinteIndividual)) {
-			throw new ContribuinteNaoIndividualException(Integer.toString(nifdeAgregado));	
-		}
-    	ContribuinteIndividual novo = (ContribuinteIndividual) s.clone();
-    	novo.setNome(nome);
-    	novo.setNif(nif);
-    	novo.setEmail(email);
-    	novo.setPassword(password);
-    	List<Integer> x = novo.getNifsAgregado();
-    	for (Integer i : x) {
-    		Contribuinte c = (ContribuinteIndividual) this.contribuintes.get(i);
-    		if (c instanceof ContribuinteIndividual) {
-				ContribuinteIndividual n = (ContribuinteIndividual) c;
-				n.addAgregado(nif);
-			}
-    	}
-    	novo.addAgregado(nif);
-    	this.contribuintes.put(nif, novo);
+        if(!this.contribuintes.containsKey(nifdeAgregado))
+            throw new ContribuinteDoesntExistException(Integer.toString(nifdeAgregado));
+        Contribuinte s = this.contribuintes.get(nifdeAgregado);
+        if (!(s instanceof ContribuinteIndividual)) {
+            throw new ContribuinteNaoIndividualException(Integer.toString(nifdeAgregado));  
+        }
+        ContribuinteIndividual novo = (ContribuinteIndividual) s.clone();
+        novo.setNome(nome);
+        novo.setNif(nif);
+        novo.setEmail(email);
+        novo.setPassword(password);
+        List<Integer> x = novo.getNifsAgregado();
+        for (Integer i : x) {
+            Contribuinte c = (ContribuinteIndividual) this.contribuintes.get(i);
+            if (c instanceof ContribuinteIndividual) {
+                ContribuinteIndividual n = (ContribuinteIndividual) c;
+                n.addAgregado(nif);
+            }
+        }
+        novo.addAgregado(nif);
+        this.contribuintes.put(nif, novo);
     }
     
     public void addDependenteToAgregado(int nifdeAgregado, int numDependentes) throws ContribuinteNaoIndividualException, ContribuinteDoesntExistException {
-    	if(!this.contribuintes.containsKey(nifdeAgregado))
-    		throw new ContribuinteDoesntExistException(Integer.toString(nifdeAgregado));
-    	Contribuinte s = this.contribuintes.get(nifdeAgregado);
-    	if (!(s instanceof ContribuinteIndividual)) {
-			throw new ContribuinteNaoIndividualException(Integer.toString(nifdeAgregado));	
-		}
-    	List<Integer> x;
-    	if (s instanceof ContribuinteIndividual) {
-			ContribuinteIndividual n = (ContribuinteIndividual) s;
-			x = n.getNifsAgregado();
-		}
-    	else
-    		x = new ArrayList<>();
-    	for (Integer i : x) {
-    		Contribuinte c = (ContribuinteIndividual) this.contribuintes.get(i);
-    		if (c instanceof ContribuinteIndividual) {
-				ContribuinteIndividual n = (ContribuinteIndividual) c;
-				n.setNumDependentesAgregado(n.getNumDependentesAgregado()+numDependentes);
-			}
-    	}
-    	
+        if(!this.contribuintes.containsKey(nifdeAgregado))
+            throw new ContribuinteDoesntExistException(Integer.toString(nifdeAgregado));
+        Contribuinte s = this.contribuintes.get(nifdeAgregado);
+        if (!(s instanceof ContribuinteIndividual)) {
+            throw new ContribuinteNaoIndividualException(Integer.toString(nifdeAgregado));  
+        }
+        List<Integer> x;
+        if (s instanceof ContribuinteIndividual) {
+            ContribuinteIndividual n = (ContribuinteIndividual) s;
+            x = n.getNifsAgregado();
+        }
+        else
+            x = new ArrayList<>();
+        for (Integer i : x) {
+            Contribuinte c = (ContribuinteIndividual) this.contribuintes.get(i);
+            if (c instanceof ContribuinteIndividual) {
+                ContribuinteIndividual n = (ContribuinteIndividual) c;
+                n.setNumDependentesAgregado(n.getNumDependentesAgregado()+numDependentes);
+            }
+        }
+        
     }
     
     /**
      * Retorna uma copia do HashMap dos contribuintes
      * */
     public HashMap<Integer, Contribuinte> getContribuintes() {
-		HashMap<Integer,Contribuinte> res = new HashMap<>();
-		for(Contribuinte c : this.contribuintes.values()) {
-			res.put(c.getNif(),c.clone());
-		}
-		return res;
-	}
+        HashMap<Integer,Contribuinte> res = new HashMap<>();
+        for(Contribuinte c : this.contribuintes.values()) {
+            res.put(c.getNif(),c.clone());
+        }
+        return res;
+    }
     
     /**
      * Construtor vazio
@@ -163,13 +165,13 @@ public class Contribuintes implements Serializable{
     }
     
     public Contribuintes(Contribuintes c) {
-		super();
-    	this.contribuintes = c.getContribuintes();
-	}
+        super();
+        this.contribuintes = c.getContribuintes();
+    }
 
 
-	@Override
+    @Override
     public Contribuintes clone(){
-    	return new Contribuintes(this);
+        return new Contribuintes(this);
     }
 }

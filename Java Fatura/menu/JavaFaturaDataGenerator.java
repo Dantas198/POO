@@ -1,7 +1,6 @@
 package menu;
 
-import atividadesEconomicas.Saude;
-import atividadesEconomicas.Veterinario;
+import atividadesEconomicas.*;
 import contribuintes.Contribuinte;
 import contribuintes.ContribuinteEmpresarial;
 import contribuintes.ContribuinteIndividual;
@@ -16,6 +15,12 @@ import moradas.LocalidadeCentro;
 import moradas.LocalidadeLitoral;
 import moradas.Localidades;
 import moradas.Morada;
+import java.time.LocalDateTime;
+import java.util.Random;
+import java.util.Collections;
+import java.util.List;
+import java.util.ArrayList;
+import comparators.CompareFaturasByDate;
 
 public class JavaFaturaDataGenerator {
     private Contribuintes c;
@@ -41,6 +46,13 @@ public class JavaFaturaDataGenerator {
         this.f = f.clone();
     }
     
+        public LocalDateTime randomData() {
+                Random num = new Random();
+		LocalDateTime now = LocalDateTime.now();
+		int year = 60 * 60 * 24 * 365;
+		long randomNum =  (num.nextInt() %(2 * year)) - 2*year;
+		return now.plusSeconds(randomNum);
+}
     
     private void addFamilia() {
         Localidade ls = this.l.getLocalidade("Lisboa");
@@ -57,7 +69,6 @@ public class JavaFaturaDataGenerator {
         try {
             c.addDependenteToAgregado(272390208,2);
         } catch (ContribuinteNaoIndividualException | ContribuinteDoesntExistException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }
@@ -80,21 +91,15 @@ public class JavaFaturaDataGenerator {
         ContribuinteIndividual witcher = new ContribuinteIndividual("Geraldo",237313731,"whiteWolf@gmail.com",m,"cirilla",0.2f);
         c.addContribuinte(witcher);
         c.addContribuinte( new ContribuinteIndividual("Antonio", 280446365, "antoniogomes@sapo.pt",
-                new Morada(25, new Pair<Integer,Integer>(8543, 144), l.getLocalidade("Porto")), "antonio", 0.2f));
-        c.addContribuinte( new ContribuinteIndividual("Firmino", 278970931, "firminopereira@sapo.pt",
-                new Morada(40, new Pair<Integer,Integer>(8543, 144), l.getLocalidade("Guimares")), "firmino", 0.2f));
+                new Morada(25, new Pair<Integer,Integer>(8543, 144), l.getLocalidade("Porto")), "antonio", 0.2f));;
         c.addContribuinte( new ContribuinteIndividual("Manuel", 281738459, "manuelrobalo@hotmail.com",
                 new Morada(35, new Pair<Integer,Integer>(8543, 144), l.getLocalidade("Ofir")), "manuel", 0.2f));
-        c.addContribuinte( new ContribuinteIndividual("Alberta", 274227509, "albertamaria@gmail.com",
-                new Morada(1, new Pair<Integer,Integer>(8543, 144), l.getLocalidade("Braga")), "alberta", 0.2f));
         c.addContribuinte( new ContribuinteIndividual("Maria", 207543992, "mariantonia@hotmail.com",
                 new Morada(4, new Pair<Integer,Integer>(8543, 144), l.getLocalidade("Porto")), "maria", 0.2f));
-        c.addContribuinte( new ContribuinteIndividual("Josefa", 284770485, "josefasousa@sapo.pt",
-                new Morada(19, new Pair<Integer,Integer>(8543, 144), l.getLocalidade("Barcelos")), "josefa", 0.2f));
         c.addContribuinte( new ContribuinteIndividual("Roberto", 261827529, "robertodias76@gmail.com",
-                new Morada(28, new Pair<Integer,Integer>(8543, 144), l.getLocalidade("Porto")), "roberto", 0.2f));
+                new Morada(28, new Pair<Integer,Integer>(8543, 144), l.getLocalidade("Braganca")), "roberto", 0.2f));
         c.addContribuinte( new ContribuinteIndividual("Antonia", 211893838, "antoniachaves@hotmail.com",
-                new Morada(4, new Pair<Integer,Integer>(8543, 144), l.getLocalidade("Guimares")), "antonia", 0.2f));
+                new Morada(4, new Pair<Integer,Integer>(8543, 144), l.getLocalidade("Guimaraes")), "antonia", 0.2f));
         c.addContribuinte( new ContribuinteIndividual("Mariana", 269638814, "marianamacedo@gmail.com",
                 new Morada(32, new Pair<Integer,Integer>(8543, 144), l.getLocalidade("Porto")), "mariana", 0.2f));
         c.addContribuinte( new ContribuinteIndividual("Joana", 244697272, "joanamaceeira@gmail.com",
@@ -118,7 +123,19 @@ public class JavaFaturaDataGenerator {
         ContribuinteEmpresarial e = new ContribuinteEmpresarial("Hospital",112,"hostital@saude.pt",m,"admin");
         e.addAtividadeEmpresa(new Saude());
         this.c.addContribuinte(e);
+        
+        e = new ContribuinteEmpresarial("Restaurante Trincas",52,"trincas@restaurante.pt", 
+                new Morada(15, new Pair<Integer,Integer>(5790, 101), l.getLocalidade("Braga")),"trincas");
+        e.addAtividadeEmpresa(new Restauracao());
+        this.c.addContribuinte(e);
+        
+        ContribuinteEmpresarial papelaria = new ContribuinteEmpresarial("papelaria",65,"papelaria@gmail.pt", 
+            new Morada(31, new Pair<Integer, Integer>(7593, 241), this.l.getLocalidade("Braga")),"papelaria");
+        papelaria.addAtividadeEmpresa(new Educacao());
+        this.c.addContribuinte(papelaria);
     }
+    
+    
     
     private void addEmpresaLitoral() {
         Localidade ls = this.l.getLocalidade("Ofir");
@@ -129,17 +146,73 @@ public class JavaFaturaDataGenerator {
         e.addAtividadeEmpresa(new Veterinario());
         e.addAtividadeEmpresa(new Saude());
         this.c.addContribuinte(e);
+        
+        ContribuinteEmpresarial Opel = new ContribuinteEmpresarial("Open",89,"opel@opel.pt", 
+            new Morada(56, new Pair<Integer, Integer>(2300, 253), this.l.getLocalidade("Porto")),"opel");
+        Opel.addAtividadeEmpresa(new ReparacaoManutencaoVeiculos());
+        Opel.addAtividadeEmpresa(new ReparacaoManutencaoMotociclos());
+        this.c.addContribuinte(Opel);
     }
     
     private void generateFaturas() throws ContribuinteDoesntExistException {
+        Fatura fat;
         ContribuinteEmpresarial cat = (ContribuinteEmpresarial) this.c.getContribuinte(33);
-        Contribuinte cliente = this.c.getContribuinte(272390208);
-        Fatura fat = cat.emiteFatura(cliente, "Hates Dogs", 1000000.99f);
-        this.f.addFatura(fat);
         ContribuinteEmpresarial hospital = (ContribuinteEmpresarial) this.c.getContribuinte(112);
-        Contribuinte client = this.c.getContribuinte(272390208);
-        Fatura fa = hospital.emiteFatura(client, "perna partida", 2.0f);
-        this.f.addFatura(fa);
+        ContribuinteEmpresarial restaurante = (ContribuinteEmpresarial) this.c.getContribuinte(52);
+        ContribuinteEmpresarial papelaria = (ContribuinteEmpresarial) this.c.getContribuinte(65);
+        ContribuinteEmpresarial opel = (ContribuinteEmpresarial) this.c.getContribuinte(89);
+        
+        Contribuinte Kratos = this.c.getContribuinte(272390208); 
+        Contribuinte Manuel = this.c.getContribuinte(281738459); 
+        Contribuinte Antonio = this.c.getContribuinte(280446365);
+        Contribuinte Maria = this.c.getContribuinte(207543992);
+        Contribuinte Roberto = this.c.getContribuinte(261827529);
+        Contribuinte Joana = this.c.getContribuinte(244697272);
+        Contribuinte Jose = this.c.getContribuinte(225288958);
+        Contribuinte Marco = this.c.getContribuinte(272137456);
+        Contribuinte Cesar = this.c.getContribuinte(276689402);
+        Contribuinte Mariana = this.c.getContribuinte(269638814);
+        
+        List<Fatura> opd = new ArrayList<>();
+        opd.add(restaurante.emiteFatura(Antonio, "sopa" , 3.99f));
+        opd.add(restaurante.emiteFatura(Jose, "lagostas" , 73.99f));
+        opd.add(restaurante.emiteFatura(Jose, "lagostas" , 73.99f));
+        opd.add(restaurante.emiteFatura(Cesar, "camaroes", 55.99f));
+        opd.add(restaurante.emiteFatura(Maria, "prato do dia" , 5.99f));
+        opd.add(restaurante.emiteFatura(Cesar, "camaroes", 55.99f));
+        opd.add(restaurante.emiteFatura(Mariana, "arroz de pato" , 4.99f));
+        opd.add(restaurante.emiteFatura(Maria, "prato do dia" , 5.99f));
+        opd.add(hospital.emiteFatura(Kratos, "perna partida", 2.0f));
+        opd.add(hospital.emiteFatura(Manuel, "gripe", 8.0f));
+        opd.add(hospital.emiteFatura(Manuel, "inflamacao", 5.0f));
+        opd.add(hospital.emiteFatura(Antonio, "cuidados ligeiros", 3.0f));
+        opd.add(hospital.emiteFatura(Kratos, "constipacao", 5.0f));
+        opd.add(hospital.emiteFatura(Marco, "operacao", 200.0f));
+        opd.add(papelaria.emiteFatura(Maria, "fotocopias", 1.08f));
+        opd.add(papelaria.emiteFatura(Marco, "colas", 3.0f));
+        opd.add(papelaria.emiteFatura(Jose, "calculadora", 10.0f));
+        opd.add(papelaria.emiteFatura(Cesar, "cartolinas", 5.0f));
+        opd.add(papelaria.emiteFatura(Mariana, "calculadora cientifica", 199.0f));
+        opd.add(opel.emiteFatura(Roberto, "Manutencao carro", 90.0f));
+        opd.add(opel.emiteFatura(Maria, "Manutencao mota", 152.0f));
+        opd.add(opel.emiteFatura(Cesar, "Manutencao carro", 155.0f));
+        opd.add(opel.emiteFatura(Cesar, "Manutencao mota", 160.0f));
+        opd.add(opel.emiteFatura(Marco, "Manutencao carro", 200.0f));
+        opd.add(opel.emiteFatura(Mariana, "Manutencao carro", 110.0f));
+        opd.add(opel.emiteFatura(Mariana, "Manutencao carro", 160.0f));
+        opd.add(opel.emiteFatura(Jose, "Manutencao carro", 150.0f));
+        opd.add(papelaria.emiteFatura(Manuel, "fotocopias", 0.76f));
+        opd.add(cat.emiteFatura(Kratos, "Hates Dogs", 1000000.99f));
+        opd.add(cat.emiteFatura(Kratos, "Hates cats", 9999.98f));
+        
+        for(Fatura fatura : opd)
+            fatura.setDataDespesa(randomData());
+
+        Collections.sort(opd, new CompareFaturasByDate());
+        
+        for(Fatura fatura : opd)
+            this.f.addFatura(fatura);
+        
     }
     
     public void generateData() {
